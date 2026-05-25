@@ -24,3 +24,5 @@ const content = `export const environment = {
 
 fs.writeFileSync(path.join(__dirname, 'src', 'environments', 'environment.ts'), content);
 console.log('✅ environment.prod.ts generado con las variables de entorno');
+console.log('   supabaseUrl:', process.env.SUPABASE_URL);
+console.log('   supabaseKey:', process.env.SUPABASE_ANON_KEY ? '✅ existe' : '❌ vacío')
