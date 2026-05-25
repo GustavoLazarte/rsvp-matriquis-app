@@ -104,37 +104,8 @@ export class DashboardComponent implements OnInit {
     return { total, confirmed, declined, pending, confirmedPct, totalGuests, confirmedGuests };
   }
 
-  get filteredGuests(): Guest[] {
-    let list = this.guests;
-    if (this.searchQuery.trim()) {
-      const q = this.searchQuery.toLowerCase();
-      list = list.filter(g =>
-        g.name.toLowerCase().includes(q) ||
-        g.email.toLowerCase().includes(q) ||
-        g.group.toLowerCase().includes(q)
-      );
-    }
-    if (this.statusFilter === 'yes') list = list.filter(g => g.attending === 'yes');
-    else if (this.statusFilter === 'no') list = list.filter(g => g.attending === 'no');
-    else if (this.statusFilter === 'pending') list = list.filter(g => g.attending === null);
-    return list;
-  }
-
-  get confirmedCount() {
-    return this.guests.filter(g => g.attending === 'yes').length;
-  }
-
   get userEmailDisplay(): string {
     return this.user?.email?.split('@')[0] || 'admin';
-  }
-
-  getInitials(name: string): string {
-    const parts = name.split(' ');
-    return (parts[0]?.charAt(0) || '') + (parts[1]?.charAt(0) || '');
-  }
-
-  setStatusFilter(filter: 'all' | 'yes' | 'no' | 'pending') {
-    this.statusFilter = filter;
   }
 
   openSheet() {
@@ -155,7 +126,8 @@ export class DashboardComponent implements OnInit {
     this.tempPhotos.splice(index, 1);
   }
 
-  saveSettings() {
+  saveSettings(settings: typeof this.eventSettings) {
+    this.eventSettings = settings;
     alert('Configuración guardada');
   }
 }

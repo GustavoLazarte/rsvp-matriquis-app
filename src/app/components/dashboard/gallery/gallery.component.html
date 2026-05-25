@@ -1,0 +1,21 @@
+<div class="dash-page-head">
+  <h1 class="dash-h1">Galería</h1>
+  <p class="dash-p">Sube y administra las fotos de la galería del evento</p>
+</div>
+
+<div class="dash-gallery-upload" (click)="galleryInput.click()">
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+  <span>Haz clic para subir fotos</span>
+  <input #galleryInput type="file" accept="image/*" multiple style="display:none" (change)="fileSelected.emit($event)" />
+</div>
+
+<div class="dash-photos" *ngIf="tempPhotos.length > 0">
+  <div class="dash-photo-card" *ngFor="let url of tempPhotos; let i = index">
+    <img [src]="url" alt="" />
+    <button class="dash-photo-remove" (click)="removePhoto.emit(i)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="dash-photo-overlay"></div>
+  </div>
+</div>
+<p class="dash-empty" *ngIf="tempPhotos.length === 0">No hay fotos subidas aún.</p>

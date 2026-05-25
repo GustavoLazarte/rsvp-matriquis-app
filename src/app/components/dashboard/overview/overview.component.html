@@ -1,0 +1,134 @@
+<div class="dash-page-head">
+  <h1 class="dash-h1">Panel general</h1>
+  <p class="dash-p">Resumen de confirmaciones, actividad reciente y estado de tu boda</p>
+</div>
+
+<div class="dash-welcome-card">
+  <div class="dash-welcome-info">
+    <h2>¡Hola de nuevo, {{ userEmailDisplay }}!</h2>
+    <p>Tu boda es el <strong>{{ eventSettings.date }}</strong> en <strong>{{ eventSettings.venue }}</strong>. Faltan <strong>~3 meses</strong>.</p>
+  </div>
+  <div class="dash-welcome-badge">
+    <span class="dash-welcome-countdown">{{ stats.confirmedPct }}%</span>
+    <span class="dash-welcome-countdown-lbl">confirmado</span>
+  </div>
+</div>
+
+<div class="dash-stat-grid">
+  <div class="dash-stat-card">
+    <div class="dash-stat-icon" style="background:#E8F0EB;color:#3A6B4A">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    </div>
+    <div>
+      <div class="dash-stat-val">{{ stats.total }}</div>
+      <div class="dash-stat-lbl">Invitados</div>
+    </div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-icon" style="background:#D4EDDA;color:#155724">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <div>
+      <div class="dash-stat-val">{{ stats.confirmed }}</div>
+      <div class="dash-stat-lbl">Confirmados</div>
+    </div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-icon" style="background:#F8D7DA;color:#721C24">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+    <div>
+      <div class="dash-stat-val">{{ stats.declined }}</div>
+      <div class="dash-stat-lbl">No asistirán</div>
+    </div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-icon" style="background:#FFF3CD;color:#856404">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    </div>
+    <div>
+      <div class="dash-stat-val">{{ stats.pending }}</div>
+      <div class="dash-stat-lbl">Pendientes</div>
+    </div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-icon" style="background:#E8EAF6;color:#283593">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div>
+      <div class="dash-stat-val">{{ stats.totalGuests }}</div>
+      <div class="dash-stat-lbl">Personas (con +1)</div>
+    </div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-icon" style="background:#FCE4EC;color:#880E4F">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </div>
+    <div>
+      <div class="dash-stat-val">{{ stats.confirmedGuests }}</div>
+      <div class="dash-stat-lbl">Asistirán</div>
+    </div>
+  </div>
+</div>
+
+<div class="dash-overview-cols">
+  <div class="dash-overview-col">
+    <div class="dash-progress-card">
+      <div class="dash-progress-head">
+        <h3>Progreso de confirmaciones</h3>
+        <span class="dash-progress-pct">{{ stats.confirmedPct }}%</span>
+      </div>
+      <div class="dash-progress-bar">
+        <div class="dash-progress-fill" [style.width.%]="stats.confirmedPct"></div>
+      </div>
+      <div class="dash-progress-labels">
+        <span>{{ stats.confirmed }} confirmados</span>
+        <span>{{ stats.declined }} declinaron</span>
+        <span>{{ stats.pending }} pendientes</span>
+      </div>
+    </div>
+
+    <div class="dash-event-card">
+      <h3>Próximo evento</h3>
+      <div class="dash-event-detail"><span class="dash-event-label">Fecha</span><span>{{ eventSettings.date }}</span></div>
+      <div class="dash-event-detail"><span class="dash-event-label">Hora</span><span>{{ eventSettings.time }}</span></div>
+      <div class="dash-event-detail"><span class="dash-event-label">Lugar</span><span>{{ eventSettings.venue }}, {{ eventSettings.address }}</span></div>
+      <div class="dash-event-detail"><span class="dash-event-label">RSVP antes del</span><span>{{ eventSettings.deadline }}</span></div>
+    </div>
+  </div>
+
+  <div class="dash-overview-col">
+    <div class="dash-recent-card">
+      <div class="dash-recent-head">
+        <h3>RSVPs recientes</h3>
+        <span class="dash-recent-count">últimos 5</span>
+      </div>
+      <div class="dash-recent-list">
+        <div class="dash-recent-item" *ngFor="let r of recentRsvps">
+          <div class="dash-recent-avatar" [class.avatar-yes]="r.status === 'yes'" [class.avatar-no]="r.status === 'no'">
+            {{ getInitials(r.name) }}
+          </div>
+          <div class="dash-recent-body">
+            <span class="dash-recent-name">{{ r.name }}</span>
+            <span class="dash-recent-meta">{{ r.date }} · {{ r.guests }} {{ r.guests === 1 ? 'invitado' : 'invitados' }}</span>
+          </div>
+          <span class="dash-status" [class.status-yes]="r.status === 'yes'" [class.status-no]="r.status === 'no'">
+            {{ r.status === 'yes' ? 'Confirmó' : 'Rechazó' }}
+          </span>
+        </div>
+      </div>
+      <button class="dash-btn dash-btn--small" (click)="setTab.emit('guests')">Ver todos los invitados</button>
+    </div>
+  </div>
+</div>
+
+<div class="dash-action-row">
+  <a class="dash-btn" href="javascript:void(0)" (click)="openSheet.emit()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Google Sheets
+  </a>
+  <a class="dash-btn dash-btn--outline" [routerLink]="['/invi', 'default']">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    Ver sitio de boda
+  </a>
+</div>

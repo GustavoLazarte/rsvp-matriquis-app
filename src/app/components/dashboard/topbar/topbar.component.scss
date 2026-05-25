@@ -1,0 +1,42 @@
+.dash-topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 2.5rem;
+  height: 64px;
+  background: #fff;
+  border-bottom: 1px solid #E8F0EB;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.dash-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1A2E22;
+  padding: 0.25rem;
+}
+.dash-topbar-title { flex: 1; }
+.dash-topbar-label {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: #1A2E22;
+}
+.dash-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.dash-topbar-email {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 12px;
+  color: #7a9585;
+}
+
+@media (max-width: 768px) {
+  .dash-hamburger { display: block; }
+  .dash-topbar { padding: 0 1.25rem; height: 56px; }
+}

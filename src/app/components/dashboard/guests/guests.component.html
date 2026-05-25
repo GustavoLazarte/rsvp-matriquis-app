@@ -1,0 +1,58 @@
+<div class="dash-page-head">
+  <h1 class="dash-h1">Invitados</h1>
+  <p class="dash-p">{{ stats.total }} invitados · {{ stats.confirmed }} confirmados · {{ stats.pending }} pendientes · {{ stats.declined }} rechazaron</p>
+</div>
+
+<div class="dash-toolbar">
+  <div class="dash-search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7a9585" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="dash-search-inp" type="text" placeholder="Buscar por nombre, email, teléfono o grupo..." [ngModel]="searchQuery" (ngModelChange)="onSearchChange($event)" />
+  </div>
+  <div class="dash-filter-chips">
+    <button class="dash-chip" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todos <span class="dash-chip-count">{{ guests.length }}</span></button>
+    <button class="dash-chip" [class.active]="statusFilter === 'yes'" (click)="setStatusFilter('yes')">Confirmados <span class="dash-chip-count">{{ stats.confirmed }}</span></button>
+    <button class="dash-chip" [class.active]="statusFilter === 'pending'" (click)="setStatusFilter('pending')">Pendientes <span class="dash-chip-count">{{ stats.pending }}</span></button>
+    <button class="dash-chip" [class.active]="statusFilter === 'no'" (click)="setStatusFilter('no')">Rechazaron <span class="dash-chip-count">{{ stats.declined }}</span></button>
+  </div>
+</div>
+
+<div class="dash-table-wrap">
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Grupo</th>
+        <th>Estado</th>
+        <th>+1</th>
+        <th>Acompañante</th>
+        <th>Comida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let g of filteredGuests">
+        <td class="dash-cell-name">{{ g.name }}</td>
+        <td class="dash-cell-muted">{{ g.email }}</td>
+        <td><span class="dash-group-tag">{{ g.group }}</span></td>
+        <td>
+          <span class="dash-status" [class.status-yes]="g.attending === 'yes'" [class.status-no]="g.attending === 'no'" [class.status-pending]="g.attending === null">
+            {{ g.attending === 'yes' ? 'Confirmado' : g.attending === 'no' ? 'Rechazó' : 'Pendiente' }}
+          </span>
+        </td>
+        <td>{{ g.plusOne ? 'Sí' : '—' }}</td>
+        <td class="dash-cell-muted">{{ g.plusOneName || '—' }}</td>
+        <td class="dash-cell-muted">{{ g.food || '—' }}</td>
+      </tr>
+      <tr *ngIf="filteredGuests.length === 0">
+        <td colspan="7" class="dash-empty-row">No se encontraron invitados con esos filtros.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="dash-action-row" style="margin-top:1.5rem">
+  <a class="dash-btn" href="javascript:void(0)" (click)="openSheet.emit()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Editar en Google Sheets
+  </a>
+</div>

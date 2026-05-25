@@ -1,39 +1,123 @@
-.login-container {
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+}
+
+.fg {
+  text-align: left;
+}
+
+.fl {
+  display: block;
+  font-family: var(--sans);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--forest);
+  margin-bottom: 0.4rem;
+}
+
+.fi-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.fi {
+  width: 100%;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--mist);
+  border-radius: 8px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+.fi:focus {
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px rgba(58,107,74,0.1);
+}
+
+.fi--error {
+  border-color: #c0392b;
+}
+.fi--error:focus {
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+}
+
+.fi::placeholder {
+  color: #b8c9be;
+}
+
+.fi-icon {
+  position: absolute;
+  right: 1rem;
+  pointer-events: none;
+  color: #b8c9be;
+}
+
+.fi-toggle {
+  position: absolute;
+  right: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  padding: 1rem;
-}
-
-.login-card {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-input {
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
-}
-
-button {
-  padding: 0.75rem;
-  background: #3b82f6;
-  color: white;
+  width: 30px;
+  height: 30px;
   border: none;
-  border-radius: 0.5rem;
+  background: none;
+  color: #b8c9be;
   cursor: pointer;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+.fi-toggle:hover {
+  color: var(--forest);
+  background: var(--ow);
 }
 
-.error {
-  color: #ef4444;
-  font-size: 0.875rem;
+.ferr {
+  display: block;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: #c0392b;
+  margin-top: 0.3rem;
+}
+
+.login-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: #c0392b;
+  background: rgba(192,57,43,0.06);
+  padding: 0.65rem 0.875rem;
+  border-radius: 8px;
+  margin-bottom: 0;
+}
+
+.login-btn {
+  justify-content: center;
+  min-height: 44px;
+  transition: opacity 0.2s, background 0.3s;
+}
+.login-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@keyframes loadPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.loading {
+  animation: loadPulse 0.9s ease-in-out infinite;
 }

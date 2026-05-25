@@ -1,0 +1,122 @@
+.dash-page-head {
+  margin-bottom: 0.5rem;
+}
+.dash-h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 34px;
+  font-weight: 300;
+  color: #1A2E22;
+  margin: 0 0 0.375rem;
+}
+.dash-p {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: #5a7565;
+  margin: 0;
+}
+
+.dash-settings {
+  background: #fff;
+  border: 1px solid #E8F0EB;
+  border-radius: 14px;
+  padding: 2.5rem;
+}
+.dash-settings-section {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid #E8F0EB;
+}
+.dash-settings-section:last-child {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.dash-settings-section-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #1A2E22;
+  margin: 0 0 0.25rem;
+}
+
+.dash-settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.5rem;
+}
+.dash-field {
+  margin-bottom: 0;
+}
+.dash-field label {
+  display: block;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #3A6B4A;
+  margin-bottom: 0.35rem;
+}
+.dash-inp {
+  width: 100%;
+  padding: 0.7rem 0.875rem;
+  border: 1px solid #E8F0EB;
+  border-radius: 8px;
+  background: #fff;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1A2E22;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+}
+.dash-inp:focus { border-color: #3A6B4A; }
+.dash-inp[type="date"] { padding: 0.625rem 0.875rem; }
+.dash-textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+.dash-checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  padding-top: 0.5rem;
+}
+.dash-checkbox input { width: 16px; height: 16px; accent-color: #3A6B4A; }
+.dash-checkbox span {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #1A2E22;
+}
+
+.dash-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid #3A6B4A;
+  background: #3A6B4A;
+  color: #fff;
+}
+.dash-btn:hover {
+  background: #264D35;
+  border-color: #264D35;
+}
+
+@media (max-width: 768px) {
+  .dash-settings-grid { grid-template-columns: 1fr; }
+  .dash-settings { padding: 1.5rem; }
+}
