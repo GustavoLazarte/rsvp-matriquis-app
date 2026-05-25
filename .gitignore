@@ -1,6 +1,31 @@
 node_modules/
 dist/
 out-tsc/
-*.local
+.angular/
+
+# Environment
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test
+coverage/
+
+# Old project
 old-rsvp-app/

@@ -1,50 +1,357 @@
-<div class="dash-page">
-  <header class="dash-header">
-    <div class="dash-header-inner">
-      <div class="dash-brand">M&J · Dashboard</div>
-      <div class="dash-user">
-        <span class="dash-user-mail">{{ user?.email || 'admin' }}</span>
-        <button class="dash-logout" (click)="onLogout()">Cerrar sesión</button>
-      </div>
-    </div>
-  </header>
-  <main class="dash-main">
-    <h2 class="dash-welcome">Panel de Administración</h2>
-    <p class="dash-sub">Gestión de invitados y configuración de la boda</p>
+<div class="dash-shell">
+  <!-- OVERLAY -->
+  <div class="dash-overlay" [class.open]="sidebarOpen" (click)="sidebarOpen = false"></div>
 
-    <div class="dash-cards">
-      <div class="dash-card">
-        <div class="dash-card-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="dash-card-label">Invitados</div>
-        <div class="dash-card-val">—</div>
-        <div class="dash-card-desc">Los RSVP se registran en Google Sheets</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-card-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </div>
-        <div class="dash-card-label">Fecha</div>
-        <div class="dash-card-val">13 Sep 2026</div>
-        <div class="dash-card-desc">Cochabamba, Bolivia</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-card-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>
-        <div class="dash-card-label">Sitio web</div>
-        <div class="dash-card-val">En vivo</div>
-        <div class="dash-card-desc">moniyjose.rsvp</div>
-      </div>
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar" [class.open]="sidebarOpen">
+    <div class="dash-sidebar-brand">
+      <div class="dash-sidebar-logo">M&J</div>
+      <span>Dashboard</span>
     </div>
 
-    <div class="dash-section">
-      <h3 class="dash-section-title">Enlaces rápidos</h3>
-      <div class="dash-links">
-        <a class="dash-link" href="https://docs.google.com/spreadsheets" target="_blank" rel="noreferrer">Ver Google Sheets →</a>
-        <a class="dash-link" [routerLink]="['/invi', 'default']">Ver sitio público →</a>
-      </div>
+    <nav class="dash-sidebar-nav">
+      <button class="dash-sidebar-item" [class.active]="activeTab === 'overview'" (click)="setTab('overview')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Overview</span>
+      </button>
+      <button class="dash-sidebar-item" [class.active]="activeTab === 'guests'" (click)="setTab('guests')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Invitados</span>
+        <span class="dash-sidebar-badge">{{ stats.pending }}</span>
+      </button>
+      <button class="dash-sidebar-item" [class.active]="activeTab === 'gallery'" (click)="setTab('gallery')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <span>Galería</span>
+      </button>
+      <button class="dash-sidebar-item" [class.active]="activeTab === 'settings'" (click)="setTab('settings')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Configuración</span>
+      </button>
+    </nav>
+
+    <div class="dash-sidebar-footer">
+      <div class="dash-sidebar-user">{{ user?.email || 'admin' }}</div>
+      <button class="dash-sidebar-logout" (click)="onLogout()">Cerrar sesión</button>
     </div>
-  </main>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="dash-main-area">
+    <!-- TOP BAR -->
+    <header class="dash-topbar">
+      <button class="dash-hamburger" (click)="sidebarOpen = true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="dash-topbar-title">
+        <span class="dash-topbar-label">{{ activeTab === 'overview' ? 'Panel general' : activeTab === 'guests' ? 'Invitados' : activeTab === 'gallery' ? 'Galería' : 'Configuración' }}</span>
+      </div>
+      <div class="dash-topbar-right">
+        <span class="dash-topbar-email">{{ user?.email || 'admin' }}</span>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="dash-content">
+      <!-- ========== OVERVIEW ========== -->
+      <section *ngIf="activeTab === 'overview'">
+
+        <div class="dash-page-head">
+          <h1 class="dash-h1">Panel general</h1>
+          <p class="dash-p">Resumen de confirmaciones, actividad reciente y estado de tu boda</p>
+        </div>
+
+        <!-- WELCOME CARD -->
+        <div class="dash-welcome-card">
+          <div class="dash-welcome-info">
+            <h2>¡Hola de nuevo, {{ userEmailDisplay }}!</h2>
+            <p>Tu boda es el <strong>{{ eventSettings.date }}</strong> en <strong>{{ eventSettings.venue }}</strong>. Faltan <strong>~3 meses</strong>.</p>
+          </div>
+          <div class="dash-welcome-badge">
+            <span class="dash-welcome-countdown">{{ stats.confirmedPct }}%</span>
+            <span class="dash-welcome-countdown-lbl">confirmado</span>
+          </div>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="dash-stat-grid">
+          <div class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:#E8F0EB;color:#3A6B4A">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <div class="dash-stat-val">{{ stats.total }}</div>
+              <div class="dash-stat-lbl">Invitados</div>
+            </div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:#D4EDDA;color:#155724">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div>
+              <div class="dash-stat-val">{{ stats.confirmed }}</div>
+              <div class="dash-stat-lbl">Confirmados</div>
+            </div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:#F8D7DA;color:#721C24">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </div>
+            <div>
+              <div class="dash-stat-val">{{ stats.declined }}</div>
+              <div class="dash-stat-lbl">No asistirán</div>
+            </div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:#FFF3CD;color:#856404">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <div class="dash-stat-val">{{ stats.pending }}</div>
+              <div class="dash-stat-lbl">Pendientes</div>
+            </div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:#E8EAF6;color:#283593">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <div class="dash-stat-val">{{ stats.totalGuests }}</div>
+              <div class="dash-stat-lbl">Personas (con +1)</div>
+            </div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dash-stat-icon" style="background:#FCE4EC;color:#880E4F">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div>
+              <div class="dash-stat-val">{{ stats.confirmedGuests }}</div>
+              <div class="dash-stat-lbl">Asistirán</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TWO COLUMN -->
+        <div class="dash-overview-cols">
+          <!-- COL 1: Progress -->
+          <div class="dash-overview-col">
+            <div class="dash-progress-card">
+              <div class="dash-progress-head">
+                <h3>Progreso de confirmaciones</h3>
+                <span class="dash-progress-pct">{{ stats.confirmedPct }}%</span>
+              </div>
+              <div class="dash-progress-bar">
+                <div class="dash-progress-fill" [style.width.%]="stats.confirmedPct"></div>
+              </div>
+              <div class="dash-progress-labels">
+                <span>{{ stats.confirmed }} confirmados</span>
+                <span>{{ stats.declined }} declinaron</span>
+                <span>{{ stats.pending }} pendientes</span>
+              </div>
+            </div>
+
+            <div class="dash-event-card">
+              <h3>Próximo evento</h3>
+              <div class="dash-event-detail"><span class="dash-event-label">Fecha</span><span>{{ eventSettings.date }}</span></div>
+              <div class="dash-event-detail"><span class="dash-event-label">Hora</span><span>{{ eventSettings.time }}</span></div>
+              <div class="dash-event-detail"><span class="dash-event-label">Lugar</span><span>{{ eventSettings.venue }}, {{ eventSettings.address }}</span></div>
+              <div class="dash-event-detail"><span class="dash-event-label">RSVP antes del</span><span>{{ eventSettings.deadline }}</span></div>
+            </div>
+          </div>
+
+          <!-- COL 2: Recent Activity -->
+          <div class="dash-overview-col">
+            <div class="dash-recent-card">
+              <div class="dash-recent-head">
+                <h3>RSVPs recientes</h3>
+                <span class="dash-recent-count">últimos 5</span>
+              </div>
+              <div class="dash-recent-list">
+                <div class="dash-recent-item" *ngFor="let r of recentRsvps">
+                  <div class="dash-recent-avatar" [class.avatar-yes]="r.status === 'yes'" [class.avatar-no]="r.status === 'no'">
+                    {{ getInitials(r.name) }}
+                  </div>
+                  <div class="dash-recent-body">
+                    <span class="dash-recent-name">{{ r.name }}</span>
+                    <span class="dash-recent-meta">{{ r.date }} · {{ r.guests }} {{ r.guests === 1 ? 'invitado' : 'invitados' }}</span>
+                  </div>
+                  <span class="dash-status" [class.status-yes]="r.status === 'yes'" [class.status-no]="r.status === 'no'">
+                    {{ r.status === 'yes' ? 'Confirmó' : 'Rechazó' }}
+                  </span>
+                </div>
+              </div>
+              <button class="dash-btn dash-btn--small" (click)="setTab('guests')">Ver todos los invitados</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-action-row">
+          <a class="dash-btn" href="javascript:void(0)" (click)="openSheet()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Google Sheets
+          </a>
+          <a class="dash-btn dash-btn--outline" [routerLink]="['/invi', 'default']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Ver sitio de boda
+          </a>
+        </div>
+      </section>
+
+      <!-- ========== GUESTS ========== -->
+      <section *ngIf="activeTab === 'guests'">
+        <div class="dash-page-head">
+          <h1 class="dash-h1">Invitados</h1>
+          <p class="dash-p">{{ stats.total }} invitados · {{ stats.confirmed }} confirmados · {{ stats.pending }} pendientes · {{ stats.declined }} rechazaron</p>
+        </div>
+
+        <div class="dash-toolbar">
+          <div class="dash-search-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7a9585" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="dash-search-inp" type="text" placeholder="Buscar por nombre, email, teléfono o grupo..." [(ngModel)]="searchQuery" />
+          </div>
+          <div class="dash-filter-chips">
+            <button class="dash-chip" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todos <span class="dash-chip-count">{{ guests.length }}</span></button>
+            <button class="dash-chip" [class.active]="statusFilter === 'yes'" (click)="setStatusFilter('yes')">Confirmados <span class="dash-chip-count">{{ stats.confirmed }}</span></button>
+            <button class="dash-chip" [class.active]="statusFilter === 'pending'" (click)="setStatusFilter('pending')">Pendientes <span class="dash-chip-count">{{ stats.pending }}</span></button>
+            <button class="dash-chip" [class.active]="statusFilter === 'no'" (click)="setStatusFilter('no')">Rechazaron <span class="dash-chip-count">{{ stats.declined }}</span></button>
+          </div>
+        </div>
+
+        <div class="dash-table-wrap">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Grupo</th>
+                <th>Estado</th>
+                <th>+1</th>
+                <th>Acompañante</th>
+                <th>Comida</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let g of filteredGuests">
+                <td class="dash-cell-name">{{ g.name }}</td>
+                <td class="dash-cell-muted">{{ g.email }}</td>
+                <td><span class="dash-group-tag">{{ g.group }}</span></td>
+                <td>
+                  <span class="dash-status" [class.status-yes]="g.attending === 'yes'" [class.status-no]="g.attending === 'no'" [class.status-pending]="g.attending === null">
+                    {{ g.attending === 'yes' ? 'Confirmado' : g.attending === 'no' ? 'Rechazó' : 'Pendiente' }}
+                  </span>
+                </td>
+                <td>{{ g.plusOne ? 'Sí' : '—' }}</td>
+                <td class="dash-cell-muted">{{ g.plusOneName || '—' }}</td>
+                <td class="dash-cell-muted">{{ g.food || '—' }}</td>
+              </tr>
+              <tr *ngIf="filteredGuests.length === 0">
+                <td colspan="7" class="dash-empty-row">No se encontraron invitados con esos filtros.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="dash-action-row" style="margin-top:1.5rem">
+          <a class="dash-btn" href="javascript:void(0)" (click)="openSheet()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Editar en Google Sheets
+          </a>
+        </div>
+      </section>
+
+      <!-- ========== GALLERY ========== -->
+      <section *ngIf="activeTab === 'gallery'">
+        <div class="dash-page-head">
+          <h1 class="dash-h1">Galería</h1>
+          <p class="dash-p">Sube y administra las fotos de la galería del evento</p>
+        </div>
+
+        <div class="dash-gallery-upload" (click)="galleryInput.click()">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Haz clic para subir fotos</span>
+          <input #galleryInput type="file" accept="image/*" multiple style="display:none" (change)="onFileSelected($event)" />
+        </div>
+
+        <div class="dash-photos" *ngIf="tempPhotos.length > 0">
+          <div class="dash-photo-card" *ngFor="let url of tempPhotos; let i = index">
+            <img [src]="url" alt="" />
+            <button class="dash-photo-remove" (click)="removePhoto(i)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="dash-photo-overlay"></div>
+          </div>
+        </div>
+        <p class="dash-empty" *ngIf="tempPhotos.length === 0">No hay fotos subidas aún.</p>
+      </section>
+
+      <!-- ========== SETTINGS ========== -->
+      <section *ngIf="activeTab === 'settings'">
+        <div class="dash-page-head">
+          <h1 class="dash-h1">Configuración</h1>
+          <p class="dash-p">Personaliza los datos del evento, la apariencia y los mensajes de la invitación</p>
+        </div>
+
+        <div class="dash-settings">
+
+          <div class="dash-settings-section">
+            <h2 class="dash-settings-section-title">Información del evento</h2>
+            <div class="dash-settings-grid">
+              <div class="dash-field">
+                <label>Fecha del evento</label>
+                <input class="dash-inp" [(ngModel)]="eventSettings.date" />
+              </div>
+              <div class="dash-field">
+                <label>Hora</label>
+                <input class="dash-inp" [(ngModel)]="eventSettings.time" />
+              </div>
+              <div class="dash-field">
+                <label>Lugar</label>
+                <input class="dash-inp" [(ngModel)]="eventSettings.venue" />
+              </div>
+              <div class="dash-field">
+                <label>Dirección</label>
+                <input class="dash-inp" [(ngModel)]="eventSettings.address" />
+              </div>
+              <div class="dash-field">
+                <label>Fecha límite RSVP</label>
+                <input class="dash-inp" type="date" [(ngModel)]="eventSettings.deadline" />
+              </div>
+              <div class="dash-field">
+                <label class="dash-checkbox">
+                  <input type="checkbox" [(ngModel)]="eventSettings.adultsOnly" />
+                  <span>Solo adultos</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-settings-section">
+            <h2 class="dash-settings-section-title">Mensaje de bienvenida</h2>
+            <div class="dash-field">
+              <textarea class="dash-inp dash-textarea" rows="3" [(ngModel)]="eventSettings.welcomeMessage"></textarea>
+            </div>
+          </div>
+
+          <div class="dash-settings-section">
+            <h2 class="dash-settings-section-title">Enlaces</h2>
+            <div class="dash-settings-grid">
+              <div class="dash-field">
+                <label>Playlist (Spotify)</label>
+                <input class="dash-inp" [(ngModel)]="eventSettings.musicLink" placeholder="https://open.spotify.com/playlist/..." />
+              </div>
+              <div class="dash-field">
+                <label>Mesa de regalos</label>
+                <input class="dash-inp" [(ngModel)]="eventSettings.giftsLink" placeholder="Opcional" />
+              </div>
+              <div class="dash-field">
+                <label>Instagram</label>
+                <input class="dash-inp" [(ngModel)]="eventSettings.instagram" placeholder="@usuario" />
+              </div>
+            </div>
+          </div>
+
+          <button class="dash-btn" (click)="saveSettings()">Guardar configuración</button>
+        </div>
+      </section>
+    </main>
+  </div>
 </div>
