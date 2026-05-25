@@ -1,0 +1,181 @@
+import { Injectable, signal } from '@angular/core';
+
+export type Lang = 'es' | 'en';
+
+export const T: Record<Lang, Record<string, any>> = {
+  es: {
+    ticker: 'Moni & Jose · 13 de Septiembre 2026 · Cochabamba, Bolivia · Solo adultos · Huerto de los Olivos by El Portal',
+    nav_rsvp: 'Confirmar Asistencia',
+    hero_eyebrow: 'El comienzo de nuestro capítulo favorito',
+    hero_date: '13 de Septiembre, 2026',
+    hero_location: 'Cochabamba, Bolivia',
+    hero_cta: 'Descubrir',
+    hero_sub: 'Después de tantas historias, viajes y risas compartidas,\narriba el día de empezar lo mejor.',
+    story_label: 'Nuestra Historia',
+    story_title: 'Dos caminos,\nuna sola vida.',
+    story_body: 'Lo que empezó como una mirada se convirtió en una conversación, luego en una amistad, luego en amor. Hoy, después de años de aventuras compartidas, sunsets fotografiados y risas que no caben en ninguna foto, elegimos celebrar con las personas que más amamos.',
+    story_quote: 'No es mirarse el uno al otro. Es mirar juntos en la misma dirección.',
+    album_label: 'Momentos', album_title: 'Nuestra Galería',
+    album_hint: 'clic para ampliar',
+    album_caps: ['2019', 'El viaje', 'Familia', 'La propuesta', 'Juntos', 'Hoy'],
+    tl_label: 'Nuestro Día', tl_title: 'La Celebración',
+    tl_events: [
+      { time: '15:30', name: 'Recepción', desc: 'Bienvenida con cócteles y canapés de temporada.', gold: false, emoji: '🥂' },
+      { time: '16:30', name: 'Ceremonia', desc: 'El momento más esperado. Unidos ante quienes más amamos.', gold: true, emoji: '💍' },
+      { time: '18:00', name: 'Cóctel & Brindis', desc: 'Un brindis para celebrar este momento junto a ustedes.', gold: false, emoji: '🍾' },
+      { time: '19:30', name: 'Cena', desc: 'Una noche especial alrededor de la mesa, bajo las estrellas.', gold: false, emoji: '🕯️' },
+      { time: '21:30', name: 'Corte de Pastel', desc: 'El brindis, el corte y el dulce inicio de esta nueva vida juntos.', gold: true, emoji: '🎂' },
+      { time: '23:30', name: 'Hasta Siempre', desc: 'Un recuerdo especial aguarda a cada invitado.', gold: false, emoji: '✨' },
+    ],
+    log_label: 'Información Práctica', log_title: 'Cómo Llegar',
+    log_venue: 'Huerto de los Olivos by El Portal',
+    log_address: 'Cochabamba, Bolivia',
+    log_time: 'Puertas abiertas · 15:00 hs',
+    log_adults: 'Solo adultos',
+    log_adults_msg: 'Esta celebración es solo para adultos. Si tienen hijos, ¡entendemos perfectamente! Queremos que puedan disfrutar la noche sin preocupaciones.',
+    log_maps: 'Abrir en Google Maps', log_cal: 'Agregar al Calendario',
+    log_gcal: 'Google Calendar', log_ical: 'Apple Calendar',
+    wx_label: 'El Clima ese Día', wx_title: 'Septiembre en Cochabamba',
+    wx_loading: 'Consultando el cielo...', wx_error: 'No se pudo cargar el clima.',
+    wx_temp: 'Temperatura', wx_hum: 'Humedad', wx_wind: 'Viento', wx_rain: 'Lluvia',
+    wx_forecast: 'Próximos días',
+    dress_label: 'Dress Code', dress_title: 'Elegancia Natural',
+    dress_body: 'Tonos tierra, verde olivo, crema y blanco hueso. Formal de jardín. Pensado para moverse, bailar y disfrutar.',
+    dress_note: 'El blanco y el negro son exclusivos de los novios.',
+    dress_swatches: ['Crema', 'Sage', 'Tierra', 'Olivo', 'Arena', 'Marfil'],
+    gifts_label: 'Regalos',
+    gifts_title: 'Lo más importante para nosotros es compartir este día con ustedes.',
+    gifts_intro: 'Pero si desean acompañarnos con un detalle para esta nueva etapa, aquí les dejamos algunas opciones con muchísimo cariño.',
+    gifts_table: 'Mesa de Regalos', gifts_s1: 'Casa Ideas', gifts_s2: 'Multicenter',
+    gifts_view: 'Ver mesa de regalos',
+    gifts_env_title: 'Lluvia de Sobres',
+    gifts_env_body: 'Para quienes prefieran acompañarnos con un aporte durante la celebración, tendremos disponible una lluvia de sobres el día del evento.',
+    gifts_qr_title: 'Transferencia vía QR',
+    gifts_qr_body: 'También podrán encontrar una opción de transferencia mediante QR para quienes prefieran hacerlo de manera digital.',
+    up_label: 'Comparte tu Foto', up_title: 'Envíanos tu Momento',
+    up_body: '¿Capturaste algo mágico? Súbelas a nuestro álbum compartido y serán parte de nuestros recuerdos para siempre.',
+    up_drag: 'Arrastra tus fotos aquí', up_or: 'o', up_btn: 'Seleccionar Fotos',
+    up_send: 'Subir al álbum compartido',
+    up_hint: 'Las fotos se guardan directamente en nuestro álbum de Google Fotos.',
+    up_sending: 'Abriendo álbum...',
+    rsvp_label: 'Confirmación de Asistencia', rsvp_title: '¿Nos Acompañas?',
+    rsvp_days: 'días', rsvp_hours: 'horas', rsvp_mins: 'min', rsvp_secs: 'seg',
+    rsvp_deadline: 'Fecha límite · 21 de Agosto 2026',
+    rsvp_name: 'Tu nombre completo', rsvp_email: 'Correo electrónico',
+    rsvp_attending: '¿Asistirás?',
+    rsvp_yes: 'Asistiré', rsvp_no: 'No podré asistir',
+    rsvp_has_plus: 'Tengo acompañante',
+    rsvp_plus_note: 'Tu invitación incluye un espacio adicional reservado.',
+    rsvp_food: 'Preferencias alimentarias',
+    rsvp_food_opts: ['Sin restricción', 'Vegetariano', 'Vegano', 'Sin gluten', 'Sin lactosa', 'Otro'],
+    rsvp_notes: 'Mensaje o nota especial (opcional)',
+    rsvp_submit: 'Confirmar Asistencia', rsvp_submitting: 'Enviando...',
+    rsvp_adults_note: 'Evento exclusivo para adultos.',
+    rsvp_ok_yes_title: '¡Nos hace muy felices!',
+    rsvp_ok_yes: 'No puedes imaginar lo mucho que significa tenerte en este día. ¡Te esperamos con los brazos abiertos!',
+    rsvp_ok_no_title: 'Gracias por avisarnos.',
+    rsvp_ok_no: 'Te echaremos de menos. Siempre serás parte de nuestra historia.',
+    footer_close: 'Gracias por ser parte de nuestra historia.',
+    footer_date: '13 · 09 · 2026', footer_loc: 'Cochabamba · Bolivia',
+  },
+  en: {
+    ticker: 'Moni & Jose · September 13th 2026 · Cochabamba, Bolivia · Adults Only · Huerto de los Olivos by El Portal',
+    nav_rsvp: 'RSVP',
+    hero_eyebrow: 'The beginning of our favorite chapter',
+    hero_date: 'September 13th, 2026',
+    hero_location: 'Cochabamba, Bolivia',
+    hero_cta: 'Discover',
+    hero_sub: 'After so many stories, trips and laughs shared,\nthe day to begin the best part is finally here.',
+    story_label: 'Our Story',
+    story_title: 'Two paths,\none life.',
+    story_body: 'What began as a glance became a conversation, then a friendship, then love. Today, after years of shared adventures, photographed sunsets and laughter that no photo can contain, we choose to celebrate with the people we love most.',
+    story_quote: `It's not gazing at each other. It's looking together in the same direction.`,
+    album_label: 'Moments', album_title: 'Our Gallery',
+    album_hint: 'click to enlarge',
+    album_caps: ['2019', 'The trip', 'Family', 'The proposal', 'Together', 'Today'],
+    tl_label: 'Our Day', tl_title: 'The Celebration',
+    tl_events: [
+      { time: '3:30 PM', name: 'Reception', desc: 'Welcome cocktails and seasonal canapés.', gold: false, emoji: '🥂' },
+      { time: '4:30 PM', name: 'Ceremony', desc: 'The most awaited moment. United before those we love most.', gold: true, emoji: '💍' },
+      { time: '6:00 PM', name: 'Cocktail Hour', desc: 'A toast to celebrate this moment together with you.', gold: false, emoji: '🍾' },
+      { time: '7:30 PM', name: 'Dinner', desc: 'A special evening around the table, under the stars.', gold: false, emoji: '🕯️' },
+      { time: '9:30 PM', name: 'Cake Cutting', desc: 'The toast, the cut and the sweet start of this new life.', gold: true, emoji: '🎂' },
+      { time: '11:30 PM', name: 'Farewell', desc: 'A special keepsake awaits each guest.', gold: false, emoji: '✨' },
+    ],
+    log_label: 'Practical Information', log_title: 'Getting There',
+    log_venue: 'Huerto de los Olivos by El Portal',
+    log_address: 'Cochabamba, Bolivia',
+    log_time: 'Doors open · 3:00 PM',
+    log_adults: 'Adults only',
+    log_adults_msg: `This is an adults-only celebration. If you have little ones at home, we completely understand! We want you to enjoy the night worry-free.`,
+    log_maps: 'Open in Google Maps', log_cal: 'Add to Calendar',
+    log_gcal: 'Google Calendar', log_ical: 'Apple Calendar',
+    wx_label: "That Day's Weather", wx_title: 'September in Cochabamba',
+    wx_loading: 'Checking the sky...', wx_error: 'Could not load weather data.',
+    wx_temp: 'Temperature', wx_hum: 'Humidity', wx_wind: 'Wind', wx_rain: 'Rain',
+    wx_forecast: 'Next few days',
+    dress_label: 'Dress Code', dress_title: 'Natural Elegance',
+    dress_body: 'Earth tones, olive green, cream and bone white. Garden formal attire.',
+    dress_note: 'White and black are exclusive to the couple.',
+    dress_swatches: ['Cream', 'Sage', 'Earth', 'Olive', 'Sand', 'Ivory'],
+    gifts_label: 'Gifts',
+    gifts_title: 'Your presence is the most important thing to us.',
+    gifts_intro: `But if you'd like to accompany us with a gift for this new chapter, here are a few options with all our love.`,
+    gifts_table: 'Gift Registry', gifts_s1: 'Casa Ideas', gifts_s2: 'Multicenter',
+    gifts_view: 'View registry',
+    gifts_env_title: 'Envelope Shower',
+    gifts_env_body: `For those who prefer to contribute during the celebration, we'll have an envelope shower available.`,
+    gifts_qr_title: 'QR Transfer',
+    gifts_qr_body: `You'll also find a QR transfer option for those who prefer to do it digitally.`,
+    up_label: 'Share Your Photo', up_title: 'Send Us Your Moment',
+    up_body: `Did you capture something magical? Upload your photos to our shared album and they'll be part of our memories forever.`,
+    up_drag: 'Drag your photos here', up_or: 'or', up_btn: 'Select Photos',
+    up_send: 'Upload to shared album',
+    up_hint: 'Photos are saved directly to our Google Photos shared album.',
+    up_sending: 'Opening album...',
+    rsvp_label: 'RSVP', rsvp_title: 'Will You Join Us?',
+    rsvp_days: 'days', rsvp_hours: 'hours', rsvp_mins: 'min', rsvp_secs: 'sec',
+    rsvp_deadline: 'Deadline · August 21st, 2026',
+    rsvp_name: 'Your full name', rsvp_email: 'Email address',
+    rsvp_attending: 'Will you attend?',
+    rsvp_yes: "I'll be there", rsvp_no: 'I cannot attend',
+    rsvp_has_plus: 'I have a plus one',
+    rsvp_plus_note: 'Your invitation includes one additional reserved spot.',
+    rsvp_food: 'Dietary preferences',
+    rsvp_food_opts: ['No restrictions', 'Vegetarian', 'Vegan', 'Gluten-free', 'Dairy-free', 'Other'],
+    rsvp_notes: 'Special message or note (optional)',
+    rsvp_submit: 'Confirm Attendance', rsvp_submitting: 'Sending...',
+    rsvp_adults_note: 'Adults-only event.',
+    rsvp_ok_yes_title: 'You make us so happy!',
+    rsvp_ok_yes: `You cannot imagine how much it means to have you on this day. We can't wait to celebrate with you!`,
+    rsvp_ok_no_title: 'Thank you for letting us know.',
+    rsvp_ok_no: 'We will miss you. You will always be part of our story.',
+    footer_close: 'Thank you for being part of our story.',
+    footer_date: '13 · 09 · 2026', footer_loc: 'Cochabamba · Bolivia',
+  },
+};
+
+@Injectable({ providedIn: 'root' })
+export class I18nService {
+  readonly lang = signal<Lang>('es');
+
+  get current(): Lang {
+    return this.lang();
+  }
+
+  setLang(l: Lang) {
+    this.lang.set(l);
+  }
+
+  t(key: string): string {
+    return T[this.current][key] ?? key;
+  }
+
+  tArr(key: string): any[] {
+    return T[this.current][key] ?? [];
+  }
+
+  tObj(key: string): any[] {
+    return T[this.current][key] ?? [];
+  }
+}

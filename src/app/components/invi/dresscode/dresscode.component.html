@@ -1,0 +1,15 @@
+<section id="dress">
+  <div class="inner">
+    <span class="eyebrow reveal">{{ i18n.t('dress_label') }}</span>
+    <h2 class="h2 reveal rd1">{{ i18n.t('dress_title') }}</h2>
+    <div class="rule reveal rd2"></div>
+    <p class="reveal rd2" style="font-family:var(--sans);font-size:15px;font-weight:300;line-height:1.85;color:#5a7565;max-width:500px">{{ i18n.t('dress_body') }}</p>
+    <div class="swatches reveal rd2">
+      <div class="swatch" *ngFor="let col of swatchColors; let i = index">
+        <div class="swatch-c" [style.background]="col"></div>
+        <span class="swatch-l">{{ i18n.tArr('dress_swatches')[i] }}</span>
+      </div>
+    </div>
+    <div class="dress-note reveal rd3">{{ i18n.t('dress_note') }}</div>
+  </div>
+</section>

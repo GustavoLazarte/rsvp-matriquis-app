@@ -1,0 +1,30 @@
+<section style="background: var(--ow)">
+  <div class="inner">
+    <span class="eyebrow reveal">{{ i18n.t('album_label') }}</span>
+    <h2 class="h2 reveal rd1">{{ i18n.t('album_title') }}</h2>
+    <div class="rule reveal rd2"></div>
+    <p class="reveal rd2" style="font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;color:#8a9e92;margin-bottom:0.25rem">{{ i18n.t('album_hint') }}</p>
+    <div class="album-grid">
+      <div class="polaroid reveal" *ngFor="let g of photoGrads; let i = index" [style.transition-delay]="i * 0.07 + 's'" (click)="openLightbox(i)">
+        <div class="pol-inner" [style.background]="g"></div>
+        <div class="pol-cap">{{ i18n.tArr('album_caps')[i] }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lightbox" [class.open]="currentIndex !== null" (click)="closeLightbox()">
+    <div class="lb-close" (click)="closeLightbox(); $event.stopPropagation()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </div>
+    <div class="lb-nav prev" (click)="prev(); $event.stopPropagation()">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
+    </div>
+    <div class="lb-frame" (click)="$event.stopPropagation()">
+      <div class="lb-img" [style.background]="currentIndex !== null ? photoGrads[currentIndex] : ''"></div>
+      <div class="pol-cap" style="margin-top:0.75rem;text-align:center">{{ currentIndex !== null ? i18n.tArr('album_caps')[currentIndex] : '' }}</div>
+    </div>
+    <div class="lb-nav next" (click)="next(); $event.stopPropagation()">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+  </div>
+</section>

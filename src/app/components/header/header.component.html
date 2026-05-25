@@ -1,0 +1,6 @@
+<header class="app-header">
+  <h1>{{ title }}</h1>
+  <button *ngIf="showLogout" class="btn-logout" (click)="logout.emit()">
+    Cerrar Sesión
+  </button>
+</header>

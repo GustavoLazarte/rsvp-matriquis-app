@@ -1,0 +1,27 @@
+<div class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-vline hvl1"></div>
+  <div class="hero-vline hvl2"></div>
+  <div class="hero-ring hr1"></div>
+  <div class="hero-ring hr2"></div>
+
+  <div class="lang-toggle">
+    <button class="lang-btn" [class.active]="i18n.current === 'es'" (click)="setLang('es')">ES</button>
+    <button class="lang-btn" [class.active]="i18n.current === 'en'" (click)="setLang('en')">EN</button>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">{{ i18n.t('hero_eyebrow') }}</div>
+    <div class="hero-names">Moni<span class="hero-amp">&</span>Jose</div>
+    <div class="hero-sub" [innerHTML]="heroSubHtml"></div>
+    <div class="hero-meta">
+      <span class="hero-meta-item">{{ i18n.t('hero_date') }}</span>
+      <span class="hero-meta-sep"></span>
+      <span class="hero-meta-item">{{ i18n.t('hero_location') }}</span>
+    </div>
+    <a class="hero-cta" href="#story">{{ i18n.t('hero_cta') }}</a>
+  </div>
+  <div class="hero-chevron" (click)="scrollToStory()">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+</div>

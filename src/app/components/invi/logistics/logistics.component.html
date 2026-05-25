@@ -1,0 +1,39 @@
+<section id="logistics" style="background: var(--ow)">
+  <div class="inner">
+    <span class="eyebrow reveal">{{ i18n.t('log_label') }}</span>
+    <h2 class="h2 reveal rd1">{{ i18n.t('log_title') }}</h2>
+    <div class="rule reveal rd2"></div>
+    <div class="log-cols">
+      <div class="log-card reveal">
+        <div class="log-card-ey">{{ i18n.current === 'es' ? 'Lugar' : 'Venue' }}</div>
+        <div class="log-card-title">{{ i18n.t('log_venue') }}</div>
+        <div class="log-card-body">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem">{{ i18n.t('log_address') }}</div>
+          <div style="display:flex;align-items:center;gap:0.5rem">{{ i18n.t('log_time') }}</div>
+        </div>
+        <div class="log-actions">
+          <a class="log-btn primary" href="https://maps.google.com/?q=Huerto+de+los+Olivos+El+Portal+Cochabamba+Bolivia" target="_blank" rel="noreferrer">{{ i18n.t('log_maps') }}</a>
+          <div style="position:relative">
+            <button class="log-btn outline" style="width:100%" (click)="toggleCal()">{{ i18n.t('log_cal') }}</button>
+            <div *ngIf="calOpen" style="position:absolute;top:100%;left:0;right:0;z-index:10;margin-top:4px">
+              <a class="cal-opt" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+Moni+%26+Jose&dates=20260913T153000Z/20260914T033000Z&details=Ceremonia+16:30+hs+-+Huerto+de+los+Olivos+by+El+Portal,+Cochabamba&location=Huerto+de+los+Olivos,+Cochabamba,+Bolivia" target="_blank" rel="noreferrer">{{ i18n.t('log_gcal') }}</a>
+              <button class="cal-opt" style="border-top:none" (click)="downloadIcal()">{{ i18n.t('log_ical') }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="log-card reveal rd1">
+        <div class="log-card-ey">Adults Only</div>
+        <div class="log-card-title">{{ i18n.t('log_adults') }}</div>
+        <div class="log-card-body" style="margin-top:0.5rem">{{ i18n.t('log_adults_msg') }}</div>
+      </div>
+
+      <div class="log-card reveal rd2" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0.75rem">
+        <div style="font-family:var(--serif);font-size:60px;font-weight:300;color:var(--forest);opacity:0.2">M&J</div>
+        <div style="font-family:var(--serif);font-size:18px;font-weight:300;color:var(--forest);opacity:0.65">Huerto de los Olivos</div>
+        <div style="font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;color:var(--forest);opacity:0.38">by El Portal</div>
+      </div>
+    </div>
+  </div>
+</section>

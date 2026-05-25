@@ -1,0 +1,16 @@
+<section id="upload">
+  <div class="inner">
+    <span class="eyebrow reveal">{{ i18n.t('up_label') }}</span>
+    <h2 class="h2 reveal rd1">{{ i18n.t('up_title') }}</h2>
+    <div class="rule reveal rd2"></div>
+    <p class="reveal rd2" style="font-family:var(--sans);font-size:15px;font-weight:300;line-height:1.85;color:#5a7565;max-width:480px;margin-bottom:2rem">{{ i18n.t('up_body') }}</p>
+
+    <div class="drop-zone reveal rd2">
+      <div class="dz-text">{{ i18n.t('up_drag') }}</div>
+      <div class="dz-or">{{ i18n.t('up_or') }}</div>
+      <button class="btn-o" (click)="uploadPhotos()">{{ i18n.t('up_btn') }}</button>
+    </div>
+
+    <button class="btn-f" style="margin-top:1.5rem" (click)="uploadPhotos()">{{ i18n.t('up_send') }}</button>
+  </div>
+</section>

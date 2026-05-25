@@ -1,0 +1,91 @@
+<section class="rsvp-sec" id="rsvp">
+  <div class="inner">
+    <span class="eyebrow reveal">{{ i18n.t('rsvp_label') }}</span>
+    <h2 class="h2 reveal rd1">{{ i18n.t('rsvp_title') }}</h2>
+    <div class="rule reveal rd2"></div>
+
+    <div class="rsvp-form-container">
+      <div class="rsvp-deadline reveal">{{ i18n.t('rsvp_deadline') }}</div>
+
+      <div class="cd-grid reveal rd1">
+        <div class="cd-item">
+          <div class="cd-val">{{ countdown().days }}</div>
+          <div class="cd-lbl">{{ i18n.t('rsvp_days') }}</div>
+        </div>
+        <div class="cd-item">
+          <div class="cd-val">{{ countdown().hours }}</div>
+          <div class="cd-lbl">{{ i18n.t('rsvp_hours') }}</div>
+        </div>
+        <div class="cd-item">
+          <div class="cd-val">{{ countdown().mins }}</div>
+          <div class="cd-lbl">{{ i18n.t('rsvp_mins') }}</div>
+        </div>
+        <div class="cd-item">
+          <div class="cd-val">{{ countdown().secs }}</div>
+          <div class="cd-lbl">{{ i18n.t('rsvp_secs') }}</div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!submitted; else rsvpOk">
+        <form #rf class="rsvp-form reveal rd2" (submit)="submitForm(rf, $event)">
+          <div class="adults-badge">{{ i18n.t('rsvp_adults_note') }}</div>
+
+          <div class="fg">
+            <label class="fl">{{ i18n.t('rsvp_name') }}</label>
+            <input class="fi" name="name" type="text" [placeholder]="i18n.t('rsvp_name')" required />
+          </div>
+
+          <div class="fg">
+            <label class="fl">{{ i18n.t('rsvp_email') }}</label>
+            <input class="fi" name="email" type="email" [placeholder]="i18n.t('rsvp_email')" />
+          </div>
+
+          <div class="fg">
+            <label class="fl">{{ i18n.t('rsvp_attending') }}</label>
+            <div class="att-btns">
+              <button type="button" class="att-btn" [class.sy]="attending==='yes'" (click)="setAttending('yes')">{{ i18n.t('rsvp_yes') }}</button>
+              <button type="button" class="att-btn" [class.sn]="attending==='no'" (click)="setAttending('no')">{{ i18n.t('rsvp_no') }}</button>
+            </div>
+          </div>
+
+          <div *ngIf="attending==='yes'">
+            <div class="fg">
+              <div class="check-row" (click)="togglePlus()">
+                <div class="check-box" [class.on]="hasPlus()">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" [style.display]="hasPlus()?'block':'none'"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <span class="check-lbl">{{ i18n.t('rsvp_has_plus') }}</span>
+              </div>
+              <div class="plus-note" *ngIf="hasPlus()">{{ i18n.t('rsvp_plus_note') }}</div>
+            </div>
+
+            <div class="fg">
+              <label class="fl">{{ i18n.t('rsvp_food') }}</label>
+              <div class="chips">
+                <button type="button" class="chip" *ngFor="let opt of i18n.tArr('rsvp_food_opts')" [class.on]="isSelected(opt)" (click)="toggleFood(opt)">{{ opt }}</button>
+              </div>
+            </div>
+
+            <div class="fg">
+              <label class="fl">{{ i18n.t('rsvp_notes') }}</label>
+              <textarea class="fi" name="notes" rows="3" [placeholder]="i18n.t('rsvp_notes')" style="resize:vertical;font-family:var(--sans)"></textarea>
+            </div>
+          </div>
+
+          <button class="btn-f" type="submit" [disabled]="submitting">{{ submitting ? i18n.t('rsvp_submitting') : i18n.t('rsvp_submit') }}</button>
+        </form>
+      </ng-container>
+
+      <ng-template #rsvpOk>
+        <div class="rsvp-ok">
+          <div style="margin-bottom:1.5rem;color:var(--forest)">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </div>
+          <div class="rsvp-ok-title">{{ attending === 'yes' ? i18n.t('rsvp_ok_yes_title') : i18n.t('rsvp_ok_no_title') }}</div>
+          <p class="rsvp-ok-body">{{ attending === 'yes' ? i18n.t('rsvp_ok_yes') : i18n.t('rsvp_ok_no') }}</p>
+          <div style="font-family:var(--serif);font-size:22px;font-weight:300;color:var(--forest);margin-top:2.5rem">— Moni & Jose</div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</section>

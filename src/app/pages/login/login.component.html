@@ -1,0 +1,33 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-mono">M&J</div>
+    <h1 class="login-title">Admin</h1>
+    <form (ngSubmit)="onLogin()">
+      <div class="fg">
+        <label class="fl">Email</label>
+        <input
+          class="fi"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="admin@moniyjose.com"
+          autocomplete="email"
+        />
+      </div>
+      <div class="fg">
+        <label class="fl">Contraseña</label>
+        <input
+          class="fi"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+        />
+      </div>
+      <p *ngIf="error" class="login-error">{{ error }}</p>
+      <button class="btn-f" type="submit" style="width:100%;justify-content:center">Ingresar</button>
+    </form>
+    <a class="login-back" [routerLink]="['/invi', 'default']">← Volver al inicio</a>
+  </div>
+</div>
