@@ -22,5 +22,5 @@ const content = `export const environment = {
 };
 `;
 
-fs.writeFileSync(path.join(__dirname, 'src', 'environments', 'environment.prod.ts'), content);
+fs.writeFileSync(path.join(__dirname, 'src', 'environments', 'environment.ts'), content);
 console.log('✅ environment.prod.ts generado con las variables de entorno');
