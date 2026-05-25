@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node set-env.js && ng serve",
     "build": "ng build",
     "build:prod": "node set-env.js && ng build --configuration=production",
     "watch": "ng build --watch --configuration development"

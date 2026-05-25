@@ -10,7 +10,7 @@ out-tsc/
 .env.test.local
 .env.production.local
 .env.example
-src/environments/environment.prod.ts
+src/environments/environment.ts
 
 # Logs
 *.log
@@ -31,3 +31,5 @@ coverage/
 
 # Old project
 old-rsvp-app/
+package-lock.json
+
