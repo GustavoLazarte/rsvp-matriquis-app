@@ -15,14 +15,21 @@ if (missing.length) {
   process.exit(1);
 }
 
-const content = `export const environment = {
-  production: true,
+function writeEnvironmentFile(fileName, production) {
+  const content = `export const environment = {
+  production: ${production},
   supabaseUrl: '${process.env.SUPABASE_URL}',
   supabaseKey: '${process.env.SUPABASE_ANON_KEY}',
 };
 `;
 
-fs.writeFileSync(path.join(__dirname, 'src', 'environments', 'environment.ts'), content);
-console.log('✅ environment.prod.ts generado con las variables de entorno');
-console.log('   supabaseUrl:', process.env.SUPABASE_URL);
-console.log('   supabaseKey:', process.env.SUPABASE_ANON_KEY ? '✅ existe' : '❌ vacío')
+  fs.writeFileSync(path.join(__dirname, 'src', 'environments', fileName), content, 'utf8');
+  console.log(`✅ ${fileName} generado con las variables de entorno (${production ? 'prod' : 'dev'})`);
+}
+
+const mode = process.argv[2] === 'prod' || process.argv[2] === 'production' ? 'prod' : 'dev';
+writeEnvironmentFile('environment.ts', false);
+if (mode === 'prod') {
+  writeEnvironmentFile('environment.prod.ts', true);
+}
+console.log(`🔧 modo de generación: ${mode}`);
