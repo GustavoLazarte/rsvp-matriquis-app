@@ -9,29 +9,24 @@
     <div class="dash-settings-grid">
       <div class="dash-field">
         <label>Fecha del evento</label>
-        <input class="dash-inp" [(ngModel)]="formData.date" />
+        <input class="dash-inp" type="date" [ngModel]="formData.event_date | slice:0:10" (ngModelChange)="onDateChange($event)" name="eventDate" />
       </div>
       <div class="dash-field">
         <label>Hora</label>
-        <input class="dash-inp" [(ngModel)]="formData.time" />
+        <input class="dash-inp" type="time" [ngModel]="formData.event_date | slice:11:16" (ngModelChange)="onTimeChange($event)" name="eventTime" />
       </div>
       <div class="dash-field">
         <label>Lugar</label>
-        <input class="dash-inp" [(ngModel)]="formData.venue" />
+        <input class="dash-inp" [(ngModel)]="formData.location" name="location" />
       </div>
       <div class="dash-field">
         <label>Dirección</label>
-        <input class="dash-inp" [(ngModel)]="formData.address" />
+        <input class="dash-inp" [(ngModel)]="formData.location_url" name="address" />
       </div>
       <div class="dash-field">
         <label>Fecha límite RSVP</label>
-        <input class="dash-inp" type="date" [(ngModel)]="formData.deadline" />
-      </div>
-      <div class="dash-field">
-        <label class="dash-checkbox">
-          <input type="checkbox" [(ngModel)]="formData.adultsOnly" />
-          <span>Solo adultos</span>
-        </label>
+        <input class="dash-inp" type="date" [max]="deadlineMax" [ngModel]="formData.rsvp_deadline | slice:0:10" name="rsvpDeadline" />
+        <span class="ferr" *ngIf="rsvpError">{{ rsvpError }}</span>
       </div>
     </div>
   </div>
@@ -39,27 +34,9 @@
   <div class="dash-settings-section">
     <h2 class="dash-settings-section-title">Mensaje de bienvenida</h2>
     <div class="dash-field">
-      <textarea class="dash-inp dash-textarea" rows="3" [(ngModel)]="formData.welcomeMessage"></textarea>
+      <textarea class="dash-inp dash-textarea" rows="3" [(ngModel)]="formData.description" name="description"></textarea>
     </div>
   </div>
 
-  <div class="dash-settings-section">
-    <h2 class="dash-settings-section-title">Enlaces</h2>
-    <div class="dash-settings-grid">
-      <div class="dash-field">
-        <label>Playlist (Spotify)</label>
-        <input class="dash-inp" [(ngModel)]="formData.musicLink" placeholder="https://open.spotify.com/playlist/..." />
-      </div>
-      <div class="dash-field">
-        <label>Mesa de regalos</label>
-        <input class="dash-inp" [(ngModel)]="formData.giftsLink" placeholder="Opcional" />
-      </div>
-      <div class="dash-field">
-        <label>Instagram</label>
-        <input class="dash-inp" [(ngModel)]="formData.instagram" placeholder="@usuario" />
-      </div>
-    </div>
-  </div>
-
-  <button class="dash-btn" (click)="saveSettings()">Guardar configuración</button>
+  <button class="dash-btn" (click)="saveSettings()" [disabled]="saving || !valid">Guardar configuración</button>
 </div>

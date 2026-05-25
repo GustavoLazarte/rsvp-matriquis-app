@@ -6,7 +6,7 @@
 <div class="dash-welcome-card">
   <div class="dash-welcome-info">
     <h2>¡Hola de nuevo, {{ userEmailDisplay }}!</h2>
-    <p>Tu boda es el <strong>{{ eventSettings.date }}</strong> en <strong>{{ eventSettings.venue }}</strong>. Faltan <strong>~3 meses</strong>.</p>
+    <p>Tu boda es el <strong>{{ formatDate(eventSettings.event_date) }}</strong> en <strong>{{ eventSettings.location }}</strong>. Faltan <strong>~3 meses</strong>.</p>
   </div>
   <div class="dash-welcome-badge">
     <span class="dash-welcome-countdown">{{ stats.confirmedPct }}%</span>
@@ -90,10 +90,10 @@
 
     <div class="dash-event-card">
       <h3>Próximo evento</h3>
-      <div class="dash-event-detail"><span class="dash-event-label">Fecha</span><span>{{ eventSettings.date }}</span></div>
-      <div class="dash-event-detail"><span class="dash-event-label">Hora</span><span>{{ eventSettings.time }}</span></div>
-      <div class="dash-event-detail"><span class="dash-event-label">Lugar</span><span>{{ eventSettings.venue }}, {{ eventSettings.address }}</span></div>
-      <div class="dash-event-detail"><span class="dash-event-label">RSVP antes del</span><span>{{ eventSettings.deadline }}</span></div>
+      <div class="dash-event-detail"><span class="dash-event-label">Fecha</span><span>{{ formatDate(eventSettings.event_date) }}</span></div>
+      <div class="dash-event-detail"><span class="dash-event-label">Hora</span><span>{{ formatTime(eventSettings.event_date) }}</span></div>
+      <div class="dash-event-detail"><span class="dash-event-label">Lugar</span><span>{{ eventSettings.location }}, {{ eventSettings.location_url }}</span></div>
+      <div class="dash-event-detail"><span class="dash-event-label">RSVP antes del</span><span>{{ formatDeadline(eventSettings.rsvp_deadline) }}</span></div>
     </div>
   </div>
 

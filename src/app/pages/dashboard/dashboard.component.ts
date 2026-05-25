@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../auth/services/auth.service';
 import { User } from '@supabase/supabase-js';
+import { Event as AppEvent } from 'src/app/core/models';
+import { EventStateService } from 'src/app/core/services/event-state.service';
+import { UserStateService } from 'src/app/core/services/user-state.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { EventService } from 'src/app/services/event.service';
 
 export type DashTab = 'overview' | 'guests' | 'gallery' | 'settings';
 
@@ -32,7 +36,10 @@ export class DashboardComponent implements OnInit {
   user: User | null = null;
   activeTab: DashTab = 'overview';
   sidebarOpen = false;
-
+  eventService = inject(EventService);
+  userState = inject(UserStateService);
+  eventStateService = inject(EventStateService);
+  
   searchQuery = '';
   statusFilter: 'all' | 'yes' | 'no' | 'pending' = 'all';
 
@@ -59,18 +66,7 @@ export class DashboardComponent implements OnInit {
     { name: 'Isabel Arteaga', status: 'yes', date: 'Hace 6 días', guests: 1 },
   ];
 
-  eventSettings = {
-    date: '13 de Septiembre, 2026',
-    time: '15:00 hs',
-    venue: 'Huerto de los Olivos by El Portal',
-    address: 'Cochabamba, Bolivia',
-    adultsOnly: true,
-    deadline: '2026-08-21',
-    welcomeMessage: 'Nos llena de alegría compartir este día especial con ustedes. Los esperamos para celebrar juntos.',
-    musicLink: 'https://open.spotify.com/playlist/...',
-    giftsLink: '',
-    instagram: '@marielle_y_alejandro',
-  };
+  eventSettings !: AppEvent;
 
   tempPhotos: string[] = [];
 
@@ -80,7 +76,13 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.user = await this.auth.getUser();
+    await this.auth.init()
+    this.user = this.userState.user();
+    const events = await this.eventService.getByUserId(this.userState?.user()?.id || "");
+    this.userState.setCurrentEventId(events[0]?.id || null);
+    this.eventStateService.setEvents(events);
+    this.eventStateService.selectEvent(this.userState.currentEventId() || null);
+    this.eventSettings = this.eventStateService.currentEvent() as AppEvent;
   }
 
   async onLogout() {
@@ -112,8 +114,8 @@ export class DashboardComponent implements OnInit {
     window.open('https://docs.google.com/spreadsheets', '_blank');
   }
 
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
+  onFileSelected(domEvent: Event) {
+    const input = domEvent.target as HTMLInputElement;
     if (!input.files) return;
     Array.from(input.files).slice(0, 12).forEach(f => {
       this.tempPhotos.push(URL.createObjectURL(f));
@@ -126,8 +128,7 @@ export class DashboardComponent implements OnInit {
     this.tempPhotos.splice(index, 1);
   }
 
-  saveSettings(settings: typeof this.eventSettings) {
+  saveSettings(settings: AppEvent) {
     this.eventSettings = settings;
-    alert('Configuración guardada');
   }
 }

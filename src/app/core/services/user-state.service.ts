@@ -15,8 +15,16 @@ export class UserStateService {
     this._user()?.email?.split('@')[0] ?? 'admin'
   );
 
+  private readonly _currentEventId = signal<string | null>(null);
+
+  readonly currentEventId = this._currentEventId.asReadonly();
+
   setUser(user: User | null): void {
     this._user.set(user);
+  }
+
+  setCurrentEventId(eventId: string | null): void {
+    this._currentEventId.set(eventId);
   }
 
   reset(): void {

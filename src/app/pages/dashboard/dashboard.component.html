@@ -48,7 +48,6 @@
 
       <app-settings
         *ngIf="activeTab === 'settings'"
-        [eventSettings]="eventSettings"
         (save)="saveSettings($event)">
       </app-settings>
     </main>

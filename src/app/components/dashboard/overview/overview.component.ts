@@ -1,18 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { DashTab } from '../../../pages/dashboard/dashboard.component';
-
-interface EventSettings {
-  date: string;
-  time: string;
-  venue: string;
-  address: string;
-  adultsOnly: boolean;
-  deadline: string;
-  welcomeMessage: string;
-  musicLink: string;
-  giftsLink: string;
-  instagram: string;
-}
+import { Event } from 'src/app/core/models';
 
 interface RecentRsvp {
   name: string;
@@ -39,7 +27,7 @@ interface Stats {
 })
 export class OverviewComponent {
   @Input() userEmailDisplay = 'admin';
-  @Input() eventSettings!: EventSettings;
+  @Input() eventSettings!: Event;
   @Input() stats!: Stats;
   @Input() recentRsvps: RecentRsvp[] = [];
 
@@ -49,5 +37,23 @@ export class OverviewComponent {
   getInitials(name: string): string {
     const parts = name.split(' ');
     return (parts[0]?.charAt(0) || '') + (parts[1]?.charAt(0) || '');
+  }
+
+  formatDate(iso: string): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    return `${d.getDate()} de ${months[d.getMonth()]}, ${d.getFullYear()}`;
+  }
+
+  formatTime(iso: string): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} hs`;
+  }
+
+  formatDeadline(iso: string | null): string {
+    if (!iso) return '';
+    return iso.slice(0, 10);
   }
 }
