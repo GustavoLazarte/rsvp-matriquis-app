@@ -12,12 +12,12 @@
 
   <div class="hero-content">
     <div class="hero-eyebrow">{{ i18n.t('hero_eyebrow') }}</div>
-    <div class="hero-names">Moni<span class="hero-amp">&</span>Jose</div>
+    <div class="hero-names">{{ rsvpEvent?.title?.split(' ')?.[0]}}<span class="hero-amp">{{ rsvpEvent?.title?.split(' ')?.[1] }}</span>{{rsvpEvent?.title?.split(' ')?.[2]}}</div>
     <div class="hero-sub" [innerHTML]="heroSubHtml"></div>
     <div class="hero-meta">
-      <span class="hero-meta-item">{{ i18n.t('hero_date') }}</span>
+      <span class="hero-meta-item">{{ dateFormat }}</span>
       <span class="hero-meta-sep"></span>
-      <span class="hero-meta-item">{{ i18n.t('hero_location') }}</span>
+      <span class="hero-meta-item">{{ rsvpEvent?.location }}</span>
     </div>
     <a class="hero-cta" href="#story">{{ i18n.t('hero_cta') }}</a>
   </div>

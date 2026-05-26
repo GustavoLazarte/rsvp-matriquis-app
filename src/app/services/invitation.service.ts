@@ -22,14 +22,14 @@ export class InvitationService {
     if (data) this.invitationState.setInvitations(data as Invitation[]);
   }
 
-  async loadByToken(token: string): Promise<Invitation | null> {
+  async loadByToken(token: string): Promise<Invitation> {
     const { data, error } = await this.supabase.supabase
       .from('invitations')
       .select('*')
       .eq('token', token)
       .single();
     if (error) throw error;
-    return data as Invitation | null;
+    return data as Invitation;
   }
 
   async create(input: Partial<Invitation>): Promise<Invitation | null> {

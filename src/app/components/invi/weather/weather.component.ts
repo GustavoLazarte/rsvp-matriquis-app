@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { I18nService } from '../../../core/services/i18n.service';
+import { Event } from 'src/app/core/models';
 
 const WMO_DESC: Record<string, Record<number, string>> = {
   es: {
@@ -30,7 +31,8 @@ export type WxIconType = 'sun' | 'cloud' | 'rain';
   templateUrl: './weather.component.html',
   styleUrls: ['./weather.component.scss'],
 })
-export class WeatherComponent implements OnInit {
+export class WeatherComponent implements OnInit, OnChanges {
+  @Input() rsvpEvent : Event | null = null;
   loading = true;
   error = false;
   data: any = null;
@@ -49,16 +51,17 @@ export class WeatherComponent implements OnInit {
       );
       const json = await res.json();
       this.data = json;
-      this.forecastDays = json.daily.time.slice(1, 4).map((dateStr: string, idx: number) => ({
-        day: this.dayName(dateStr),
-        iconType: this.getIconType(json.daily.weathercode[idx + 1]),
-        hi: Math.round(json.daily.temperature_2m_max[idx + 1]),
-        lo: Math.round(json.daily.temperature_2m_min[idx + 1]),
-      }));
+      this.updateForecastDays();
       this.loading = false;
     } catch {
       this.error = true;
       this.loading = false;
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['rsvpEvent'] && this.data) {
+      this.updateForecastDays();
     }
   }
 
@@ -73,6 +76,32 @@ export class WeatherComponent implements OnInit {
     if (code <= 1) return 'sun';
     if (code <= 3) return 'cloud';
     return 'rain';
+  }
+
+  private updateForecastDays(): void {
+    if (!this.data) return;
+
+    const dates: string[] = this.data.daily.time;
+    const eventDate = this.rsvpEvent?.event_date?.slice(0, 10);
+
+    if (eventDate) {
+      const eventIndex = dates.findIndex((date) => date === eventDate);
+      if (eventIndex >= 0) {
+        this.forecastDays = [this.buildForecastDay(eventIndex)];
+        return;
+      }
+    }
+
+    this.forecastDays = dates.slice(1, 4).map((dateStr: string, idx: number) => this.buildForecastDay(idx + 1));
+  }
+
+  private buildForecastDay(index: number) {
+    return {
+      day: this.dayName(this.data.daily.time[index]),
+      iconType: this.getIconType(this.data.daily.weathercode[index]),
+      hi: Math.round(this.data.daily.temperature_2m_max[index]),
+      lo: Math.round(this.data.daily.temperature_2m_min[index]),
+    };
   }
 
   dayName(dateStr: string): string {

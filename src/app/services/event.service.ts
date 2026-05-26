@@ -73,4 +73,15 @@ export class EventService {
     if (error) throw error;
     return (data as Event[]) || [];
   }
+
+  async getById(id: string): Promise<void> {
+    const { data, error } = await this.supabase.supabase
+      .from('events')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+    this.eventState.addEvent(data as Event);
+    this.eventState.selectEvent(id);
+  }
 }

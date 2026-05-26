@@ -1,5 +1,6 @@
-import { Component, OnDestroy, signal } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, signal } from '@angular/core';
 import { I18nService } from '../../../core/services/i18n.service';
+import { Event as AppEvent }  from 'src/app/core/models';
 
 @Component({
   standalone: false,
@@ -7,7 +8,8 @@ import { I18nService } from '../../../core/services/i18n.service';
   templateUrl: './rsvp-form.component.html',
   styleUrls: ['./rsvp-form.component.scss'],
 })
-export class RsvpFormComponent implements OnDestroy {
+export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() rsvpEvent : AppEvent | null = null;
   attending: 'yes' | 'no' | null = null;
   hasPlus = signal(false);
   foods = signal<string[]>([]);
@@ -18,11 +20,26 @@ export class RsvpFormComponent implements OnDestroy {
   private cdTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(public i18n: I18nService) {
+  }
+
+  ngOnInit(){
     this.startCountdown();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['rsvpEvent'] && this.rsvpEvent) {
+      this.startCountdown();
+    }
+  }
+
   private startCountdown() {
-    const deadline = new Date('2026-08-21T23:59:59').getTime();
+    if (this.cdTimer) {
+      clearInterval(this.cdTimer);
+      this.cdTimer = null;
+    }
+
+    if (!this.rsvpEvent) return;
+    const deadline = new Date(this.rsvpEvent.event_date).getTime();
     const tick = () => {
       const diff = deadline - Date.now();
       if (diff <= 0) {
@@ -106,5 +123,18 @@ export class RsvpFormComponent implements OnDestroy {
 
   ngOnDestroy() {
     if (this.cdTimer) clearInterval(this.cdTimer);
+  }
+
+  get dateFormat(): string {
+    let resTicket= "";
+    if (!this.rsvpEvent?.rsvp_deadline) return resTicket;
+    const date = new Date(this.rsvpEvent?.rsvp_deadline);
+    const month = date.toLocaleString(this.i18n.current, { month: 'long' });
+    if (this.i18n.current === 'en') {
+      resTicket = `${this.i18n.t('rsvp_deadline')} ${month} ${date.getDate()}${this.i18n.t('ticker_date_helper')} ${date.getFullYear()}`;
+    }else if(this.i18n.current === 'es') {
+      resTicket = `${this.i18n.t('rsvp_deadline')} ${date.getDate()}${this.i18n.t('ticker_date_helper')} ${month} ${date.getFullYear()}`;
+    }
+    return resTicket;
   }
 }

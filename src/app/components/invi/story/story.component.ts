@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { I18nService } from '../../../core/services/i18n.service';
+import { Event } from 'src/app/core/models';
 
 @Component({
   standalone: false,
@@ -8,6 +9,7 @@ import { I18nService } from '../../../core/services/i18n.service';
   styleUrls: ['./story.component.scss'],
 })
 export class StoryComponent {
+  @Input() rsvpEvent : Event | null = null;
   constructor(public i18n: I18nService) {}
 
   get storyTitleHtml(): string {
