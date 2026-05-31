@@ -12,7 +12,7 @@
           <div style="display:flex;align-items:center;gap:0.5rem">{{ i18n.t('log_time') }} {{ rsvpEvent?.event_date | slice:11:16 }} PM </div>
         </div>
         <div class="log-actions">
-          <a class="log-btn primary" [href]="rsvpEvent?.location_url" target="_blank" rel="noreferrer">{{ i18n.t('log_maps') }}</a>
+          <a class="log-btn primary" [href]="rsvpEvent?.adress_url" target="_blank" rel="noreferrer">{{ i18n.t('log_maps') }}</a>
           <div style="position:relative">
             <button class="log-btn outline" style="width:100%" (click)="toggleCal()">{{ i18n.t('log_cal') }}</button>
             <div *ngIf="calOpen" style="position:absolute;top:100%;left:0;right:0;z-index:10;margin-top:4px">

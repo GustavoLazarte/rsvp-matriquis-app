@@ -7,6 +7,10 @@
   <div class="dash-settings-section">
     <h2 class="dash-settings-section-title">Información del evento</h2>
     <div class="dash-settings-grid">
+      <div class="dash-field dash-field-full">
+        <label>Título del evento</label>
+        <input class="dash-inp" [(ngModel)]="formData.title" name="title" />
+      </div>
       <div class="dash-field">
         <label>Fecha del evento</label>
         <input class="dash-inp" type="date" [ngModel]="formData.event_date | slice:0:10" (ngModelChange)="onDateChange($event)" name="eventDate" />
@@ -21,12 +25,61 @@
       </div>
       <div class="dash-field">
         <label>Dirección</label>
-        <input class="dash-inp" [(ngModel)]="formData.location_url" name="address" />
+        <input class="dash-inp" [(ngModel)]="formData.adress" name="address" />
+      </div>
+      <div class="dash-field">
+        <label>Dirección URL (Map)</label>
+        <input class="dash-inp" [(ngModel)]="formData.adress_url" name="addressUrl" />
       </div>
       <div class="dash-field">
         <label>Fecha límite RSVP</label>
         <input class="dash-inp" type="date" [max]="deadlineMax" [ngModel]="formData.rsvp_deadline | slice:0:10" name="rsvpDeadline" />
         <span class="ferr" *ngIf="rsvpError">{{ rsvpError }}</span>
+      </div>
+      <div class="dash-field dash-field-full">
+        <label>Mesa de regalos (URL)</label>
+        <input class="dash-inp" [(ngModel)]="formData.gif_table_url" name="giftTableUrl" placeholder="https://..." />
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-settings-section">
+    <h2 class="dash-settings-section-title">Imágenes del evento</h2>
+    <div class="dash-img-grid">
+      <div class="dash-img-field">
+        <label>Logo de los novios</label>
+        <div class="dash-img-preview" *ngIf="formData.couple_logo_url; else logoPlaceholder">
+          <img [src]="formData.couple_logo_url" alt="Logo" />
+          <button class="dash-img-remove" (click)="removeLogo()" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <ng-template #logoPlaceholder>
+          <div class="dash-img-upload" (click)="logoInput.click()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Subir logo</span>
+          </div>
+        </ng-template>
+        <input #logoInput type="file" accept="image/*" style="display:none" (change)="uploadLogo($event)" />
+        <span class="dash-img-status" *ngIf="uploadingLogo">Subiendo...</span>
+      </div>
+
+      <div class="dash-img-field">
+        <label>Foto del lugar (dirección)</label>
+        <div class="dash-img-preview" *ngIf="formData.adress_photo_url; else venuePlaceholder">
+          <img [src]="formData.adress_photo_url" alt="Lugar" />
+          <button class="dash-img-remove" (click)="removeAdressPhoto()" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <ng-template #venuePlaceholder>
+          <div class="dash-img-upload" (click)="venueInput.click()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Subir foto</span>
+          </div>
+        </ng-template>
+        <input #venueInput type="file" accept="image/*" style="display:none" (change)="uploadAdressPhoto($event)" />
+        <span class="dash-img-status" *ngIf="uploadingAdress">Subiendo...</span>
       </div>
     </div>
   </div>
