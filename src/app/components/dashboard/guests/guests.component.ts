@@ -1,14 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-
-export interface Guest {
-  name: string;
-  email: string;
-  group: string;
-  attending: 'yes' | 'no' | null;
-  plusOne: boolean;
-  plusOneName: string;
-  food: string;
-}
+import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
+import type { Invitation, RsvpResponse } from '../../../core/models';
+import { InvitationService } from '../../../services/invitation.service';
 
 @Component({
   standalone: false,
@@ -17,35 +9,56 @@ export interface Guest {
   styleUrls: ['./guests.component.scss'],
 })
 export class GuestsComponent {
-  @Input() guests: Guest[] = [];
+  private invitationService = inject(InvitationService);
+
+  @Input() invitations: Invitation[] = [];
+  @Input() responses: RsvpResponse[] = [];
   @Input() searchQuery = '';
   @Input() statusFilter: 'all' | 'yes' | 'no' | 'pending' = 'all';
+  @Input() eventId = '';
 
   @Output() searchQueryChange = new EventEmitter<string>();
   @Output() statusFilterChange = new EventEmitter<'all' | 'yes' | 'no' | 'pending'>();
-  @Output() openSheet = new EventEmitter<void>();
+
+  readonly showModal = signal(false);
+  readonly creating = signal(false);
+  readonly createdLink = signal('');
+  readonly formName = signal('');
+  readonly formEmail = signal('');
+  readonly formPhone = signal('');
+  readonly formGroup = signal('');
+  readonly formPlusOne = signal(false);
 
   get stats() {
-    const total = this.guests.length;
-    const confirmed = this.guests.filter(g => g.attending === 'yes').length;
-    const declined = this.guests.filter(g => g.attending === 'no').length;
+    const total = this.invitations.length;
+    const confirmed = this.responses.filter(r => r.attending === 'yes').length;
+    const declined = this.responses.filter(r => r.attending === 'no').length;
     const pending = total - confirmed - declined;
     return { total, confirmed, declined, pending };
   }
 
-  get filteredGuests(): Guest[] {
-    let list = this.guests;
+  get filteredGuests(): Array<{
+    invitation: Invitation;
+    response: RsvpResponse | undefined;
+  }> {
+    let list = this.invitations.map(inv => ({
+      invitation: inv,
+      response: this.responses.find(r => r.invitation_id === inv.id),
+    }));
+
     if (this.searchQuery.trim()) {
       const q = this.searchQuery.toLowerCase();
-      list = list.filter(g =>
-        g.name.toLowerCase().includes(q) ||
-        g.email.toLowerCase().includes(q) ||
-        g.group.toLowerCase().includes(q)
+      list = list.filter(({ invitation }) =>
+        invitation.guest_name.toLowerCase().includes(q) ||
+        (invitation.guest_email?.toLowerCase().includes(q) ?? false) ||
+        (invitation.guest_phone?.toLowerCase().includes(q) ?? false)
       );
     }
-    if (this.statusFilter === 'yes') list = list.filter(g => g.attending === 'yes');
-    else if (this.statusFilter === 'no') list = list.filter(g => g.attending === 'no');
-    else if (this.statusFilter === 'pending') list = list.filter(g => g.attending === null);
+
+    if (this.statusFilter === 'yes') list = list.filter(({ response }) => response?.attending === 'yes');
+    else if (this.statusFilter === 'no') list = list.filter(({ response }) => response?.attending === 'no');
+    else if (this.statusFilter === 'pending') list = list.filter(({ response }) => !response);
+
     return list;
   }
 
@@ -57,5 +70,56 @@ export class GuestsComponent {
   onSearchChange(value: string) {
     this.searchQuery = value;
     this.searchQueryChange.emit(value);
+  }
+
+  openModal() {
+    this.showModal.set(true);
+    this.formName.set('');
+    this.formEmail.set('');
+    this.formPhone.set('');
+    this.formGroup.set('');
+    this.formPlusOne.set(false);
+    this.createdLink.set('');
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeModal() {
+    this.showModal.set(false);
+    document.body.style.overflow = '';
+  }
+
+  async submitInvitation() {
+    const name = this.formName().trim();
+    if (!name || !this.eventId) return;
+
+    this.creating.set(true);
+    try {
+      const created = await this.invitationService.create({
+        event_id: this.eventId,
+        guest_name: name,
+        guest_email: this.formEmail().trim() || null,
+        guest_phone: this.formPhone().trim() || null,
+        group: this.formGroup().trim() || null,
+        plus_one_allowed: this.formPlusOne() ? 1 : 0,
+        token: crypto.randomUUID(),
+        status: 'pending',
+      });
+      if (created) {
+        this.createdLink.set(`${window.location.origin}/invi/${created.token}`);
+      }
+    } catch {
+      alert('Error al crear la invitación');
+    } finally {
+      this.creating.set(false);
+    }
+  }
+
+  copyLink() {
+    navigator.clipboard.writeText(this.createdLink());
+  }
+
+  getResponseStatus(response: RsvpResponse | undefined): 'yes' | 'no' | null {
+    if (!response) return null;
+    return response.attending === 'yes' ? 'yes' : 'no';
   }
 }

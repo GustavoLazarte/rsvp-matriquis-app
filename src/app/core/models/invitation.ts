@@ -6,6 +6,8 @@ export interface Invitation {
   token: string;
   guest_name: string;
   guest_email: string | null;
+  guest_phone: string | null;
+  group: string | null;
   plus_one_allowed: number;
   status: InvitationStatus;
   sent_at: string | null;

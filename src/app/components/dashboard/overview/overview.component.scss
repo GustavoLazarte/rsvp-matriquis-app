@@ -106,6 +106,24 @@
   color: #7a9585;
   margin-top: 2px;
 }
+.dash-stat-sublbl {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  color: #a0b8a8;
+  margin-top: 1px;
+}
+.dash-stat-card--people {
+  border-left: 3px solid #C9A96E;
+  background: #FDFBF7;
+}
+.dash-stat-card--people:hover {
+  box-shadow: 0 6px 24px rgba(201,169,110,0.15);
+}
+.dash-stat-val--people {
+  font-size: 36px;
+  color: #C9A96E;
+}
 
 .dash-overview-cols {
   display: grid;

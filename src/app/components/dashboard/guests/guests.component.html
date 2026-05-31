@@ -6,10 +6,10 @@
 <div class="dash-toolbar">
   <div class="dash-search-wrap">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7a9585" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input class="dash-search-inp" type="text" placeholder="Buscar por nombre, email, teléfono o grupo..." [ngModel]="searchQuery" (ngModelChange)="onSearchChange($event)" />
+    <input class="dash-search-inp" type="text" placeholder="Buscar por nombre o email..." [ngModel]="searchQuery" (ngModelChange)="onSearchChange($event)" />
   </div>
   <div class="dash-filter-chips">
-    <button class="dash-chip" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todos <span class="dash-chip-count">{{ guests.length }}</span></button>
+    <button class="dash-chip" [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">Todos <span class="dash-chip-count">{{ invitations.length }}</span></button>
     <button class="dash-chip" [class.active]="statusFilter === 'yes'" (click)="setStatusFilter('yes')">Confirmados <span class="dash-chip-count">{{ stats.confirmed }}</span></button>
     <button class="dash-chip" [class.active]="statusFilter === 'pending'" (click)="setStatusFilter('pending')">Pendientes <span class="dash-chip-count">{{ stats.pending }}</span></button>
     <button class="dash-chip" [class.active]="statusFilter === 'no'" (click)="setStatusFilter('no')">Rechazaron <span class="dash-chip-count">{{ stats.declined }}</span></button>
@@ -21,38 +21,111 @@
     <thead>
       <tr>
         <th>Nombre</th>
-        <th>Email</th>
+        <th>Email / Teléfono</th>
         <th>Grupo</th>
         <th>Estado</th>
         <th>+1</th>
-        <th>Acompañante</th>
-        <th>Comida</th>
+        <th>Invitados</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let g of filteredGuests">
-        <td class="dash-cell-name">{{ g.name }}</td>
-        <td class="dash-cell-muted">{{ g.email }}</td>
-        <td><span class="dash-group-tag">{{ g.group }}</span></td>
+      <tr *ngFor="let item of filteredGuests">
+        <td class="dash-cell-name">{{ item.invitation.guest_name }}</td>
+        <td class="dash-cell-muted">{{ item.invitation.guest_email || item.invitation.guest_phone || '—' }}</td>
+        <td class="dash-cell-muted">{{ item.invitation.group || '—' }}</td>
         <td>
-          <span class="dash-status" [class.status-yes]="g.attending === 'yes'" [class.status-no]="g.attending === 'no'" [class.status-pending]="g.attending === null">
-            {{ g.attending === 'yes' ? 'Confirmado' : g.attending === 'no' ? 'Rechazó' : 'Pendiente' }}
+          <span class="dash-status"
+            [class.status-yes]="item.response?.attending === 'yes'"
+            [class.status-no]="item.response?.attending === 'no'"
+            [class.status-pending]="!item.response">
+            {{ item.response?.attending === 'yes' ? 'Confirmado' : item.response?.attending === 'no' ? 'Rechazó' : 'Pendiente' }}
           </span>
         </td>
-        <td>{{ g.plusOne ? 'Sí' : '—' }}</td>
-        <td class="dash-cell-muted">{{ g.plusOneName || '—' }}</td>
-        <td class="dash-cell-muted">{{ g.food || '—' }}</td>
+        <td>{{ item.invitation.plus_one_allowed ? 'Sí' : '—' }}</td>
+        <td class="dash-cell-muted">{{ item.response?.guest_count || '—' }}</td>
       </tr>
       <tr *ngIf="filteredGuests.length === 0">
-        <td colspan="7" class="dash-empty-row">No se encontraron invitados con esos filtros.</td>
+        <td colspan="6" class="dash-empty-row">No se encontraron invitados con esos filtros.</td>
       </tr>
     </tbody>
   </table>
 </div>
 
 <div class="dash-action-row" style="margin-top:1.5rem">
-  <a class="dash-btn" href="javascript:void(0)" (click)="openSheet.emit()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-    Editar en Google Sheets
-  </a>
+  <button class="dash-btn" (click)="openModal()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Crear invitación
+  </button>
+</div>
+
+<div class="dash-modal-overlay" *ngIf="showModal()" (click)="closeModal()"></div>
+<div class="dash-modal" *ngIf="showModal()">
+  <button class="dash-modal-x" (click)="closeModal()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <div class="dash-modal-icon">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+  </div>
+
+  <ng-container *ngIf="!createdLink(); else linkCreated">
+    <h3 class="dash-modal-title">Nueva invitación</h3>
+    <p class="dash-modal-desc">Ingresa los datos del invitado para generar su enlace personalizado.</p>
+
+    <div class="dash-modal-form">
+      <div class="dash-modal-field">
+        <label>Nombre completo</label>
+        <input class="dash-inp" [ngModel]="formName()" (ngModelChange)="formName.set($event)" name="invName" placeholder="Ej: María García" />
+      </div>
+      <div class="dash-modal-field">
+        <label>Correo electrónico</label>
+        <input class="dash-inp" [ngModel]="formEmail()" (ngModelChange)="formEmail.set($event)" name="invEmail" placeholder="ejemplo@correo.com" type="email" />
+      </div>
+      <div class="dash-modal-row">
+        <div class="dash-modal-field" style="flex:1">
+          <label>Grupo / Familia</label>
+          <input class="dash-inp" [ngModel]="formGroup()" (ngModelChange)="formGroup.set($event)" name="invGroup" placeholder="Ej: Familia López" />
+        </div>
+        <div class="dash-modal-field" style="flex:1">
+          <label>Teléfono</label>
+          <input class="dash-inp" [ngModel]="formPhone()" (ngModelChange)="formPhone.set($event)" name="invPhone" placeholder="+591 70000000" type="tel" />
+        </div>
+      </div>
+      <div class="dash-modal-field">
+        <label class="dash-checkbox">
+          <input type="checkbox" [ngModel]="formPlusOne()" (ngModelChange)="formPlusOne.set($event)" name="invPlusOne" />
+          <span>Permitir acompañante (+1)</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="dash-modal-actions">
+      <button class="dash-btn dash-btn--outline" (click)="closeModal()">Cancelar</button>
+      <button class="dash-btn" (click)="submitInvitation()" [disabled]="!formName().trim() || creating()">
+        <svg *ngIf="creating()" class="dash-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
+        {{ creating() ? 'Creando...' : 'Crear invitación' }}
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-template #linkCreated>
+    <h3 class="dash-modal-title" style="color:#2e7d32">¡Invitación creada!</h3>
+    <p class="dash-modal-desc">Comparte este enlace con el invitado para que confirme su asistencia.</p>
+
+    <div class="dash-link-box">
+      <div class="dash-link-url">{{ createdLink() }}</div>
+      <button class="dash-link-copy" (click)="copyLink()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+        Copiar
+      </button>
+    </div>
+
+    <div class="dash-modal-actions" style="margin-top:1.5rem">
+      <button class="dash-btn dash-btn--outline" (click)="closeModal()">Cerrar</button>
+      <button class="dash-btn" (click)="closeModal(); openModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Otra invitación
+      </button>
+    </div>
+  </ng-template>
 </div>

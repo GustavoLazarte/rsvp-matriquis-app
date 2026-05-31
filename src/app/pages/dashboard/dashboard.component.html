@@ -22,21 +22,21 @@
       <app-overview
         *ngIf="activeTab === 'overview'"
         [userEmailDisplay]="userEmailDisplay"
-        [eventSettings]="eventSettings"
+        [eventSettings]="eventSettings()"
         [stats]="stats"
-        [recentRsvps]="recentRsvps"
-        (setTab)="setTab($event)"
-        (openSheet)="openSheet()">
+        [recentRsvps]="recentRsvps()"
+        (setTab)="setTab($event)">
       </app-overview>
 
       <app-guests
         *ngIf="activeTab === 'guests'"
-        [guests]="guests"
+        [invitations]="invitations()"
+        [responses]="responses()"
+        [eventId]="eventSettings().id"
         [searchQuery]="searchQuery"
         [statusFilter]="statusFilter"
         (searchQueryChange)="searchQuery = $event"
-        (statusFilterChange)="statusFilter = $event"
-        (openSheet)="openSheet()">
+        (statusFilterChange)="statusFilter = $event">
       </app-guests>
 
       <app-gallery

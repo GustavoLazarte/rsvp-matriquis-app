@@ -32,7 +32,6 @@ export class OverviewComponent {
   @Input() recentRsvps: RecentRsvp[] = [];
 
   @Output() setTab = new EventEmitter<DashTab>();
-  @Output() openSheet = new EventEmitter<void>();
 
   getInitials(name: string): string {
     const parts = name.split(' ');

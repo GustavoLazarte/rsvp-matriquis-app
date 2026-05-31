@@ -184,6 +184,203 @@
   color: #fff;
 }
 
+/* ─── Modal ─── */
+.dash-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,46,34,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  animation: fadeIn .2s ease;
+}
+.dash-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 92%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.2);
+  z-index: 1001;
+  padding: 2rem 2rem 1.75rem;
+  animation: modalIn .25s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translate(-50%,-50%) scale(0.95) translateY(8px); }
+  to { opacity: 1; transform: translate(-50%,-50%) scale(1) translateY(0); }
+}
+
+.dash-modal-x {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #F0F5F2;
+  color: #5a7565;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.dash-modal-x:hover {
+  background: #E8F0EB;
+  color: #1A2E22;
+}
+
+.dash-modal-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #E8F0EB, #D4E8DC);
+  color: #3A6B4A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.dash-modal-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #1A2E22;
+  margin: 0 0 0.375rem;
+}
+.dash-modal-desc {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: #5a7565;
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.dash-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.dash-modal-field label {
+  display: block;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #3A6B4A;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.dash-modal-field .dash-inp {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #E8F0EB;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.dash-modal-field .dash-inp:focus {
+  border-color: #3A6B4A;
+  box-shadow: 0 0 0 3px rgba(58,107,74,0.1);
+}
+.dash-modal-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.dash-modal-field--check {
+  flex-shrink: 0;
+}
+.dash-modal-field--check .dash-checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  white-space: nowrap;
+  padding-top: 0.35rem;
+}
+.dash-modal-field--check .dash-checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: #3A6B4A;
+}
+.dash-modal-field--check .dash-checkbox span {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #1A2E22;
+}
+
+.dash-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.75rem;
+}
+
+/* ─── Link created state ─── */
+.dash-link-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #F7FAF8;
+  border: 1px solid #E8F0EB;
+  border-radius: 10px;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+}
+.dash-link-url {
+  flex: 1;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #1A2E22;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dash-link-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.45rem 0.875rem;
+  border-radius: 6px;
+  border: none;
+  background: #3A6B4A;
+  color: #fff;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.dash-link-copy:hover {
+  background: #264D35;
+}
+
+/* ─── Spin animation ─── */
+.dash-spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @media (max-width: 768px) {
   .dash-toolbar { flex-direction: column; align-items: stretch; }
+  .dash-modal { padding: 1.5rem; }
+  .dash-modal-row { flex-direction: column; gap: 0; }
 }

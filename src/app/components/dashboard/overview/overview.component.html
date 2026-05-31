@@ -51,13 +51,14 @@
       <div class="dash-stat-lbl">Pendientes</div>
     </div>
   </div>
-  <div class="dash-stat-card">
-    <div class="dash-stat-icon" style="background:#E8EAF6;color:#283593">
+  <div class="dash-stat-card dash-stat-card--people">
+    <div class="dash-stat-icon" style="background:#F5EDD6;color:#C9A96E">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
     </div>
     <div>
-      <div class="dash-stat-val">{{ stats.totalGuests }}</div>
-      <div class="dash-stat-lbl">Personas (con +1)</div>
+      <div class="dash-stat-val dash-stat-val--people">{{ stats.totalGuests }}</div>
+      <div class="dash-stat-lbl">Asistirán</div>
+      <div class="dash-stat-sublbl">personas confirmadas (con +1)</div>
     </div>
   </div>
   <div class="dash-stat-card">
@@ -66,7 +67,7 @@
     </div>
     <div>
       <div class="dash-stat-val">{{ stats.confirmedGuests }}</div>
-      <div class="dash-stat-lbl">Asistirán</div>
+      <div class="dash-stat-lbl">Invitaciones confirmadas</div>
     </div>
   </div>
 </div>
@@ -123,10 +124,6 @@
 </div>
 
 <div class="dash-action-row">
-  <a class="dash-btn" href="javascript:void(0)" (click)="openSheet.emit()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-    Google Sheets
-  </a>
   <a class="dash-btn dash-btn--outline" [routerLink]="['/invi', 'default']">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
     Ver sitio de boda
