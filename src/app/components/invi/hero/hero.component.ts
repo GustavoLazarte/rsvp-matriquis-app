@@ -31,6 +31,10 @@ export class HeroComponent {
     document.getElementById('story')?.scrollIntoView({ behavior: 'smooth' });
   }
 
+  scrollToRsvp() {
+    document.getElementById('rsvp')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
   get dateFormat(): string {
     let resTicket= "";
     if (!this.rsvpEvent) return resTicket;

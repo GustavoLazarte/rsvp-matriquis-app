@@ -1,7 +1,7 @@
 .dash-sidebar {
   width: 240px;
   min-width: 240px;
-  background: #1A2E22;
+  background: linear-gradient(180deg, #1A2E22 0%, #13241b 100%);
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -9,43 +9,50 @@
   height: 100svh;
   transition: transform 0.3s;
   z-index: 200;
+  border-right: 1px solid rgba(184,212,190,0.06);
 }
 .dash-sidebar-brand {
-  padding: 1.5rem 1.5rem 0.5rem;
+  padding: 1.75rem 1.25rem 0.75rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 20px;
-  font-weight: 300;
-  color: #B8D4BE;
+  border-bottom: 1px solid rgba(184,212,190,0.06);
+  margin: 0 0.75rem 1rem;
+  padding-left: 0;
+  padding-right: 0;
 }
 .dash-sidebar-logo {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: rgba(184,212,190,0.1);
-  border: 1px solid rgba(184,212,190,0.2);
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: rgba(201,169,110,0.12);
+  border: 1px solid rgba(201,169,110,0.2);
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 400; color: #C9A96E;
+  font-size: 13px; font-weight: 500; color: #C9A96E;
+  object-fit: cover; font-family: 'Cormorant Garamond', serif;
+}
+.dash-sidebar-brand span {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 18px; font-weight: 300; color: rgba(184,212,190,0.7);
+  letter-spacing: 0.02em;
 }
 .dash-sidebar-nav {
   flex: 1;
-  padding: 1.5rem 0.75rem;
+  padding: 0 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.125rem;
 }
 .dash-sidebar-item {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.7rem 0.875rem;
+  padding: 0.65rem 0.875rem;
   border: none;
   border-radius: 8px;
   background: none;
-  color: rgba(184,212,190,0.55);
+  color: rgba(184,212,190,0.45);
   font-family: 'DM Sans', system-ui, sans-serif;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 400;
   cursor: pointer;
   transition: all 0.2s;
@@ -54,18 +61,27 @@
   position: relative;
 }
 .dash-sidebar-item:hover {
-  color: rgba(184,212,190,0.85);
-  background: rgba(184,212,190,0.06);
+  color: rgba(184,212,190,0.8);
+  background: rgba(184,212,190,0.05);
 }
 .dash-sidebar-item.active {
-  color: #B8D4BE;
-  background: rgba(184,212,190,0.1);
+  color: #E8F0EB;
+  background: rgba(201,169,110,0.08);
 }
+.dash-sidebar-item.active::before {
+  content: '';
+  position: absolute; left: -0.5rem; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 20px;
+  border-radius: 0 3px 3px 0;
+  background: #C9A96E;
+}
+.dash-sidebar-item svg { flex-shrink: 0; }
 .dash-sidebar-badge {
   margin-left: auto;
-  background: rgba(184,212,190,0.12);
-  color: #B8D4BE;
-  font-size: 10px;
+  background: rgba(201,169,110,0.15);
+  color: #C9A96E;
+  font-size: 9.5px;
   font-weight: 600;
   padding: 0.125rem 0.5rem;
   border-radius: 100px;
@@ -74,34 +90,40 @@
 }
 .dash-sidebar-footer {
   padding: 1rem 1.25rem;
-  border-top: 1px solid rgba(184,212,190,0.08);
+  border-top: 1px solid rgba(184,212,190,0.06);
+  margin: 0.75rem;
+  margin-top: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 .dash-sidebar-user {
   font-family: 'DM Sans', system-ui, sans-serif;
   font-size: 11px;
-  color: rgba(184,212,190,0.4);
+  color: rgba(184,212,190,0.35);
   margin-bottom: 0.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .dash-sidebar-logout {
-  padding: 0.35rem 0.875rem;
-  border: 1px solid rgba(184,212,190,0.15);
-  border-radius: 6px;
+  width: 100%;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid rgba(184,212,190,0.1);
+  border-radius: 8px;
   background: none;
-  color: rgba(184,212,190,0.5);
+  color: rgba(184,212,190,0.35);
   font-family: 'DM Sans', system-ui, sans-serif;
   font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s;
 }
 .dash-sidebar-logout:hover {
-  background: rgba(184,212,190,0.08);
-  color: rgba(184,212,190,0.75);
+  background: rgba(184,212,190,0.05);
+  color: rgba(184,212,190,0.6);
+  border-color: rgba(184,212,190,0.15);
 }
 
 @media (max-width: 768px) {

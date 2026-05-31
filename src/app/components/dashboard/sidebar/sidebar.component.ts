@@ -13,6 +13,7 @@ export class SidebarComponent {
   @Input() activeTab: DashTab = 'overview';
   @Input() pendingCount = 0;
   @Input() sidebarOpen = false;
+  @Input() coupleLogoUrl: string | null = null;
 
   @Output() setTab = new EventEmitter<DashTab>();
   @Output() logout = new EventEmitter<void>();

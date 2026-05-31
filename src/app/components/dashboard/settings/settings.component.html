@@ -1,5 +1,5 @@
 <div class="dash-page-head">
-  <h1 class="dash-h1">Configuración</h1>
+  <h1 class="dash-h1">{{ formData.title || 'Configuración' }}</h1>
   <p class="dash-p">Personaliza los datos del evento, la apariencia y los mensajes de la invitación</p>
 </div>
 
@@ -17,18 +17,26 @@
       </div>
       <div class="dash-field">
         <label>Hora</label>
-        <input class="dash-inp" type="time" [ngModel]="formData.event_date | slice:11:16" (ngModelChange)="onTimeChange($event)" name="eventTime" />
+        <div class="dash-time-group">
+          <select class="dash-inp dash-inp--sel" [(ngModel)]="timeHour" (ngModelChange)="onTimePart()" name="eventHour">
+            <option *ngFor="let h of hours" [value]="h">{{ h }}</option>
+          </select>
+          <span class="dash-time-sep">:</span>
+          <select class="dash-inp dash-inp--sel" [(ngModel)]="timeMinute" (ngModelChange)="onTimePart()" name="eventMinute">
+            <option *ngFor="let m of minutes" [value]="m">{{ m }}</option>
+          </select>
+        </div>
       </div>
       <div class="dash-field">
-        <label>Lugar</label>
+        <label>Ubicacion</label>
         <input class="dash-inp" [(ngModel)]="formData.location" name="location" />
       </div>
       <div class="dash-field">
-        <label>Dirección</label>
+        <label>Lugar</label>
         <input class="dash-inp" [(ngModel)]="formData.adress" name="address" />
       </div>
       <div class="dash-field">
-        <label>Dirección URL (Map)</label>
+        <label>Lugar URL (Map)</label>
         <input class="dash-inp" [(ngModel)]="formData.adress_url" name="addressUrl" />
       </div>
       <div class="dash-field">
@@ -39,6 +47,12 @@
       <div class="dash-field dash-field-full">
         <label>Mesa de regalos (URL)</label>
         <input class="dash-inp" [(ngModel)]="formData.gif_table_url" name="giftTableUrl" placeholder="https://..." />
+      </div>
+      <div class="dash-field dash-field-full">
+        <label>Música (URL de Spotify o MP3)
+          <span class="dash-tip" title="Pega un link de Spotify o sube un MP3 al storage para que suene en la invitación">i</span>
+        </label>
+        <input class="dash-inp" [(ngModel)]="formData.music_url" name="musicUrl" placeholder="https://open.spotify.com/track/... o https://..." />
       </div>
     </div>
   </div>
@@ -65,7 +79,7 @@
       </div>
 
       <div class="dash-img-field">
-        <label>Foto del lugar (dirección)</label>
+        <label>Foto del lugar</label>
         <div class="dash-img-preview" *ngIf="formData.adress_photo_url; else venuePlaceholder">
           <img [src]="formData.adress_photo_url" alt="Lugar" />
           <button class="dash-img-remove" (click)="removeAdressPhoto()" type="button">
@@ -85,7 +99,7 @@
   </div>
 
   <div class="dash-settings-section">
-    <h2 class="dash-settings-section-title">Mensaje de bienvenida</h2>
+    <h2 class="dash-settings-section-title">Mensaje de Descripcion</h2>
     <div class="dash-field">
       <textarea class="dash-inp dash-textarea" rows="3" [(ngModel)]="formData.description" name="description"></textarea>
     </div>

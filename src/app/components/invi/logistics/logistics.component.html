@@ -37,7 +37,6 @@
         <div class="log-card-ey">📍 {{ i18n.current === 'es' ? 'Dónde' : 'Where' }}</div>
         <div class="log-card-title">{{ rsvpEvent?.location }}</div>
         <div class="log-card-body">
-          <p style="font-size:13px;color:#7a9180;margin-bottom:2px">by El Portal</p>
           <p style="font-size:12px;color:#9aada4;margin-bottom:1.25rem">{{ rsvpEvent?.adress || rsvpEvent?.adress_url || i18n.t('log_address') }}</p>
           <img class="log-venue-logo" [src]="rsvpEvent?.adress_photo_url" alt="venue" />
         </div>

@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, computed } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { User } from '@supabase/supabase-js';
 import { Event as AppEvent } from 'src/app/core/models';
@@ -41,6 +42,7 @@ export class DashboardComponent implements OnInit {
   invitationState = inject(InvitationStateService);
   rsvpResponseService = inject(RsvpResponseService);
   rsvpResponseState = inject(RsvpResponseStateService);
+  private title = inject(Title);
   
   searchQuery = '';
   statusFilter: 'all' | 'yes' | 'no' | 'pending' = 'all';
@@ -85,6 +87,7 @@ export class DashboardComponent implements OnInit {
     }
 
     const ev = this.eventSettings();
+    if (ev?.title) this.title.setTitle(`${ev.title} — Admin`);
     if (ev?.id) {
       await this.eventImageService.loadByEvent(ev.id);
       this.tempPhotos = this.eventImageState.images().map(img => img.url);
@@ -110,9 +113,8 @@ export class DashboardComponent implements OnInit {
     const declined = responded.filter(r => r.attending === 'no').length;
     const pending = total - confirmed - declined;
     const confirmedPct = total ? Math.round(((confirmed + declined) / total) * 100) : 0;
-    const confirmedGuests = responded.filter(r => r.attending === 'yes').reduce((acc, r) => acc + r.guest_count, 0);
-    const totalGuests = confirmedGuests;
-    return { total, confirmed, declined, pending, confirmedPct, totalGuests, confirmedGuests };
+    const totalGuests = responded.filter(r => r.attending === 'yes').reduce((acc, r) => acc + r.guest_count, 0);
+    return { total, confirmed, declined, pending, confirmedPct, totalGuests };
   }
 
   get userEmailDisplay(): string {

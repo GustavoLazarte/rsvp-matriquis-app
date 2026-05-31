@@ -16,6 +16,7 @@ export class GuestsComponent {
   @Input() searchQuery = '';
   @Input() statusFilter: 'all' | 'yes' | 'no' | 'pending' = 'all';
   @Input() eventId = '';
+  @Input() eventSettings: any = {};
 
   @Output() searchQueryChange = new EventEmitter<string>();
   @Output() statusFilterChange = new EventEmitter<'all' | 'yes' | 'no' | 'pending'>();

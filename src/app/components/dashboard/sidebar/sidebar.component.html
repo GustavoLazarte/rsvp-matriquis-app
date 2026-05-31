@@ -1,6 +1,7 @@
 <aside class="dash-sidebar" [class.open]="sidebarOpen">
   <div class="dash-sidebar-brand">
-    <div class="dash-sidebar-logo">M&J</div>
+    <img class="dash-sidebar-logo" *ngIf="coupleLogoUrl; else logoPlaceholder" [src]="coupleLogoUrl" alt="logo" />
+    <ng-template #logoPlaceholder><div class="dash-sidebar-logo">M&amp;J</div></ng-template>
     <span>Dashboard</span>
   </div>
 

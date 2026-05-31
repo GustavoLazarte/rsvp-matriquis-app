@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit, PLATFORM_ID, afterNextRender, inject } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { EventStateService } from 'src/app/core/services/event-state.service';
 import { InvitationStateService } from 'src/app/core/services/invitation-state.service';
@@ -17,6 +18,7 @@ export class InviComponent implements OnInit {
   eventService = inject(EventService);
   invitationStateServuce = inject(InvitationStateService);
   invitationService = inject(InvitationService);
+  private title = inject(Title);
   constructor(
     private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: object
@@ -27,11 +29,13 @@ export class InviComponent implements OnInit {
     });
   }
 
-  async ngOnInit() {  
+  async ngOnInit() {
     if (this.inviId) {
       const inv = await this.invitationService.loadByToken(this.inviId);
       await this.eventService.getById(inv?.event_id);
     }
+    const ev = this.eventStateService.currentEvent();
+    if (ev?.title) this.title.setTitle(`${ev.title} — RSVP`);
   }
 
   private initRevealObserver() {

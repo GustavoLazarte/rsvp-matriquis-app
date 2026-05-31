@@ -19,4 +19,5 @@ export interface Event {
   created_at: string;
   updated_at: string;
   gif_table_url: string | null;
+  music_url: string | null;
 }

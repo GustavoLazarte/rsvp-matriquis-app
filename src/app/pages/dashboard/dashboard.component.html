@@ -6,6 +6,7 @@
     [activeTab]="activeTab"
     [pendingCount]="stats.pending"
     [sidebarOpen]="sidebarOpen"
+    [coupleLogoUrl]="eventSettings().couple_logo_url"
     (setTab)="setTab($event)"
     (logout)="onLogout()"
     (closeSidebar)="sidebarOpen = false">
@@ -35,6 +36,7 @@
         [eventId]="eventSettings().id"
         [searchQuery]="searchQuery"
         [statusFilter]="statusFilter"
+        [eventSettings]="eventSettings()"
         (searchQueryChange)="searchQuery = $event"
         (statusFilterChange)="statusFilter = $event">
       </app-guests>
@@ -42,6 +44,7 @@
       <app-gallery
         *ngIf="activeTab === 'gallery'"
         [tempPhotos]="tempPhotos"
+        [eventSettings]="eventSettings()"
         (fileSelected)="onFileSelected($event)"
         (removePhoto)="removePhoto($event)">
       </app-gallery>

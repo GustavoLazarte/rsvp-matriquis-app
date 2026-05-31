@@ -45,20 +45,58 @@ export class LogisticsComponent {
     return `https://maps.google.com/?q=${encodeURIComponent(venue)}`;
   }
 
+  private get eventStart(): Date | null {
+    if (!this.rsvpEvent?.event_date) return null;
+    const date = new Date(this.rsvpEvent.event_date);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  private formatCalendarDate(date: Date): string {
+    return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  }
+
   get gcalUrl(): string {
-    const title = 'Boda Moni & Jose';
-    const location = `${this.rsvpEvent?.location || ''}, Cochabamba, Bolivia`;
-    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=20260913T153000Z/20260914T033000Z&details=Ceremonia+16:30&location=${encodeURIComponent(location)}`;
+    const start = this.eventStart;
+    if (!start) return 'https://calendar.google.com/calendar/render?action=TEMPLATE';
+
+    const title = encodeURIComponent(this.rsvpEvent?.title || 'Boda Moni & Jose');
+    const location = encodeURIComponent(`${this.rsvpEvent?.location || ''}, Cochabamba, Bolivia`);
+    const details = encodeURIComponent('Ceremonia 16:30');
+    const end = new Date(start.getTime() + 10 * 60 * 60 * 1000);
+
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${this.formatCalendarDate(start)}/${this.formatCalendarDate(end)}&details=${details}&location=${location}`;
   }
 
   toggleCal() { this.calOpen = !this.calOpen; }
 
   downloadIcal() {
-    const ical = 'BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:Boda Moni & Jose\nDTSTART:20260913T163000Z\nDTEND:20260914T033000Z\nLOCATION:Huerto de los Olivos by El Portal, Cochabamba, Bolivia\nDESCRIPTION:Ceremonia 16:30 hs\nEND:VEVENT\nEND:VCALENDAR';
+    const start = this.eventStart;
+    if (!start) return;
+
+    const end = new Date(start.getTime() + 10 * 60 * 60 * 1000);
+    const title = this.rsvpEvent?.title;
+    const location = `${this.rsvpEvent?.adress || ''}, ${this.rsvpEvent?.location || ''}`;
+    const details = 'Ceremonia 16:30 hs';
+
+    const ical = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'BEGIN:VEVENT',
+      `SUMMARY:${title}`,
+      `DTSTART:${this.formatCalendarDate(start)}`,
+      `DTEND:${this.formatCalendarDate(end)}`,
+      `LOCATION:${location}`,
+      `DESCRIPTION:${details}`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\n');
+
     const blob = new Blob([ical], { type: 'text/calendar' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'boda-moni-jose.ics'; a.click();
+    a.href = url;
+    a.download = `boda-${this.rsvpEvent?.id || 'evento'}.ics`;
+    a.click();
     URL.revokeObjectURL(url);
   }
 }

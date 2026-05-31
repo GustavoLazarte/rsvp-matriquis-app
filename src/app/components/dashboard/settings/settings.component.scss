@@ -59,6 +59,21 @@
   color: #3A6B4A;
   margin-bottom: 0.35rem;
 }
+.dash-time-group {
+  display: flex; align-items: center; gap: 0.25rem;
+}
+.dash-time-group .dash-inp--sel {
+  width: auto; min-width: 72px; flex: 1;
+  padding: 0.625rem 0.5rem;
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233A6B4A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.5rem center;
+  padding-right: 1.5rem;
+}
+.dash-time-sep {
+  font-family: 'DM Sans', sans-serif; font-size: 16px;
+  color: #3A6B4A; font-weight: 500; line-height: 1;
+}
 .dash-inp {
   width: 100%;
   padding: 0.7rem 0.875rem;
@@ -183,6 +198,25 @@
 }
 .dash-img-remove:hover {
   background: rgba(198,40,40,0.8);
+}
+.dash-tip {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: rgba(58,107,74,0.12); color: #3A6B4A;
+  font-size: 10px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: help; margin-left: 0.375rem; vertical-align: middle;
+  position: relative;
+}
+.dash-tip:hover::after {
+  content: attr(title);
+  position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%); white-space: nowrap;
+  background: #1A2E22; color: #B8D4BE;
+  font-size: 11px; font-weight: 400;
+  padding: 0.5rem 0.75rem; border-radius: 8px;
+  z-index: 10; line-height: 1.4; font-family: 'DM Sans', sans-serif;
+  max-width: 240px; white-space: normal;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 .dash-img-status {
   display: block;

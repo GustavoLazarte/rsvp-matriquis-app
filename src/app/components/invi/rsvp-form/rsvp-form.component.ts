@@ -1,6 +1,8 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, signal } from '@angular/core';
 import { I18nService } from '../../../core/services/i18n.service';
-import { Event as AppEvent }  from 'src/app/core/models';
+import { Event as AppEvent, RsvpResponse } from 'src/app/core/models';
+import { RsvpResponseService } from 'src/app/services/rsvp-response.service';
+import { InvitationService } from 'src/app/services/invitation.service';
 
 @Component({
   standalone: false,
@@ -9,21 +11,36 @@ import { Event as AppEvent }  from 'src/app/core/models';
   styleUrls: ['./rsvp-form.component.scss'],
 })
 export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
-  @Input() rsvpEvent : AppEvent | null = null;
+  @Input() rsvpEvent: AppEvent | null = null;
+  @Input() inviId: string | null = null;
   attending: 'yes' | 'no' | null = null;
   hasPlus = signal(false);
   foods = signal<string[]>([]);
   submitted = false;
   submitting = false;
+  invitationId = '';
 
   countdown = signal({ days: '00', hours: '00', mins: '00', secs: '00' });
   private cdTimer: ReturnType<typeof setInterval> | null = null;
 
-  constructor(public i18n: I18nService) {
-  }
+  constructor(
+    public i18n: I18nService,
+    private rsvpResponseService: RsvpResponseService,
+    private invitationService: InvitationService,
+  ) {}
 
-  ngOnInit(){
+  async ngOnInit() {
     this.startCountdown();
+    if (this.inviId) {
+      const inv = await this.invitationService.loadByToken(this.inviId);
+      this.invitationId = inv.id;
+      await this.rsvpResponseService.loadByInvitation(inv.id);
+      const existing = this.rsvpResponseService.state.responses().find(r => r.invitation_id === inv.id);
+      if (existing) {
+        this.submitted = true;
+        this.attending = existing.attending as 'yes' | 'no';
+      }
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -76,30 +93,29 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
     return this.foods().includes(f);
   }
 
-  submitForm(form: HTMLFormElement, event: Event) {
+  async submitForm(form: HTMLFormElement, event: Event) {
     event.preventDefault();
-    if (this.submitting) return;
+    if (this.submitting || !this.attending || !this.invitationId) return;
     const name = (form.elements.namedItem('name') as HTMLInputElement)?.value?.trim();
-    if (!name || !this.attending) return;
+    if (!name) return;
     this.submitting = true;
-    const email = (form.elements.namedItem('email') as HTMLInputElement)?.value?.trim();
     const notes = (form.elements.namedItem('notes') as HTMLTextAreaElement)?.value?.trim();
-    const payload = new URLSearchParams({
-      name,
-      email,
+
+    const guestCount = this.hasPlus() ? 2 : 1;
+
+    await this.rsvpResponseService.submit({
+      invitation_id: this.invitationId,
       attending: this.attending,
-      has_plus: this.hasPlus() ? 'yes' : 'no',
-      food: this.foods().join(', '),
-      notes: notes || '',
-      lang: this.i18n.current,
-      timestamp: new Date().toISOString(),
+      guest_count: guestCount,
+      dietary_notes: this.foods().join(', ') || null,
+      message: notes || null,
     });
-    new Image().src = `https://docs.google.com/forms/d/e/1FAIpQLSxxxxxxxxx/viewform?usp=pp_url&${payload}`;
-    setTimeout(() => {
-      this.submitted = true;
-      this.submitting = false;
-      this.confetti();
-    }, 900);
+
+    await this.invitationService.update(this.invitationId, { status: 'responded' });
+
+    this.submitted = true;
+    this.submitting = false;
+    this.confetti();
   }
 
   private confetti() {
@@ -126,13 +142,13 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get dateFormat(): string {
-    let resTicket= "";
+    let resTicket = '';
     if (!this.rsvpEvent?.rsvp_deadline) return resTicket;
     const date = new Date(this.rsvpEvent?.rsvp_deadline);
     const month = date.toLocaleString(this.i18n.current, { month: 'long' });
     if (this.i18n.current === 'en') {
       resTicket = `${this.i18n.t('rsvp_deadline')} ${month} ${date.getDate()}${this.i18n.t('ticker_date_helper')} ${date.getFullYear()}`;
-    }else if(this.i18n.current === 'es') {
+    } else if (this.i18n.current === 'es') {
       resTicket = `${this.i18n.t('rsvp_deadline')} ${date.getDate()}${this.i18n.t('ticker_date_helper')} ${month} ${date.getFullYear()}`;
     }
     return resTicket;

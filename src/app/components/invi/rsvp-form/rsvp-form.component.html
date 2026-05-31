@@ -36,11 +36,6 @@
           </div>
 
           <div class="fg">
-            <label class="fl">{{ i18n.t('rsvp_email') }}</label>
-            <input class="fi" name="email" type="email" [placeholder]="i18n.t('rsvp_email')" />
-          </div>
-
-          <div class="fg">
             <label class="fl">{{ i18n.t('rsvp_attending') }}</label>
             <div class="att-btns">
               <button type="button" class="att-btn" [class.sy]="attending==='yes'" (click)="setAttending('yes')">{{ i18n.t('rsvp_yes') }}</button>
@@ -83,7 +78,7 @@
           </div>
           <div class="rsvp-ok-title">{{ attending === 'yes' ? i18n.t('rsvp_ok_yes_title') : i18n.t('rsvp_ok_no_title') }}</div>
           <p class="rsvp-ok-body">{{ attending === 'yes' ? i18n.t('rsvp_ok_yes') : i18n.t('rsvp_ok_no') }}</p>
-          <div style="font-family:var(--serif);font-size:22px;font-weight:300;color:var(--forest);margin-top:2.5rem">— Moni & Jose</div>
+          <div style="font-family:var(--serif);font-size:22px;font-weight:300;color:var(--forest);margin-top:2.5rem">— {{ rsvpEvent?.title }}</div>
         </div>
       </ng-template>
     </div>

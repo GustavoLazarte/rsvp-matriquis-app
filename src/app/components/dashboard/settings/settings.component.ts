@@ -25,19 +25,32 @@ export class SettingsComponent implements OnInit {
   readonly currentEvent = this.eventState.currentEvent;
 
   formData!: Event;
+  timeHour = '16';
+  timeMinute = '00';
+
+  hours: string[] = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+  minutes: string[] = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
   ngOnInit() {
     this.formData = { ...this.currentEvent() } as Event;
+    const t = this.formData?.event_date?.slice(11, 16);
+    if (t) {
+      this.timeHour = t.split(':')[0];
+      this.timeMinute = t.split(':')[1];
+    }
+  }
+
+  private syncEventDate() {
+    const date = this.formData?.event_date?.slice(0, 10) || '2026-01-01';
+    this.formData.event_date = `${date}T${this.timeHour}:${this.timeMinute}:00.000Z`;
   }
 
   onDateChange(date: string) {
-    const time = this.formData.event_date?.slice(11, 16) || '00:00';
-    this.formData.event_date = `${date}T${time}:00.000Z`;
+    this.syncEventDate();
   }
 
-  onTimeChange(time: string) {
-    const date = this.formData.event_date?.slice(0, 10) || '2026-01-01';
-    this.formData.event_date = `${date}T${time}:00.000Z`;
+  onTimePart() {
+    this.syncEventDate();
   }
 
   get deadlineMax(): string {
@@ -121,6 +134,7 @@ export class SettingsComponent implements OnInit {
         couple_logo_url: this.formData.couple_logo_url,
         adress_photo_url: this.formData.adress_photo_url,
         gif_table_url: this.formData.gif_table_url,
+        music_url: this.formData.music_url,
       });
     }
 
