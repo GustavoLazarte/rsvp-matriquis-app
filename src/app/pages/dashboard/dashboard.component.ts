@@ -78,10 +78,11 @@ export class DashboardComponent implements OnInit {
   async ngOnInit() {
     await this.auth.init()
     this.user = this.userState.user();
-    const events = await this.eventService.getByUserId(this.userState?.user()?.id || "");
-    this.userState.setCurrentEventId(events[0]?.id || null);
-    this.eventStateService.setEvents(events);
-    this.eventStateService.selectEvent(this.userState.currentEventId() || null);
+    if (this.eventStateService.events().length === 0) {
+      const events = await this.eventService.getByUserId(this.userState?.user()?.id || "");
+      this.eventStateService.setEvents(events);
+      this.eventStateService.selectEvent(events[0]?.id || null);
+    }
 
     const ev = this.eventSettings();
     if (ev?.id) {

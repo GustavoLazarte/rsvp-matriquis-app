@@ -46,7 +46,7 @@ export class LoginComponent {
           ? 'Email o contraseña incorrectos'
           : error.message;
     } else {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/select-event']);
     }
   }
 }

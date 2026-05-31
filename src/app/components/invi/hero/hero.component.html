@@ -11,15 +11,16 @@
   </div>
 
   <div class="hero-content">
-    <div class="hero-eyebrow">{{ i18n.t('hero_eyebrow') }}</div>
-    <div class="hero-names">{{ rsvpEvent?.title?.split(' ')?.[0]}}<span class="hero-amp">{{ rsvpEvent?.title?.split(' ')?.[1] }}</span>{{rsvpEvent?.title?.split(' ')?.[2]}}</div>
-    <div class="hero-sub" [innerHTML]="heroSubHtml"></div>
-    <div class="hero-meta">
-      <span class="hero-meta-item">{{ dateFormat }}</span>
-      <span class="hero-meta-sep"></span>
-      <span class="hero-meta-item">{{ rsvpEvent?.location }}</span>
+    <img class="hero-logo" [src]="rsvpEvent?.couple_logo_url" alt="logo" />
+
+    <div class="hero-eyebrow">{{ dateFormat }} — {{ rsvpEvent?.location }}</div>
+    <div class="hero-names">
+      <span class="hero-name-primary">{{ nameParts[0] }}</span>
+      <span class="hero-amp">&amp;</span>
+      <span class="hero-name-primary">{{ nameParts[1] }}</span>
     </div>
-    <a class="hero-cta" href="#story">{{ i18n.t('hero_cta') }}</a>
+    <div class="hero-sub">{{ rsvpEvent?.adress }}</div>
+    <a class="hero-cta" href="#rsvp">{{ i18n.t('nav_rsvp') }}</a>
   </div>
   <div class="hero-chevron" (click)="scrollToStory()">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg>

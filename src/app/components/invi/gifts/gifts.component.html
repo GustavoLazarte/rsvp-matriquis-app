@@ -1,28 +1,29 @@
 <section id="gifts" style="background: var(--ow)">
   <div class="inner">
     <span class="eyebrow reveal">{{ i18n.t('gifts_label') }}</span>
+    <h2 class="h2 reveal rd1">{{ i18n.t('gifts_title') }}</h2>
     <div class="rule reveal rd1"></div>
-    <p class="gifts-intro reveal rd1">{{ i18n.t('gifts_title') }}</p>
     <p class="gifts-sub reveal rd2">{{ i18n.t('gifts_intro') }}</p>
 
-    <span class="gifts-sec-label reveal rd2">{{ i18n.t('gifts_table') }}</span>
-    <div class="gifts-table-grid reveal rd2">
-      <div class="gift-card">
-        <div class="gift-card-name">{{ i18n.t('gifts_s1') }}</div>
-        <button class="btn-o">{{ i18n.t('gifts_view') }}</button>
-      </div>
-      <div class="gift-card">
-        <div class="gift-card-name">{{ i18n.t('gifts_s2') }}</div>
-        <button class="btn-o">{{ i18n.t('gifts_view') }}</button>
-      </div>
+    <div class="gifts-stores reveal rd2" *ngIf="rsvpEvent?.gif_table_url">
+      <span class="gifts-sec-label">{{ i18n.t('gifts_table') }}</span>
+      <a class="gift-card" [href]="rsvpEvent?.gif_table_url" target="_blank" rel="noreferrer">
+        <div class="gift-card-icon">🎁</div>
+        <div>
+          <div class="gift-card-name">{{ i18n.t('gifts_s1') }}</div>
+          <span class="gift-card-sub">{{ i18n.t('gifts_view') }} →</span>
+        </div>
+      </a>
     </div>
 
     <div class="gifts-other reveal rd3">
       <div class="gift-other-card">
+        <div class="gift-other-icon">✉️</div>
         <div class="gift-other-title">{{ i18n.t('gifts_env_title') }}</div>
         <div class="gift-other-body">{{ i18n.t('gifts_env_body') }}</div>
       </div>
       <div class="gift-other-card">
+        <div class="gift-other-icon">📱</div>
         <div class="gift-other-title">{{ i18n.t('gifts_qr_title') }}</div>
         <div class="gift-other-body">{{ i18n.t('gifts_qr_body') }}</div>
       </div>

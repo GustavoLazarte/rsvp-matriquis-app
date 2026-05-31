@@ -3,36 +3,57 @@
     <span class="eyebrow reveal">{{ i18n.t('log_label') }}</span>
     <h2 class="h2 reveal rd1">{{ i18n.t('log_title') }}</h2>
     <div class="rule reveal rd2"></div>
+
     <div class="log-cols">
+      <!-- Cuándo -->
       <div class="log-card reveal">
-        <div class="log-card-ey">{{ i18n.current === 'es' ? 'Lugar' : 'Venue' }}</div>
-        <div class="log-card-title">{{ rsvpEvent?.location }}</div>
+        <div class="log-card-ey">📅 {{ i18n.current === 'es' ? 'Cuándo' : 'When' }}</div>
+        <div class="log-card-title">{{ dateLabel }}</div>
         <div class="log-card-body">
-          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem">{{ rsvpEvent?.location }}</div>
-          <div style="display:flex;align-items:center;gap:0.5rem">{{ i18n.t('log_time') }} {{ rsvpEvent?.event_date | slice:11:16 }} PM </div>
+          <div class="log-schedule">
+            <div class="log-sched-row" *ngFor="let ev of scheduleEvents">
+              <span class="log-sched-label">{{ ev.name }}</span>
+              <span class="log-sched-time">{{ ev.time }}</span>
+            </div>
+            <div class="log-sched-row">
+              <span class="log-sched-label">{{ i18n.current === 'es' ? 'Año' : 'Year' }}</span>
+              <span class="log-sched-time">{{ yearLabel }}</span>
+            </div>
+          </div>
         </div>
-        <div class="log-actions">
-          <a class="log-btn primary" [href]="rsvpEvent?.adress_url" target="_blank" rel="noreferrer">{{ i18n.t('log_maps') }}</a>
+        <div class="log-actions" style="margin-top:1.5rem">
           <div style="position:relative">
             <button class="log-btn outline" style="width:100%" (click)="toggleCal()">{{ i18n.t('log_cal') }}</button>
             <div *ngIf="calOpen" style="position:absolute;top:100%;left:0;right:0;z-index:10;margin-top:4px">
-              <a class="cal-opt" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+Moni+%26+Jose&dates=20260913T153000Z/20260914T033000Z&details=Ceremonia+16:30+hs+-+Huerto+de+los+Olivos+by+El+Portal,+Cochabamba&location=Huerto+de+los+Olivos,+Cochabamba,+Bolivia" target="_blank" rel="noreferrer">{{ i18n.t('log_gcal') }}</a>
+              <a class="cal-opt" href="{{ gcalUrl }}" target="_blank" rel="noreferrer">{{ i18n.t('log_gcal') }}</a>
               <button class="cal-opt" style="border-top:none" (click)="downloadIcal()">{{ i18n.t('log_ical') }}</button>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Dónde -->
       <div class="log-card reveal rd1">
+        <div class="log-card-ey">📍 {{ i18n.current === 'es' ? 'Dónde' : 'Where' }}</div>
+        <div class="log-card-title">{{ rsvpEvent?.location }}</div>
+        <div class="log-card-body">
+          <p style="font-size:13px;color:#7a9180;margin-bottom:2px">by El Portal</p>
+          <p style="font-size:12px;color:#9aada4;margin-bottom:1.25rem">{{ rsvpEvent?.adress || rsvpEvent?.adress_url || i18n.t('log_address') }}</p>
+          <img class="log-venue-logo" [src]="rsvpEvent?.adress_photo_url" alt="venue" />
+        </div>
+        <div class="log-actions">
+          <a class="log-btn primary" [href]="mapsUrl" target="_blank" rel="noreferrer">{{ i18n.t('log_maps') }}</a>
+        </div>
+      </div>
+
+      <!-- Adults -->
+      <div class="log-card reveal rd2">
         <div class="log-card-ey">Adults Only</div>
         <div class="log-card-title">{{ i18n.t('log_adults') }}</div>
         <div class="log-card-body" style="margin-top:0.5rem">{{ i18n.t('log_adults_msg') }}</div>
-      </div>
-
-      <div class="log-card reveal rd2" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0.75rem">
-        <div style="font-family:var(--serif);font-size:60px;font-weight:300;color:var(--forest);opacity:0.2">M&J</div>
-        <div style="font-family:var(--serif);font-size:18px;font-weight:300;color:var(--forest);opacity:0.65">Huerto de los Olivos</div>
-        <div style="font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;color:var(--forest);opacity:0.38">by El Portal</div>
+        <div class="log-card-body" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--mist)">
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--forest)">⏱ {{ i18n.current === 'es' ? 'Confirma antes del' : 'RSVP by' }} {{ deadlineLabel }}</span>
+        </div>
       </div>
     </div>
   </div>

@@ -12,6 +12,13 @@ export class HeroComponent {
   @Input() rsvpEvent : Event | null = null;
   constructor(public i18n: I18nService) {}
 
+  get nameParts(): [string, string] {
+    const title = this.rsvpEvent?.title || '';
+    const sep = title.includes(' & ') ? ' & ' : ' &amp; ';
+    const parts = title.split(sep);
+    return [parts[0]?.trim() || '', parts[1]?.trim() || ''];
+  }
+
   get heroSubHtml(): string {
     return this.i18n.t('hero_sub').replace(/\n/g, '<br/>');
   }

@@ -1,1 +1,13 @@
 :host { display: block; }
+.footer-logo {
+  height: 56px;
+  display: block;
+  margin: 0 auto 1.25rem;
+  opacity: 0.85;
+}
+.footer-love {
+  font-family: var(--sans);
+  font-size: 10px;
+  color: rgba(255,255,255,0.2);
+  margin-top: 1.5rem;
+}

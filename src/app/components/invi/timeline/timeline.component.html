@@ -16,14 +16,14 @@
               <div class="tl-d-desc">{{ ev.desc }}</div>
             </div>
             <div class="tl-d-center reveal" [style.transition-delay]="i * 0.1 + 's'">
-              <div class="tl-d-node" [class.gold]="ev.gold"><div class="tl-d-dot"></div></div>
+              <div class="tl-d-node" [class.gold]="ev.gold">{{ ev.emoji }}</div>
             </div>
             <div></div>
           </div>
           <div class="tl-d-row" *ngIf="i % 2 !== 0">
             <div></div>
             <div class="tl-d-center reveal" [style.transition-delay]="i * 0.1 + 's'">
-              <div class="tl-d-node" [class.gold]="ev.gold"><div class="tl-d-dot"></div></div>
+              <div class="tl-d-node" [class.gold]="ev.gold">{{ ev.emoji }}</div>
             </div>
             <div class="tl-d-cell reveal" [class.gold]="ev.gold" [style.transition-delay]="i * 0.1 + 's'">
               <div class="tl-d-time">{{ ev.time }}</div>
@@ -39,7 +39,7 @@
       <div class="tl-m-wrap">
         <div class="tl-m-axis"></div>
         <div class="tl-m-item reveal" *ngFor="let ev of events; let i = index" [class.gold]="ev.gold" [style.transition-delay]="i * 0.08 + 's'">
-          <div class="tl-m-node" [class.gold]="ev.gold"><div class="tl-m-dot"></div></div>
+          <div class="tl-m-node" [class.gold]="ev.gold">{{ ev.emoji }}</div>
           <div class="tl-m-time">{{ ev.time }}</div>
           <div class="tl-m-name">{{ ev.name }}</div>
           <div class="tl-m-desc">{{ ev.desc }}</div>

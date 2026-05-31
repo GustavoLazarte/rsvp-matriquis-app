@@ -1,1 +1,11 @@
 :host { display: block; min-height: 100svh; }
+.hero-logo {
+  height: 90px;
+  display: block;
+  margin: 0 auto 1.5rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.15s forwards;
+}
+.hero-name-primary {
+  display: block;
+}

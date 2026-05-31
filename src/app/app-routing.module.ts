@@ -8,6 +8,12 @@ const routes: Routes = [
     loadChildren: () => import('./pages/login/login.module').then((m) => m.LoginModule),
   },
   {
+    path: 'select-event',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./pages/event-select/event-select.module').then((m) => m.EventSelectModule),
+  },
+  {
     path: 'dashboard',
     canActivate: [authGuard],
     loadChildren: () =>
