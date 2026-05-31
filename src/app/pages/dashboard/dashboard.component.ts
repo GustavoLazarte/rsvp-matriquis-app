@@ -6,6 +6,8 @@ import { EventStateService } from 'src/app/core/services/event-state.service';
 import { UserStateService } from 'src/app/core/services/user-state.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { EventService } from 'src/app/services/event.service';
+import { EventImageService } from 'src/app/services/event-image.service';
+import { EventImageStateService } from 'src/app/core/services/event-image-state.service';
 
 export type DashTab = 'overview' | 'guests' | 'gallery' | 'settings';
 
@@ -39,6 +41,8 @@ export class DashboardComponent implements OnInit {
   eventService = inject(EventService);
   userState = inject(UserStateService);
   eventStateService = inject(EventStateService);
+  eventImageService = inject(EventImageService);
+  eventImageState = inject(EventImageStateService);
   
   searchQuery = '';
   statusFilter: 'all' | 'yes' | 'no' | 'pending' = 'all';
@@ -83,6 +87,11 @@ export class DashboardComponent implements OnInit {
     this.eventStateService.setEvents(events);
     this.eventStateService.selectEvent(this.userState.currentEventId() || null);
     this.eventSettings = this.eventStateService.currentEvent() as AppEvent;
+
+    if (this.eventSettings?.id) {
+      await this.eventImageService.loadByEvent(this.eventSettings.id);
+      this.tempPhotos = this.eventImageState.images().map(img => img.url);
+    }
   }
 
   async onLogout() {
@@ -114,18 +123,22 @@ export class DashboardComponent implements OnInit {
     window.open('https://docs.google.com/spreadsheets', '_blank');
   }
 
-  onFileSelected(domEvent: Event) {
+  async onFileSelected(domEvent: Event) {
     const input = domEvent.target as HTMLInputElement;
-    if (!input.files) return;
-    Array.from(input.files).slice(0, 12).forEach(f => {
-      this.tempPhotos.push(URL.createObjectURL(f));
-    });
+    if (!input.files || !this.eventSettings?.id) return;
+    const files = Array.from(input.files).slice(0, 12);
+
+    await this.eventImageService.uploadBatch(this.eventSettings.id, files);
+    this.tempPhotos = this.eventImageState.images().map(img => img.url);
+
     input.value = '';
   }
 
-  removePhoto(index: number) {
-    URL.revokeObjectURL(this.tempPhotos[index]);
-    this.tempPhotos.splice(index, 1);
+  async removePhoto(index: number) {
+    const image = this.eventImageState.images()[index];
+    if (!image) return;
+    await this.eventImageService.remove(image.id);
+    this.tempPhotos = this.eventImageState.images().map(img => img.url);
   }
 
   saveSettings(settings: AppEvent) {

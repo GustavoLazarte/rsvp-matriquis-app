@@ -8,9 +8,25 @@
     <div class="drop-zone reveal rd2">
       <div class="dz-text">{{ i18n.t('up_drag') }}</div>
       <div class="dz-or">{{ i18n.t('up_or') }}</div>
-      <button class="btn-o" (click)="uploadPhotos()">{{ i18n.t('up_btn') }}</button>
+      <button class="btn-o" (click)="triggerFileInput()">{{ i18n.t('up_btn') }}</button>
     </div>
 
-    <button class="btn-f" style="margin-top:1.5rem" (click)="uploadPhotos()">{{ i18n.t('up_send') }}</button>
+    <div *ngIf="uploading" style="text-align:center;margin-top:1rem;font-size:14px;color:var(--olive)">
+      Subiendo fotos...
+    </div>
+
+    <div *ngIf="uploadSuccess" style="text-align:center;margin-top:1rem;font-size:14px;color:#2e7d32">
+      ¡Fotos subidas exitosamente!
+    </div>
+
+    <div *ngIf="uploadError" style="text-align:center;margin-top:1rem;font-size:14px;color:#c62828">
+      {{ uploadError }}
+    </div>
+
+    <button class="btn-f" style="margin-top:1.5rem" [disabled]="uploading" (click)="triggerFileInput()">{{ uploading ? 'Subiendo...' : i18n.t('up_send') }}</button>
+
+    <p style="margin-top:0.75rem;font-size:13px;color:var(--muted);text-align:center">
+      {{ i18n.t('up_hint') }}
+    </p>
   </div>
 </section>

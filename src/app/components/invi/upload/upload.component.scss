@@ -1,1 +1,9 @@
 :host { display: block; }
+
+.drop-zone {
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.drop-zone:active {
+  opacity: .7;
+}
