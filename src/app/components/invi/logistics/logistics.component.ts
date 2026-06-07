@@ -77,19 +77,25 @@ export class LogisticsComponent {
     const title = this.rsvpEvent?.title;
     const location = `${this.rsvpEvent?.adress || ''}, ${this.rsvpEvent?.location || ''}`;
     const details = 'Ceremonia 16:30 hs';
+    const eventUrl = this.rsvpEvent?.adress_url || window.location.href;
+    const logoUrl = this.rsvpEvent?.couple_logo_url;
 
-    const ical = [
+    const lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
+      'PRODID:-//BodaApp//ES',
       'BEGIN:VEVENT',
       `SUMMARY:${title}`,
       `DTSTART:${this.formatCalendarDate(start)}`,
       `DTEND:${this.formatCalendarDate(end)}`,
       `LOCATION:${location}`,
       `DESCRIPTION:${details}`,
-      'END:VEVENT',
-      'END:VCALENDAR',
-    ].join('\n');
+      `URL:${eventUrl}`,
+    ];
+    if (logoUrl) lines.push(`ATTACH:${logoUrl}`);
+    lines.push('END:VEVENT', 'END:VCALENDAR');
+
+    const ical = lines.join('\n');
 
     const blob = new Blob([ical], { type: 'text/calendar' });
     const url = URL.createObjectURL(blob);

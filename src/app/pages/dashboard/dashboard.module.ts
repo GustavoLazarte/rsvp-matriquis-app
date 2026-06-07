@@ -9,6 +9,8 @@ import { OverviewComponent } from '../../components/dashboard/overview/overview.
 import { GuestsComponent } from '../../components/dashboard/guests/guests.component';
 import { GalleryComponent } from '../../components/dashboard/gallery/gallery.component';
 import { SettingsComponent } from '../../components/dashboard/settings/settings.component';
+import { AlbumManagerComponent } from '../../components/dashboard/album-manager/album-manager.component';
+import { GeneralPhotosComponent } from '../../components/dashboard/general-photos/general-photos.component';
 import { SharedModule } from '../../components/shared.module';
 
 const routes: Routes = [{ path: '', component: DashboardComponent }];
@@ -22,6 +24,8 @@ const routes: Routes = [{ path: '', component: DashboardComponent }];
     GuestsComponent,
     GalleryComponent,
     SettingsComponent,
+    AlbumManagerComponent,
+    GeneralPhotosComponent,
   ],
   imports: [CommonModule, FormsModule, SharedModule, RouterModule.forChild(routes)],
   exports: [RouterModule],

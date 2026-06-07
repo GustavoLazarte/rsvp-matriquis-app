@@ -1,20 +1,23 @@
-import { Component, inject, OnInit, computed } from '@angular/core';
+import { Component, inject, OnInit, computed, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { User } from '@supabase/supabase-js';
-import { Event as AppEvent } from 'src/app/core/models';
+import { Event as AppEvent, AlbumImage } from 'src/app/core/models';
 import { EventStateService } from 'src/app/core/services/event-state.service';
 import { UserStateService } from 'src/app/core/services/user-state.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { EventService } from 'src/app/services/event.service';
 import { EventImageService } from 'src/app/services/event-image.service';
 import { EventImageStateService } from 'src/app/core/services/event-image-state.service';
+import { AlbumImageService } from 'src/app/services/album-image.service';
+import { AlbumImageStateService } from 'src/app/core/services/album-image-state.service';
 import { InvitationService } from 'src/app/services/invitation.service';
 import { InvitationStateService } from 'src/app/core/services/invitation-state.service';
 import { RsvpResponseService } from 'src/app/services/rsvp-response.service';
 import { RsvpResponseStateService } from 'src/app/core/services/rsvp-response-state.service';
 
 export type DashTab = 'overview' | 'guests' | 'gallery' | 'settings';
+export type GallerySubTab = 'album' | 'photos';
 
 interface RecentRsvp {
   name: string;
@@ -32,12 +35,15 @@ interface RecentRsvp {
 export class DashboardComponent implements OnInit {
   user: User | null = null;
   activeTab: DashTab = 'overview';
+  gallerySubTab: GallerySubTab = 'album';
   sidebarOpen = false;
   eventService = inject(EventService);
   userState = inject(UserStateService);
   eventStateService = inject(EventStateService);
   eventImageService = inject(EventImageService);
   eventImageState = inject(EventImageStateService);
+  albumImageService = inject(AlbumImageService);
+  albumImageState = inject(AlbumImageStateService);
   invitationService = inject(InvitationService);
   invitationState = inject(InvitationStateService);
   rsvpResponseService = inject(RsvpResponseService);
@@ -70,7 +76,11 @@ export class DashboardComponent implements OnInit {
     return this.eventStateService.currentEvent() ?? ({} as AppEvent);
   });
 
-  tempPhotos: string[] = [];
+  readonly albumImages = this.albumImageState.images;
+  readonly eventImages = this.eventImageState.images;
+
+  uploadingAlbum = false;
+  savingCaptionId: string | null = null;
 
   constructor(
     private auth: AuthService,
@@ -89,8 +99,8 @@ export class DashboardComponent implements OnInit {
     const ev = this.eventSettings();
     if (ev?.title) this.title.setTitle(`${ev.title} — Admin`);
     if (ev?.id) {
+      await this.albumImageService.loadByEvent(ev.id);
       await this.eventImageService.loadByEvent(ev.id);
-      this.tempPhotos = this.eventImageState.images().map(img => img.url);
       await this.invitationService.loadByEvent(ev.id);
       await this.rsvpResponseService.loadByEvent(ev.id);
     }
@@ -104,6 +114,10 @@ export class DashboardComponent implements OnInit {
   setTab(tab: DashTab) {
     this.activeTab = tab;
     this.sidebarOpen = false;
+  }
+
+  setGallerySubTab(sub: GallerySubTab) {
+    this.gallerySubTab = sub;
   }
 
   get stats() {
@@ -121,23 +135,79 @@ export class DashboardComponent implements OnInit {
     return this.user?.email?.split('@')[0] || 'admin';
   }
 
-  async onFileSelected(domEvent: Event) {
+  // ---- Album management ----
+
+  async onAlbumFilesSelected(domEvent: Event) {
+    const input = domEvent.target as HTMLInputElement;
+    const ev = this.eventSettings();
+    if (!input.files || !ev?.id) return;
+    const files = Array.from(input.files);
+
+    this.uploadingAlbum = true;
+    try {
+      for (const file of files) {
+        await this.albumImageService.uploadAndCreate(ev.id, file);
+      }
+    } catch (err: any) {
+      alert('Error al subir foto(s) del álbum: ' + (err?.message || ''));
+    } finally {
+      this.uploadingAlbum = false;
+      input.value = '';
+    }
+  }
+
+  async removeAlbumImage(id: string) {
+    await this.albumImageService.remove(id);
+  }
+
+  async updateAlbumCaption(evt: { id: string; captionEs: string; captionEn: string }) {
+    this.savingCaptionId = evt.id;
+    try {
+      await this.albumImageService.updateCaption(evt.id, evt.captionEs, evt.captionEn);
+    } catch (err: any) {
+      alert('Error al guardar el texto: ' + (err?.message || ''));
+    } finally {
+      this.savingCaptionId = null;
+    }
+  }
+
+  async moveAlbumImage(index: number, direction: 'up' | 'down') {
+    const images = this.albumImages();
+    if (direction === 'up' && index <= 0) return;
+    if (direction === 'down' && index >= images.length - 1) return;
+
+    const swapIndex = direction === 'up' ? index - 1 : index + 1;
+    const current = images[index];
+    const swap = images[swapIndex];
+
+    // Optimistic UI
+    this.albumImageState.swapImages(index, swapIndex);
+
+    try {
+      await Promise.all([
+        this.albumImageService.updateSortOrder(current.id, swap.sort_order),
+        this.albumImageService.updateSortOrder(swap.id, current.sort_order),
+      ]);
+    } catch (err: any) {
+      this.albumImageState.swapImages(index, swapIndex);
+      alert('Error al reordenar: ' + (err?.message || ''));
+    }
+  }
+
+  // ---- General photos ----
+
+  async onGeneralFilesSelected(domEvent: Event) {
     const input = domEvent.target as HTMLInputElement;
     const ev = this.eventSettings();
     if (!input.files || !ev?.id) return;
     const files = Array.from(input.files).slice(0, 12);
 
     await this.eventImageService.uploadBatch(ev.id, files);
-    this.tempPhotos = this.eventImageState.images().map(img => img.url);
-
     input.value = '';
   }
 
-  async removePhoto(index: number) {
-    const image = this.eventImageState.images()[index];
-    if (!image) return;
-    await this.eventImageService.remove(image.id);
-    this.tempPhotos = this.eventImageState.images().map(img => img.url);
+  async removeGeneralPhoto(id: string) {
+    await this.eventImageService.remove(id);
   }
 
   saveSettings(_settings: AppEvent) {

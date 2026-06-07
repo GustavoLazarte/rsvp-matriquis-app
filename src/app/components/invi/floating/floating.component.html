@@ -1,7 +1,11 @@
 <button class="fab-rsvp" [class.hide]="hidden" (click)="scrollToRsvp()">{{ i18n.t('nav_rsvp') }}</button>
-<button class="fab-music" [class.playing]="playing" (click)="play()" (dblclick)="stop()">
+<button class="fab-music" [class.playing]="playing" [class.blocked]="blocked()" (click)="enableMusic()" (dblclick)="stop()">
   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
 </button>
+<div class="fab-blocked-msg" *ngIf="blocked()" (click)="enableMusic()">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+  {{ i18n.t('music_blocked') }}
+</div>
 <div class="fab-player" *ngIf="playing && isSpotify">
   <iframe [src]="spotifyEmbedUrl" width="300" height="80" frameborder="0" allow="encrypted-media" title="Spotify"></iframe>
 </div>

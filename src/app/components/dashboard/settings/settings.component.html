@@ -52,7 +52,22 @@
         <label>Música (URL de Spotify o MP3)
           <span class="dash-tip" title="Pega un link de Spotify o sube un MP3 al storage para que suene en la invitación">i</span>
         </label>
-        <input class="dash-inp" [(ngModel)]="formData.music_url" name="musicUrl" placeholder="https://open.spotify.com/track/... o https://..." />
+        <div class="dash-music-row">
+          <input class="dash-inp" [(ngModel)]="formData.music_url" name="musicUrl" placeholder="https://open.spotify.com/track/... o https://..." />
+          <ng-container *ngIf="!formData.music_url; else musicRemoveBtn">
+            <div class="dash-music-upload" (click)="musicInput.click()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              <span>Subir MP3</span>
+            </div>
+          </ng-container>
+          <ng-template #musicRemoveBtn>
+            <button class="dash-music-remove" (click)="removeMusic()" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </ng-template>
+        </div>
+        <span class="dash-img-status" *ngIf="uploadingMusic">Subiendo...</span>
+        <input #musicInput type="file" accept="audio/*" style="display:none" (change)="uploadMusic($event)" />
       </div>
     </div>
   </div>

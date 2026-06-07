@@ -18,6 +18,8 @@ export const T: Record<Lang, Record<string, any>> = {
     story_quote: 'No es mirarse el uno al otro. Es mirar juntos en la misma dirección.',
     album_label: 'Momentos', album_title: 'Nuestra Galería',
     album_hint: 'clic para ampliar',
+    album_empty: 'El álbum está vacío. Pronto habrá fotos disponibles.',
+    album_view_all: 'Ver todas las fotos →',
     album_caps: ['2019', 'El viaje', 'Familia', 'La propuesta', 'Juntos', 'Hoy'],
     tl_label: 'Nuestro Día', tl_title: 'La Celebración',
     tl_events: [
@@ -78,6 +80,7 @@ export const T: Record<Lang, Record<string, any>> = {
     rsvp_ok_no: 'Te echaremos de menos. Siempre serás parte de nuestra historia.',
     footer_close: 'Gracias por ser parte de nuestra historia.',
     footer_date: '13 · 09 · 2026', footer_loc: 'Cochabamba · Bolivia',
+    music_blocked: 'Toca para activar la música',
   },
   en: {
     ticker_date_helper : "TH ",
@@ -94,6 +97,8 @@ export const T: Record<Lang, Record<string, any>> = {
     story_quote: `It's not gazing at each other. It's looking together in the same direction.`,
     album_label: 'Moments', album_title: 'Our Gallery',
     album_hint: 'click to enlarge',
+    album_empty: 'The album is empty. Photos will be available soon.',
+    album_view_all: 'View all photos →',
     album_caps: ['2019', 'The trip', 'Family', 'The proposal', 'Together', 'Today'],
     tl_label: 'Our Day', tl_title: 'The Celebration',
     tl_events: [
@@ -154,6 +159,7 @@ export const T: Record<Lang, Record<string, any>> = {
     rsvp_ok_no: 'We will miss you. You will always be part of our story.',
     footer_close: 'Thank you for being part of our story.',
     footer_date: '13 · 09 · 2026', footer_loc: 'Cochabamba · Bolivia',
+    music_blocked: 'Tap to enable music',
   },
 };
 

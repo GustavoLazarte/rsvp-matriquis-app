@@ -226,6 +226,54 @@
   color: #3A6B4A;
 }
 
+.dash-music-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.dash-music-row .dash-inp {
+  flex: 1;
+}
+.dash-music-upload {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px dashed #d0ddd4;
+  border-radius: 8px;
+  background: #f7faf8;
+  color: #5a7565;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.dash-music-upload:hover {
+  border-color: #3A6B4A;
+  background: #edf4ef;
+  color: #3A6B4A;
+}
+.dash-music-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1.5px solid #e8d0d0;
+  background: #faf5f5;
+  color: #b04a4a;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.dash-music-remove:hover {
+  background: #f0dfdf;
+  border-color: #b04a4a;
+}
+
 @media (max-width: 768px) {
   .dash-settings-grid { grid-template-columns: 1fr; }
   .dash-img-grid { grid-template-columns: 1fr; }

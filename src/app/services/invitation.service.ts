@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from '../core/services/supabase.service';
 import { InvitationStateService } from '../core/services/invitation-state.service';
-import type { Invitation } from '../core/models';
+import type { Invitation, Event } from '../core/models';
 
 @Injectable({ providedIn: 'root' })
 export class InvitationService {
@@ -32,6 +32,18 @@ export class InvitationService {
     return data as Invitation;
   }
 
+  async loadByTokenWithEvent(token: string): Promise<{ invitation: Invitation; event: Event }> {
+    const { data, error } = await this.supabase.supabase
+      .from('invitations')
+      .select('*, event:event_id(*)')
+      .eq('token', token)
+      .single();
+    if (error) throw error;
+    const invitation = data as Invitation;
+    const event = (data as any).event as Event;
+    return { invitation, event };
+  }
+
   async create(input: Partial<Invitation>): Promise<Invitation | null> {
     const { data, error } = await this.supabase.supabase
       .from('invitations')
@@ -50,6 +62,16 @@ export class InvitationService {
       .eq('id', id);
     if (error) throw error;
     this.invitationState.updateInvitation(id, input);
+  }
+
+  async trackOpen(id: string): Promise<void> {
+    const inv = this.invitationState.invitations().find(i => i.id === id);
+    const current = inv?.opened_count ?? 0;
+    await this.update(id, {
+      opened_count: current + 1,
+      last_opened_at: new Date().toISOString(),
+      status: 'opened',
+    });
   }
 
   async remove(id: string): Promise<void> {

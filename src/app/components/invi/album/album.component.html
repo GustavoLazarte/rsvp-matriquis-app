@@ -4,12 +4,21 @@
     <h2 class="h2 reveal rd1">{{ i18n.t('album_title') }}</h2>
     <div class="rule reveal rd2"></div>
     <p class="reveal rd2" style="font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;color:#8a9e92;margin-bottom:0.25rem">{{ i18n.t('album_hint') }}</p>
-    <div class="album-grid">
-      <div class="polaroid reveal" *ngFor="let g of photoGrads; let i = index" [style.transition-delay]="i * 0.07 + 's'" (click)="openLightbox(i)">
-        <div class="pol-inner" [style.background]="g"></div>
-        <div class="pol-cap">{{ i18n.tArr('album_caps')[i] }}</div>
+
+    <div class="album-grid" *ngIf="albumImages().length > 0; else noAlbum">
+      <div class="polaroid reveal" *ngFor="let img of displayImages(); let i = index" [style.transition-delay]="i * 0.07 + 's'" (click)="openLightbox(i)">
+        <div class="pol-inner"><img [src]="img.url" alt="" /></div>
+        <div class="pol-cap">{{ caption(img) }}</div>
       </div>
     </div>
+    <div class="album-more" *ngIf="totalCount() > 6" (click)="openLightbox(0)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      {{ i18n.t('album_view_all') }}
+    </div>
+
+    <ng-template #noAlbum>
+      <p style="text-align:center;font-family:var(--sans);font-size:13px;color:#8a9e92;padding:2rem 0">{{ i18n.t('album_empty') }}</p>
+    </ng-template>
   </div>
 
   <div class="lightbox" [class.open]="currentIndex !== null" (click)="closeLightbox()">
@@ -20,8 +29,12 @@
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
     </div>
     <div class="lb-frame" (click)="$event.stopPropagation()">
-      <div class="lb-img" [style.background]="currentIndex !== null ? photoGrads[currentIndex] : ''"></div>
-      <div class="pol-cap" style="margin-top:0.75rem;text-align:center">{{ currentIndex !== null ? i18n.tArr('album_caps')[currentIndex] : '' }}</div>
+      <div class="lb-img" *ngIf="currentIndex !== null">
+        <img [src]="albumImages()[currentIndex].url" alt="" />
+      </div>
+      <div class="pol-cap" style="margin-top:0.75rem;text-align:center" *ngIf="currentIndex !== null">
+        {{ caption(albumImages()[currentIndex]) }}
+      </div>
     </div>
     <div class="lb-nav next" (click)="next(); $event.stopPropagation()">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>

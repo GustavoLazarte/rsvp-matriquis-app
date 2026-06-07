@@ -12,5 +12,7 @@ export interface Invitation {
   status: InvitationStatus;
   sent_at: string | null;
   expires_at: string | null;
+  opened_count: number;
+  last_opened_at: string | null;
   created_at: string;
 }

@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { I18nService } from '../../../core/services/i18n.service';
 import { EventStateService } from '../../../core/services/event-state.service';
 import { SupabaseStorageService } from '../../../core/services/supabase-storage.service';
+import { EventImageService } from '../../../services/event-image.service';
 
 @Component({
   standalone: false,
@@ -13,6 +14,8 @@ export class UploadComponent {
   uploading = false;
   uploadSuccess = false;
   uploadError = '';
+
+  private eventImageService = inject(EventImageService);
 
   constructor(
     public i18n: I18nService,
@@ -50,7 +53,7 @@ export class UploadComponent {
 
     try {
       for (const file of files) {
-        await this.storage.upload(eventId, file);
+        await this.eventImageService.uploadAndCreate(eventId, file, 'gallery');
       }
       this.uploadSuccess = true;
     } catch (err: any) {

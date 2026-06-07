@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID, afterNextRender, inject } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, afterNextRender, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { EventStateService } from 'src/app/core/services/event-state.service';
@@ -12,30 +12,40 @@ import { InvitationService } from 'src/app/services/invitation.service';
   templateUrl: './invi.component.html',
   styleUrls: ['./invi.component.scss'],
 })
-export class InviComponent implements OnInit {
+export class InviComponent {
   inviId: string | null = null;
-  eventStateService = inject(EventStateService); 
+  eventStateService = inject(EventStateService);
   eventService = inject(EventService);
-  invitationStateServuce = inject(InvitationStateService);
+  invitationStateService = inject(InvitationStateService);
   invitationService = inject(InvitationService);
   private title = inject(Title);
+
   constructor(
     private route: ActivatedRoute,
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(PLATFORM_ID) private platformId: object,
   ) {
     this.inviId = this.route.snapshot.paramMap.get('inviId');
+    this.loadData();
     afterNextRender(() => {
       this.initRevealObserver();
     });
   }
 
-  async ngOnInit() {
-    if (this.inviId) {
+  private async loadData() {
+    if (!this.inviId) return;
+    try {
+      const { invitation, event } = await this.invitationService.loadByTokenWithEvent(this.inviId);
+      this.eventStateService.addEvent(event);
+      this.eventStateService.selectEvent(event.id);
+      if (event?.title) this.title.setTitle(`${event.title} — RSVP`);
+      this.invitationService.trackOpen(invitation.id);
+    } catch {
       const inv = await this.invitationService.loadByToken(this.inviId);
       await this.eventService.getById(inv?.event_id);
+      const ev = this.eventStateService.currentEvent();
+      if (ev?.title) this.title.setTitle(`${ev.title} — RSVP`);
+      this.invitationService.trackOpen(inv.id);
     }
-    const ev = this.eventStateService.currentEvent();
-    if (ev?.title) this.title.setTitle(`${ev.title} — RSVP`);
   }
 
   private initRevealObserver() {

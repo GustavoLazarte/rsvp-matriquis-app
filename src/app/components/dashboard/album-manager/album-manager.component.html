@@ -1,0 +1,72 @@
+<div class="dash-page-head">
+  <h1 class="dash-h1">Álbum del evento</h1>
+  <p class="dash-p">Sube y administra las fotos del álbum que se muestran en la invitación. Cada foto puede llevar un texto en español e inglés.</p>
+</div>
+
+<div class="dash-gallery-upload" (click)="fileInput.click()">
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.6"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+  <span>Subir fotos al álbum</span>
+  <input #fileInput type="file" accept="image/*" multiple style="display:none" (change)="addFiles.emit($event)" />
+</div>
+<span class="dash-img-status" *ngIf="uploading">Subiendo...</span>
+
+<div class="dash-album-list" *ngIf="albumImages.length > 0; else emptyAlbum">
+  <div class="dash-album-card" *ngFor="let img of albumImages; let i = index">
+    <div class="dash-album-card-num">{{ i + 1 }}</div>
+
+    <div class="dash-album-card-img">
+      <img [src]="img.url" alt="" />
+      <button class="dash-album-card-remove" (click)="removeImage.emit(img.id)" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="dash-album-card-body">
+      <div class="dash-album-card-header">
+        <div class="dash-album-card-actions">
+          <button class="dash-album-move" (click)="moveUp.emit(i)" [disabled]="i === 0" title="Subir">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+          </button>
+          <button class="dash-album-move" (click)="moveDown.emit(i)" [disabled]="i === albumImages.length - 1" title="Bajar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <ng-container *ngIf="editId !== img.id; else captionEdit">
+        <div class="dash-album-caption" (click)="startEdit(img)">
+          <span class="dash-album-caption-label">ES</span>
+          <span>{{ img.caption_es || 'Añadir texto en español' }}</span>
+        </div>
+        <div class="dash-album-caption" (click)="startEdit(img)">
+          <span class="dash-album-caption-label">EN</span>
+          <span>{{ img.caption_en || 'Add text in English' }}</span>
+        </div>
+        <button class="dash-album-edit-btn" (click)="startEdit(img)">Editar texto</button>
+      </ng-container>
+
+      <ng-template #captionEdit>
+        <div class="dash-album-edit-fields">
+          <div class="dash-album-edit-row">
+            <label class="dash-album-edit-label">ES</label>
+            <input class="dash-album-edit-input" [(ngModel)]="editCaptionEs" placeholder="Texto en español" />
+          </div>
+          <div class="dash-album-edit-row">
+            <label class="dash-album-edit-label">EN</label>
+            <input class="dash-album-edit-input" [(ngModel)]="editCaptionEn" placeholder="Text in English" />
+          </div>
+          <div class="dash-album-edit-btns">
+            <button class="dash-album-save-btn" (click)="saveEdit()" [disabled]="savingCaptionId === img.id">
+              {{ savingCaptionId === img.id ? 'Guardando...' : 'Guardar' }}
+            </button>
+            <button class="dash-album-cancel-btn" (click)="cancelEdit()">Cancelar</button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<ng-template #emptyAlbum>
+  <p class="dash-empty">No hay fotos en el álbum. Sube tu primera foto.</p>
+</ng-template>

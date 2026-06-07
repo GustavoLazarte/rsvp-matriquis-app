@@ -41,13 +41,31 @@
         (statusFilterChange)="statusFilter = $event">
       </app-guests>
 
-      <app-gallery
-        *ngIf="activeTab === 'gallery'"
-        [tempPhotos]="tempPhotos"
-        [eventSettings]="eventSettings()"
-        (fileSelected)="onFileSelected($event)"
-        (removePhoto)="removePhoto($event)">
-      </app-gallery>
+      <ng-container *ngIf="activeTab === 'gallery'">
+        <div class="dash-gallery-tabs">
+          <button class="dash-gallery-tab" [class.active]="gallerySubTab === 'album'" (click)="setGallerySubTab('album')">Álbum</button>
+          <button class="dash-gallery-tab" [class.active]="gallerySubTab === 'photos'" (click)="setGallerySubTab('photos')">Fotos generales</button>
+        </div>
+
+        <app-album-manager
+          *ngIf="gallerySubTab === 'album'"
+          [albumImages]="albumImages()"
+          [uploading]="uploadingAlbum"
+          [savingCaptionId]="savingCaptionId"
+          (addFiles)="onAlbumFilesSelected($event)"
+          (removeImage)="removeAlbumImage($event)"
+          (updateCaption)="updateAlbumCaption($event)"
+          (moveUp)="moveAlbumImage($event, 'up')"
+          (moveDown)="moveAlbumImage($event, 'down')">
+        </app-album-manager>
+
+        <app-general-photos
+          *ngIf="gallerySubTab === 'photos'"
+          [photos]="eventImages()"
+          (addFiles)="onGeneralFilesSelected($event)"
+          (removePhoto)="removeGeneralPhoto($event)">
+        </app-general-photos>
+      </ng-container>
 
       <app-settings
         *ngIf="activeTab === 'settings'"

@@ -10,9 +10,11 @@ export class SupabaseStorageService {
   async upload(
     eventId: string,
     file: File,
+    subfolder?: string,
   ): Promise<string> {
     const ext = file.name.split('.').pop() || 'jpg';
-    const path = `${eventId}/${crypto.randomUUID()}.${ext}`;
+    const folder = subfolder ? `${eventId}/${subfolder}` : eventId;
+    const path = `${folder}/${crypto.randomUUID()}.${ext}`;
 
     const { error } = await this.supabase.supabase.storage
       .from(this.bucket)

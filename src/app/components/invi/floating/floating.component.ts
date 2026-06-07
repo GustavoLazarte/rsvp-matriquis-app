@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnChanges, inject } from '@angular/core';
+import { Component, HostListener, Input, OnChanges, OnDestroy, signal, inject } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { I18nService } from '../../../core/services/i18n.service';
 import { Event } from 'src/app/core/models';
@@ -9,10 +9,11 @@ import { Event } from 'src/app/core/models';
   templateUrl: './floating.component.html',
   styleUrls: ['./floating.component.scss'],
 })
-export class FloatingComponent implements OnChanges {
+export class FloatingComponent implements OnChanges, OnDestroy {
   @Input() rsvpEvent: Event | null = null;
   hidden = true;
   playing = false;
+  blocked = signal(false);
   spotifyEmbedUrl: SafeResourceUrl | null = null;
   private audio: HTMLAudioElement | null = null;
   private sanitizer = inject(DomSanitizer);
@@ -21,11 +22,61 @@ export class FloatingComponent implements OnChanges {
 
   ngOnChanges() {
     this.buildEmbedUrl();
+    if (!this.isSpotify && this.musicUrl) {
+      this.tryAutoplay();
+    }
+  }
+
+  private tryAutoplay() {
+    if (!this.musicUrl) return;
+    const audio = new Audio(this.musicUrl);
+    audio.loop = true;
+    audio.play().then(() => {
+      this.audio = audio;
+      this.playing = true;
+    }).catch(() => {
+      this.blocked.set(true);
+    });
+  }
+
+  ngOnDestroy() {
+    this.stop();
   }
 
   @HostListener('window:scroll')
   onScroll() {
     this.hidden = window.scrollY < window.innerHeight * 0.9;
+  }
+
+  enableMusic() {
+    if (this.playing || !this.musicUrl) return;
+    if (this.isSpotify) {
+      this.playing = true;
+      return;
+    }
+    const audio = new Audio(this.musicUrl);
+    audio.loop = true;
+    audio.play().then(() => {
+      this.audio = audio;
+      this.playing = true;
+      this.blocked.set(false);
+    }).catch(() => {
+      this.blocked.set(true);
+    });
+  }
+
+  stop() {
+    if (!this.playing) return;
+    this.playing = false;
+    if (this.audio) {
+      this.audio.pause();
+      this.audio.currentTime = 0;
+      this.audio = null;
+    }
+  }
+
+  scrollToRsvp() {
+    document.getElementById('rsvp')?.scrollIntoView({ behavior: 'smooth' });
   }
 
   get isSpotify(): boolean {
@@ -42,30 +93,5 @@ export class FloatingComponent implements OnChanges {
     this.spotifyEmbedUrl = match
       ? this.sanitizer.bypassSecurityTrustResourceUrl(`https://open.spotify.com/embed/track/${match[1]}`)
       : null;
-  }
-
-  play() {
-    if (this.playing || !this.musicUrl) return;
-    this.playing = true;
-    if (!this.isSpotify) {
-      const audio = new Audio(this.musicUrl);
-      audio.loop = true;
-      audio.play().catch(() => {});
-      this.audio = audio;
-    }
-  }
-
-  stop() {
-    if (!this.playing) return;
-    this.playing = false;
-    if (this.audio) {
-      this.audio.pause();
-      this.audio.currentTime = 0;
-      this.audio = null;
-    }
-  }
-
-  scrollToRsvp() {
-    document.getElementById('rsvp')?.scrollIntoView({ behavior: 'smooth' });
   }
 }

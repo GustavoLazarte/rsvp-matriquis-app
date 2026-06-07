@@ -20,6 +20,7 @@ export class SettingsComponent implements OnInit {
   saving = false;
   uploadingLogo = false;
   uploadingAdress = false;
+  uploadingMusic = false;
 
   readonly events = this.eventState.events;
   readonly currentEvent = this.eventState.currentEvent;
@@ -115,6 +116,27 @@ export class SettingsComponent implements OnInit {
 
   removeAdressPhoto() {
     this.formData.adress_photo_url = null;
+  }
+
+  async uploadMusic(domEvent: any) {
+    const input = domEvent.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || !this.formData?.id) return;
+
+    this.uploadingMusic = true;
+    try {
+      const url = await this.storage.upload(this.formData.id, file);
+      this.formData.music_url = url;
+    } catch (err: any) {
+      alert('Error al subir el archivo de música: ' + (err?.message || ''));
+    } finally {
+      this.uploadingMusic = false;
+      input.value = '';
+    }
+  }
+
+  removeMusic() {
+    this.formData.music_url = null;
   }
 
   async saveSettings() {

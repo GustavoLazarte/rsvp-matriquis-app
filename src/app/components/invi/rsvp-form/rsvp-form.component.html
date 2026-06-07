@@ -32,7 +32,7 @@
 
           <div class="fg">
             <label class="fl">{{ i18n.t('rsvp_name') }}</label>
-            <input class="fi" name="name" type="text" [placeholder]="i18n.t('rsvp_name')" required />
+            <input class="fi" name="name" type="text" [placeholder]="i18n.t('rsvp_name')" [value]="guestName()" required />
           </div>
 
           <div class="fg">
@@ -44,7 +44,7 @@
           </div>
 
           <div *ngIf="attending==='yes'">
-            <div class="fg">
+            <div class="fg" *ngIf="plusOneAllowed">
               <div class="check-row" (click)="togglePlus()">
                 <div class="check-box" [class.on]="hasPlus()">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" [style.display]="hasPlus()?'block':'none'"><path d="M20 6L9 17l-5-5"/></svg>

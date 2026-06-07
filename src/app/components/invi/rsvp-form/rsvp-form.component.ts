@@ -14,11 +14,13 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
   @Input() rsvpEvent: AppEvent | null = null;
   @Input() inviId: string | null = null;
   attending: 'yes' | 'no' | null = null;
+  plusOneAllowed = false;
   hasPlus = signal(false);
   foods = signal<string[]>([]);
   submitted = false;
   submitting = false;
   invitationId = '';
+  guestName = signal('');
 
   countdown = signal({ days: '00', hours: '00', mins: '00', secs: '00' });
   private cdTimer: ReturnType<typeof setInterval> | null = null;
@@ -34,6 +36,8 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
     if (this.inviId) {
       const inv = await this.invitationService.loadByToken(this.inviId);
       this.invitationId = inv.id;
+      this.plusOneAllowed = inv.plus_one_allowed === 1;
+      this.guestName.set(inv.guest_name);
       await this.rsvpResponseService.loadByInvitation(inv.id);
       const existing = this.rsvpResponseService.state.responses().find(r => r.invitation_id === inv.id);
       if (existing) {
@@ -79,6 +83,7 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   togglePlus() {
+    if (!this.plusOneAllowed) return;
     this.hasPlus.update(v => !v);
   }
 

@@ -1,0 +1,104 @@
+.dash-page-head {
+  margin-bottom: 1rem;
+}
+.dash-h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 34px;
+  font-weight: 300;
+  color: #1A2E22;
+  margin: 0 0 0.375rem;
+}
+.dash-p {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: #5a7565;
+  margin: 0;
+}
+
+.dash-gallery-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  border: 1.5px dashed #B8D4BE;
+  border-radius: 12px;
+  background: #f7faf8;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #5a7565;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  margin-bottom: 1.5rem;
+}
+.dash-gallery-upload:hover {
+  border-color: #3A6B4A;
+  background: #edf4ef;
+  color: #3A6B4A;
+}
+
+.dash-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.25rem;
+}
+.dash-photo-card {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: default;
+  transition: transform 0.25s;
+}
+.dash-photo-card:hover {
+  transform: scale(1.02);
+}
+.dash-photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.dash-photo-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 2;
+}
+.dash-photo-card:hover .dash-photo-remove {
+  opacity: 1;
+}
+.dash-photo-remove:hover {
+  background: rgba(198,40,40,0.8);
+}
+.dash-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  transition: background 0.25s;
+  z-index: 1;
+}
+.dash-photo-card:hover .dash-photo-overlay {
+  background: rgba(0,0,0,0.08);
+}
+
+.dash-empty {
+  text-align: center;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  color: #8a9e92;
+  padding: 2rem;
+}

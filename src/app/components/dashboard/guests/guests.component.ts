@@ -119,6 +119,19 @@ export class GuestsComponent {
     navigator.clipboard.writeText(this.createdLink());
   }
 
+  getInvitationLink(inv: Invitation): string {
+    return `${window.location.origin}/invi/${inv.token}`;
+  }
+
+  copyInvitationLink(inv: Invitation) {
+    navigator.clipboard.writeText(this.getInvitationLink(inv));
+  }
+
+  async deleteInvitation(inv: Invitation) {
+    if (!confirm(`¿Eliminar invitación de "${inv.guest_name}"? Esta acción no se puede deshacer.`)) return;
+    await this.invitationService.remove(inv.id);
+  }
+
   getResponseStatus(response: RsvpResponse | undefined): 'yes' | 'no' | null {
     if (!response) return null;
     return response.attending === 'yes' ? 'yes' : 'no';
