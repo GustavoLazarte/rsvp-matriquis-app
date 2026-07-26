@@ -150,6 +150,65 @@ export class ExportService {
     }
   }
 
+  exportInvitationsCsv(
+    invitations: Invitation[],
+    responses: RsvpResponse[],
+    event: Event
+  ) {
+    if (invitations.length === 0) {
+      alert('No hay datos para exportar');
+      return;
+    }
+
+    const responseMap = new Map(responses.map(r => [r.invitation_id, r]));
+
+    const headers = ['#', 'Nombre', 'Email', 'Teléfono', 'Grupo', '+1', 'Estado', 'RSVP', 'Invitados', 'Notas / Mensaje', 'Respondió', 'Enlace'];
+
+    const rows = invitations.map((inv, idx) => {
+      const resp = responseMap.get(inv.id);
+      let rsvpText = 'Sin respuesta';
+      if (resp) {
+        if (resp.attending === 'yes') rsvpText = 'Asistirá';
+        else if (resp.attending === 'no') rsvpText = 'No asistirá';
+        else if (resp.attending === 'maybe') rsvpText = 'Tal vez';
+      }
+      const notes = [resp?.dietary_notes, resp?.message].filter(Boolean).join(' — ');
+      return [
+        String(idx + 1),
+        inv.guest_name || '',
+        inv.guest_email || '',
+        inv.guest_phone || '',
+        inv.group || '',
+        inv.plus_one_allowed ? 'Sí' : '',
+        this.statusLabels[inv.status] || inv.status,
+        rsvpText,
+        resp ? String(resp.guest_count) : '',
+        notes || '',
+        resp ? this.fmt(resp.responded_at) : '',
+        `${window.location.origin}/rsvp/${inv.token}`,
+      ];
+    });
+
+    const escape = (v: string) => {
+      if (v == null) return '';
+      const s = String(v);
+      if (s.includes(';') || s.includes('\n') || s.includes('"')) {
+        return '"' + s.replace(/"/g, '""') + '"';
+      }
+      return s;
+    };
+
+    const lines = [headers.join(';')].concat(rows.map(r => r.map(escape).join(';')));
+    const csv = '\uFEFF' + lines.join('\r\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `invitaciones_${(event.title || 'evento').replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
   private fmt(iso: string): string {
     const d = new Date(iso);
     return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
