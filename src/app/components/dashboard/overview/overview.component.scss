@@ -333,8 +333,28 @@
 }
 
 @media (max-width: 768px) {
-  .dash-stat-grid { grid-template-columns: 1fr 1fr; }
+  .dash-stat-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
   .dash-overview-cols { grid-template-columns: 1fr; }
-  .dash-welcome-card { flex-direction: column; text-align: center; gap: 1rem; }
+  .dash-welcome-card { flex-direction: column; text-align: center; gap: 1rem; padding: 1.25rem; }
   .dash-welcome-badge { margin-left: 0; }
+  .dash-welcome-info h2 { font-size: 22px; }
+  .dash-welcome-info p { font-size: 13px; }
+  .dash-progress-card, .dash-event-card, .dash-recent-card { padding: 1.25rem; }
+  .dash-h1 { font-size: 28px; }
+  .dash-stat-card { padding: 1rem 1.25rem; }
+  .dash-stat-val { font-size: 26px; }
+  .dash-stat-val--people { font-size: 30px; }
+  .dash-progress-head h3 { font-size: 12px; }
+  .dash-progress-labels { font-size: 11px; gap: 1rem; }
+  .dash-event-detail { font-size: 12px; }
+  .dash-event-label { min-width: 80px; font-size: 10px; }
+  .dash-recent-name { font-size: 12px; }
+  .dash-recent-meta { font-size: 10px; }
+  .dash-btn--small { font-size: 10px; padding: 0.5rem 0.875rem; }
+}
+@media (max-width: 380px) {
+  .dash-stat-grid { grid-template-columns: 1fr; }
+  .dash-stat-card { padding: 0.875rem 1rem; gap: 0.875rem; }
+  .dash-stat-icon { width: 40px; height: 40px; }
+  .dash-welcome-countdown { font-size: 36px; }
 }

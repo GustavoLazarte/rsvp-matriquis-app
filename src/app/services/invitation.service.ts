@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from '../core/services/supabase.service';
 import { InvitationStateService } from '../core/services/invitation-state.service';
+import { RsvpResponseService } from './rsvp-response.service';
 import type { Invitation, Event } from '../core/models';
 
 @Injectable({ providedIn: 'root' })
@@ -10,6 +11,7 @@ export class InvitationService {
   constructor(
     private supabase: SupabaseService,
     private invitationState: InvitationStateService,
+    private rsvpResponseService: RsvpResponseService,
   ) {}
 
   async loadByEvent(eventId: string): Promise<void> {
@@ -74,7 +76,17 @@ export class InvitationService {
     });
   }
 
+  async revoke(id: string): Promise<void> {
+    await this.update(id, { status: 'revoked' });
+  }
+
+  async restore(id: string): Promise<void> {
+    const hasResponse = this.rsvpResponseService.state.responses().some(r => r.invitation_id === id);
+    await this.update(id, { status: hasResponse ? 'responded' : 'pending' });
+  }
+
   async remove(id: string): Promise<void> {
+    await this.rsvpResponseService.removeByInvitationId(id);
     const { error } = await this.supabase.supabase
       .from('invitations')
       .delete()

@@ -273,3 +273,16 @@
   color: #8a9e92;
   padding: 2rem;
 }
+
+@media (max-width: 768px) {
+  .dash-h1 { font-size: 28px; }
+  .dash-album-card { flex-direction: column; }
+  .dash-album-card-img { width: 100%; height: 140px; }
+  .dash-album-card-header { flex-wrap: wrap; }
+  .dash-gallery-upload { padding: 1.5rem; margin-bottom: 0.75rem; }
+  .dash-album-edit-input { max-width: 100%; }
+}
+@media (max-width: 380px) {
+  .dash-album-card-num { width: 18px; height: 18px; font-size: 10px; top: -4px; left: -4px; }
+  .dash-album-card-img { height: 120px; }
+}

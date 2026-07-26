@@ -49,11 +49,17 @@ export class FloatingComponent implements OnChanges, OnDestroy {
   }
 
   enableMusic() {
-    if (this.playing || !this.musicUrl) return;
     if (this.isSpotify) {
-      this.playing = true;
+      this.playing = !this.playing;
       return;
     }
+    if (this.audio && !this.playing) {
+      this.audio.play().then(() => {
+        this.playing = true;
+      });
+      return;
+    }
+    if (this.playing || !this.musicUrl) return;
     const audio = new Audio(this.musicUrl);
     audio.loop = true;
     audio.play().then(() => {
@@ -66,12 +72,11 @@ export class FloatingComponent implements OnChanges, OnDestroy {
   }
 
   stop() {
-    if (!this.playing) return;
+    if (!this.playing || this.isSpotify) return;
     this.playing = false;
+    this.blocked.set(false);
     if (this.audio) {
       this.audio.pause();
-      this.audio.currentTime = 0;
-      this.audio = null;
     }
   }
 

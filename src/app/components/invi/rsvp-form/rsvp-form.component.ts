@@ -21,6 +21,7 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
   submitting = false;
   invitationId = '';
   guestName = signal('');
+  isRevoked = false;
 
   countdown = signal({ days: '00', hours: '00', mins: '00', secs: '00' });
   private cdTimer: ReturnType<typeof setInterval> | null = null;
@@ -35,6 +36,10 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
     this.startCountdown();
     if (this.inviId) {
       const inv = await this.invitationService.loadByToken(this.inviId);
+      if (inv.status === 'revoked') {
+        this.isRevoked = true;
+        return;
+      }
       this.invitationId = inv.id;
       this.plusOneAllowed = inv.plus_one_allowed === 1;
       this.guestName.set(inv.guest_name);

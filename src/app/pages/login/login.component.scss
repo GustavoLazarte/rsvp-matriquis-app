@@ -121,3 +121,9 @@
 .loading {
   animation: loadPulse 0.9s ease-in-out infinite;
 }
+
+@media (max-width: 400px) {
+  .login-card { padding: 2rem 1.5rem; }
+  .login-mono { font-size: 40px; }
+  .login-title { font-size: 20px; margin-bottom: 1.5rem; }
+}

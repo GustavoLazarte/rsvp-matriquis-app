@@ -33,6 +33,10 @@ export class RsvpResponseStateService {
     this._responses.update(list => list.filter(r => r.id !== id));
   }
 
+  removeByInvitationId(invitationId: string): void {
+    this._responses.update(list => list.filter(r => r.invitation_id !== invitationId));
+  }
+
   reset(): void {
     this._responses.set([]);
   }

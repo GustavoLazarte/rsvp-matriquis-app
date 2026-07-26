@@ -32,6 +32,15 @@ export class RsvpResponseService {
     if (data) this.responseState.setResponses(data as RsvpResponse[]);
   }
 
+  async removeByInvitationId(invitationId: string): Promise<void> {
+    const { error } = await this.supabase.supabase
+      .from('rsvp_responses')
+      .delete()
+      .eq('invitation_id', invitationId);
+    if (error) throw error;
+    this.responseState.removeByInvitationId(invitationId);
+  }
+
   async submit(input: Partial<RsvpResponse>): Promise<RsvpResponse | null> {
     const { data, error } = await this.supabase.supabase
       .from('rsvp_responses')

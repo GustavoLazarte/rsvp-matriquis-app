@@ -1,0 +1,14 @@
+1ra fase
+TO DO:
+- revisar por que pausea el proyecto?
+- buscar dominio y costos moniyjose.com
+- agregas mas user y explicar la jerarquia de permisos en el dashboard
+- esperar correcciones
+
+ETA : hasta el jueves
+
+2da fase
+- Pruebas con usuario con versionado de la app
+
+ETA : hasta el domingo
+6

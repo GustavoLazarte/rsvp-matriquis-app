@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
-import type { Invitation, RsvpResponse } from '../../../core/models';
+import type { Invitation, RsvpResponse, Event } from '../../../core/models';
 import { InvitationService } from '../../../services/invitation.service';
+import { ExportService } from '../../../services/export.service';
 
 @Component({
   standalone: false,
@@ -10,16 +11,17 @@ import { InvitationService } from '../../../services/invitation.service';
 })
 export class GuestsComponent {
   private invitationService = inject(InvitationService);
+  private exportService = inject(ExportService);
 
   @Input() invitations: Invitation[] = [];
   @Input() responses: RsvpResponse[] = [];
   @Input() searchQuery = '';
-  @Input() statusFilter: 'all' | 'yes' | 'no' | 'pending' = 'all';
+  @Input() statusFilter: 'all' | 'yes' | 'no' | 'pending' | 'revoked' = 'all';
   @Input() eventId = '';
   @Input() eventSettings: any = {};
 
   @Output() searchQueryChange = new EventEmitter<string>();
-  @Output() statusFilterChange = new EventEmitter<'all' | 'yes' | 'no' | 'pending'>();
+  @Output() statusFilterChange = new EventEmitter<'all' | 'yes' | 'no' | 'pending' | 'revoked'>();
 
   readonly showModal = signal(false);
   readonly creating = signal(false);
@@ -31,11 +33,13 @@ export class GuestsComponent {
   readonly formPlusOne = signal(false);
 
   get stats() {
-    const total = this.invitations.length;
-    const confirmed = this.responses.filter(r => r.attending === 'yes').length;
-    const declined = this.responses.filter(r => r.attending === 'no').length;
+    const active = this.invitations.filter(i => i.status !== 'revoked');
+    const total = active.length;
+    const confirmed = this.responses.filter(r => r.attending === 'yes' && active.some(i => i.id === r.invitation_id)).length;
+    const declined = this.responses.filter(r => r.attending === 'no' && active.some(i => i.id === r.invitation_id)).length;
+    const revoked = this.invitations.filter(i => i.status === 'revoked').length;
     const pending = total - confirmed - declined;
-    return { total, confirmed, declined, pending };
+    return { total, confirmed, declined, pending, revoked };
   }
 
   get filteredGuests(): Array<{
@@ -58,12 +62,13 @@ export class GuestsComponent {
 
     if (this.statusFilter === 'yes') list = list.filter(({ response }) => response?.attending === 'yes');
     else if (this.statusFilter === 'no') list = list.filter(({ response }) => response?.attending === 'no');
-    else if (this.statusFilter === 'pending') list = list.filter(({ response }) => !response);
+    else if (this.statusFilter === 'pending') list = list.filter(({ response, invitation }) => !response && invitation.status !== 'revoked');
+    else if (this.statusFilter === 'revoked') list = list.filter(({ invitation }) => invitation.status === 'revoked');
 
     return list;
   }
 
-  setStatusFilter(filter: 'all' | 'yes' | 'no' | 'pending') {
+  setStatusFilter(filter: 'all' | 'yes' | 'no' | 'pending' | 'revoked') {
     this.statusFilter = filter;
     this.statusFilterChange.emit(filter);
   }
@@ -127,13 +132,26 @@ export class GuestsComponent {
     navigator.clipboard.writeText(this.getInvitationLink(inv));
   }
 
+  async revokeInvitation(inv: Invitation) {
+    if (!confirm(`¿Revocar invitación de "${inv.guest_name}"? Esta acción puede deshacerse después.`)) return;
+    await this.invitationService.revoke(inv.id);
+  }
+
+  async restoreInvitation(inv: Invitation) {
+    await this.invitationService.restore(inv.id);
+  }
+
   async deleteInvitation(inv: Invitation) {
-    if (!confirm(`¿Eliminar invitación de "${inv.guest_name}"? Esta acción no se puede deshacer.`)) return;
+    if (!confirm(`¿Eliminar permanentemente la invitación de "${inv.guest_name}"? Esta acción no se puede deshacer.`)) return;
     await this.invitationService.remove(inv.id);
   }
 
   getResponseStatus(response: RsvpResponse | undefined): 'yes' | 'no' | null {
     if (!response) return null;
     return response.attending === 'yes' ? 'yes' : 'no';
+  }
+
+  exportCsv() {
+    this.exportService.exportInvitations(this.invitations, this.responses, this.eventSettings);
   }
 }

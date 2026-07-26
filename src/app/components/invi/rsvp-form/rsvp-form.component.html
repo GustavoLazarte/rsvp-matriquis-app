@@ -5,6 +5,18 @@
     <div class="rule reveal rd2"></div>
 
     <div class="rsvp-form-container">
+      <ng-container *ngIf="isRevoked; else notRevoked">
+        <div class="rsvp-ok">
+          <div style="margin-bottom:1.5rem;color:#999">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          </div>
+          <div class="rsvp-ok-title" style="color:#888">{{ i18n.current === 'es' ? 'Invitación no disponible' : 'Invitation unavailable' }}</div>
+          <p class="rsvp-ok-body">{{ i18n.current === 'es' ? 'Esta invitación ya no se encuentra activa. Si crees que es un error, contacta al organizador.' : 'This invitation is no longer active. If you think this is a mistake, please contact the organizer.' }}</p>
+        </div>
+      </ng-container>
+
+      <ng-template #notRevoked>
+
       <div class="rsvp-deadline reveal">{{ dateFormat }}</div>
 
       <div class="cd-grid reveal rd1">
@@ -80,6 +92,8 @@
           <p class="rsvp-ok-body">{{ attending === 'yes' ? i18n.t('rsvp_ok_yes') : i18n.t('rsvp_ok_no') }}</p>
           <div style="font-family:var(--serif);font-size:22px;font-weight:300;color:var(--forest);margin-top:2.5rem">— {{ rsvpEvent?.title }}</div>
         </div>
+      </ng-template>
+
       </ng-template>
     </div>
   </div>

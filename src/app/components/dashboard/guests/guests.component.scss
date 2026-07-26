@@ -241,6 +241,24 @@
   background: #FFF3cd;
   color: #856404;
 }
+.status-revoked {
+  background: #E8E8E8;
+  color: #666;
+}
+.status-revoked svg {
+  color: #999;
+}
+
+.dash-action-btn--restore {
+  color: #3A6B4A;
+  border-color: #D4E8DC;
+  background: #F0F5F2;
+}
+.dash-action-btn--restore:hover {
+  background: #3A6B4A;
+  border-color: #3A6B4A;
+  color: #fff;
+}
 
 .dash-action-row {
   display: flex;
@@ -474,6 +492,19 @@
 
 @media (max-width: 768px) {
   .dash-toolbar { flex-direction: column; align-items: stretch; }
+  .dash-search-wrap { min-width: 0; }
   .dash-modal { padding: 1.5rem; }
   .dash-modal-row { flex-direction: column; gap: 0; }
+  .dash-h1 { font-size: 28px; }
+  .dash-table th, .dash-table td { padding: 0.75rem 0.875rem; font-size: 12px; }
+  .dash-table th { font-size: 10px; letter-spacing: 0.04em; }
+  .dash-action-btn { width: 30px; height: 30px; opacity: 1; }
+  .dash-status { font-size: 10px; padding: 0.2rem 0.625rem; }
+  .dash-modal-title { font-size: 20px; }
+  .dash-modal-desc { font-size: 13px; }
+}
+@media (max-width: 380px) {
+  .dash-chip { padding: 0.3rem 0.625rem; font-size: 11px; }
+  .dash-table td, .dash-table th { padding: 0.625rem 0.625rem; }
+  .dash-link-url { font-size: 11px; }
 }

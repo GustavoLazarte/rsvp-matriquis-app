@@ -277,5 +277,15 @@
 @media (max-width: 768px) {
   .dash-settings-grid { grid-template-columns: 1fr; }
   .dash-img-grid { grid-template-columns: 1fr; }
-  .dash-settings { padding: 1.5rem; }
+  .dash-settings { padding: 1.25rem; }
+  .dash-h1 { font-size: 28px; }
+  .dash-settings-section { margin-bottom: 1.75rem; padding-bottom: 1.75rem; }
+  .dash-music-row { flex-wrap: wrap; }
+  .dash-music-upload { font-size: 11px; padding: 0.4rem 0.75rem; }
+  .dash-img-upload { height: 130px; font-size: 12px; }
+  .dash-img-preview { height: 130px; }
+}
+@media (max-width: 380px) {
+  .dash-settings { padding: 1rem; border-radius: 10px; }
+  .dash-time-group { flex-wrap: wrap; }
 }

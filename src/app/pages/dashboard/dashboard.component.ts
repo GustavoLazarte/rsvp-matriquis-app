@@ -51,7 +51,7 @@ export class DashboardComponent implements OnInit {
   private title = inject(Title);
   
   searchQuery = '';
-  statusFilter: 'all' | 'yes' | 'no' | 'pending' = 'all';
+  statusFilter: 'all' | 'yes' | 'no' | 'pending' | 'revoked' = 'all';
 
   readonly invitations = this.invitationState.invitations;
   readonly responses = this.rsvpResponseState.responses;
@@ -121,14 +121,16 @@ export class DashboardComponent implements OnInit {
   }
 
   get stats() {
-    const total = this.invitations().length;
+    const active = this.invitations().filter(i => i.status !== 'revoked');
+    const total = active.length;
     const responded = this.responses();
-    const confirmed = responded.filter(r => r.attending === 'yes').length;
-    const declined = responded.filter(r => r.attending === 'no').length;
+    const confirmed = responded.filter(r => r.attending === 'yes' && active.some(i => i.id === r.invitation_id)).length;
+    const declined = responded.filter(r => r.attending === 'no' && active.some(i => i.id === r.invitation_id)).length;
     const pending = total - confirmed - declined;
     const confirmedPct = total ? Math.round(((confirmed + declined) / total) * 100) : 0;
-    const totalGuests = responded.filter(r => r.attending === 'yes').reduce((acc, r) => acc + r.guest_count, 0);
-    return { total, confirmed, declined, pending, confirmedPct, totalGuests };
+    const totalGuests = responded.filter(r => r.attending === 'yes' && active.some(i => i.id === r.invitation_id)).reduce((acc, r) => acc + r.guest_count, 0);
+    const revoked = this.invitations().filter(i => i.status === 'revoked').length;
+    return { total, confirmed, declined, pending, confirmedPct, totalGuests, revoked };
   }
 
   get userEmailDisplay(): string {

@@ -76,3 +76,11 @@
   background: rgba(184,212,190,0.15); color: #7a9180;
 }
 .es-card-status.active { background: rgba(58,107,74,0.12); color: var(--forest); }
+
+@media (max-width: 400px) {
+  .es-modal { padding: 2rem 1.25rem; border-radius: 20px; }
+  .es-title { font-size: 20px; }
+  .es-sub { font-size: 12px; }
+  .es-card-content { padding: 1.25rem; }
+  .es-card-title { font-size: 18px; }
+}

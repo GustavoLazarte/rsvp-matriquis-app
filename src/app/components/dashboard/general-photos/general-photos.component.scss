@@ -102,3 +102,12 @@
   color: #8a9e92;
   padding: 2rem;
 }
+
+@media (max-width: 768px) {
+  .dash-h1 { font-size: 28px; }
+  .dash-photos { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.75rem; }
+  .dash-gallery-upload { padding: 1.5rem; }
+}
+@media (max-width: 380px) {
+  .dash-photos { grid-template-columns: repeat(2, 1fr); gap: 0.625rem; }
+}
