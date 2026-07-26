@@ -1,7 +1,7 @@
 <div class="grain"></div>
 
 <app-invi-ticker [rsvpEvent]="eventStateService.currentEvent()"></app-invi-ticker>
-<app-invi-hero [rsvpEvent]="eventStateService.currentEvent()"></app-invi-hero>
+<app-invi-hero [rsvpEvent]="eventStateService.currentEvent()" [isRsvpLocked]="invitationStatus === 'responded' || rsvpSubmitted"></app-invi-hero>
 <app-invi-story [rsvpEvent]="eventStateService.currentEvent()"></app-invi-story>
 <app-invi-album [rsvpEvent]="eventStateService.currentEvent()"></app-invi-album>
 <app-invi-timeline [rsvpEvent]="eventStateService.currentEvent()"></app-invi-timeline>
@@ -10,6 +10,6 @@
 <app-invi-dresscode [rsvpEvent]="eventStateService.currentEvent()"></app-invi-dresscode>
 <app-invi-gifts [rsvpEvent]="eventStateService.currentEvent()"></app-invi-gifts>
 <app-invi-upload [rsvpEvent]="eventStateService.currentEvent()"></app-invi-upload>
-<app-invi-rsvp-form [rsvpEvent]="eventStateService.currentEvent()" [inviId]="inviId"></app-invi-rsvp-form>
+<app-invi-rsvp-form [rsvpEvent]="eventStateService.currentEvent()" [inviId]="token" (rsvpConfirmed)="onRsvpConfirmed()"></app-invi-rsvp-form>
 <app-invi-footer [rsvpEvent]="eventStateService.currentEvent()"></app-invi-footer>
-<app-invi-floating [rsvpEvent]="eventStateService.currentEvent()"></app-invi-floating>
+<app-invi-floating [rsvpEvent]="eventStateService.currentEvent()" [rsvpSubmitted]="rsvpSubmitted"></app-invi-floating>

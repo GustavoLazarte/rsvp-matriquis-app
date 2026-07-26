@@ -12,6 +12,7 @@ export const T: Record<Lang, Record<string, any>> = {
     hero_location: 'Cochabamba, Bolivia',
     hero_cta: 'Descubrir',
     hero_sub: 'Después de tantas historias, viajes y risas compartidas,\narriba el día de empezar lo mejor.',
+    hero_already_confirmed: 'Tu presencia ya está confirmada',
     story_label: 'Nuestra Historia',
     story_title: 'Dos caminos,\nuna sola vida.',
     story_body: 'Lo que empezó como una mirada se convirtió en una conversación, luego en una amistad, luego en amor. Hoy, después de años de aventuras compartidas, sunsets fotografiados y risas que no caben en ninguna foto, elegimos celebrar con las personas que más amamos.',
@@ -81,6 +82,7 @@ export const T: Record<Lang, Record<string, any>> = {
     footer_close: 'Gracias por ser parte de nuestra historia.',
     footer_date: '13 · 09 · 2026', footer_loc: 'Cochabamba · Bolivia',
     music_blocked: 'Toca para activar la música',
+    music_hint: 'Doble clic para pausar la música',
   },
   en: {
     ticker_date_helper : "TH ",
@@ -91,6 +93,7 @@ export const T: Record<Lang, Record<string, any>> = {
     hero_location: 'Cochabamba, Bolivia',
     hero_cta: 'Discover',
     hero_sub: 'After so many stories, trips and laughs shared,\nthe day to begin the best part is finally here.',
+    hero_already_confirmed: 'Your presence is already confirmed',
     story_label: 'Our Story',
     story_title: 'Two paths,\none life.',
     story_body: 'What began as a glance became a conversation, then a friendship, then love. Today, after years of shared adventures, photographed sunsets and laughter that no photo can contain, we choose to celebrate with the people we love most.',
@@ -160,6 +163,7 @@ export const T: Record<Lang, Record<string, any>> = {
     footer_close: 'Thank you for being part of our story.',
     footer_date: '13 · 09 · 2026', footer_loc: 'Cochabamba · Bolivia',
     music_blocked: 'Tap to enable music',
+    music_hint: 'Double-click to pause the music',
   },
 };
 

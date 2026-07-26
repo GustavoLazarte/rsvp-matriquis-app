@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnChanges, OnDestroy, signal, inject } from '@angular/core';
+import { Component, HostListener, Input, OnChanges, OnDestroy, AfterViewInit, signal, inject, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { I18nService } from '../../../core/services/i18n.service';
 import { Event } from 'src/app/core/models';
@@ -9,16 +9,19 @@ import { Event } from 'src/app/core/models';
   templateUrl: './floating.component.html',
   styleUrls: ['./floating.component.scss'],
 })
-export class FloatingComponent implements OnChanges, OnDestroy {
+export class FloatingComponent implements OnChanges, OnDestroy, AfterViewInit {
   @Input() rsvpEvent: Event | null = null;
+  @Input() rsvpSubmitted = false;
   hidden = true;
   playing = false;
   blocked = signal(false);
   spotifyEmbedUrl: SafeResourceUrl | null = null;
   private audio: HTMLAudioElement | null = null;
   private sanitizer = inject(DomSanitizer);
+  private pollTimer: ReturnType<typeof setInterval> | null = null;
+  private rsvpDone = false;
 
-  constructor(public i18n: I18nService) {}
+  constructor(public i18n: I18nService, private cdr: ChangeDetectorRef) {}
 
   ngOnChanges() {
     this.buildEmbedUrl();
@@ -27,20 +30,33 @@ export class FloatingComponent implements OnChanges, OnDestroy {
     }
   }
 
-  private tryAutoplay() {
-    if (!this.musicUrl) return;
-    const audio = new Audio(this.musicUrl);
-    audio.loop = true;
-    audio.play().then(() => {
-      this.audio = audio;
-      this.playing = true;
-    }).catch(() => {
-      this.blocked.set(true);
-    });
+  ngAfterViewInit() {
+    this.pollTimer = setInterval(() => {
+      if (this.rsvpDone) return;
+      const el = document.getElementById('rsvp');
+      if (el && el.querySelector('.rsvp-ok')) {
+        this.rsvpDone = true;
+        this.cdr.detectChanges();
+        if (this.pollTimer) clearInterval(this.pollTimer);
+      }
+    }, 500);
   }
 
   ngOnDestroy() {
-    this.stop();
+    if (this.audio) this.audio.pause();
+    if (this.pollTimer) clearInterval(this.pollTimer);
+  }
+
+  get hideRsvpButton(): boolean {
+    return this.rsvpSubmitted || this.rsvpDone || this.isRsvpSectionVisible();
+  }
+
+  private isRsvpSectionVisible(): boolean {
+    if (typeof document === 'undefined') return false;
+    const el = document.getElementById('rsvp');
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.top < window.innerHeight && rect.bottom > 0;
   }
 
   @HostListener('window:scroll')
@@ -49,17 +65,11 @@ export class FloatingComponent implements OnChanges, OnDestroy {
   }
 
   enableMusic() {
-    if (this.isSpotify) {
-      this.playing = !this.playing;
-      return;
-    }
-    if (this.audio && !this.playing) {
-      this.audio.play().then(() => {
-        this.playing = true;
-      });
-      return;
-    }
     if (this.playing || !this.musicUrl) return;
+    if (this.isSpotify) {
+      this.playing = true;
+      return;
+    }
     const audio = new Audio(this.musicUrl);
     audio.loop = true;
     audio.play().then(() => {
@@ -68,13 +78,13 @@ export class FloatingComponent implements OnChanges, OnDestroy {
       this.blocked.set(false);
     }).catch(() => {
       this.blocked.set(true);
+      setTimeout(() => this.blocked.set(false), 3000);
     });
   }
 
-  stop() {
+  pause() {
     if (!this.playing || this.isSpotify) return;
     this.playing = false;
-    this.blocked.set(false);
     if (this.audio) {
       this.audio.pause();
     }
@@ -90,6 +100,19 @@ export class FloatingComponent implements OnChanges, OnDestroy {
 
   get musicUrl(): string {
     return this.rsvpEvent?.music_url || '';
+  }
+
+  private tryAutoplay() {
+    if (!this.musicUrl) return;
+    const audio = new Audio(this.musicUrl);
+    audio.loop = true;
+    audio.play().then(() => {
+      this.audio = audio;
+      this.playing = true;
+    }).catch(() => {
+      this.blocked.set(true);
+      setTimeout(() => this.blocked.set(false), 3000);
+    });
   }
 
   private buildEmbedUrl() {

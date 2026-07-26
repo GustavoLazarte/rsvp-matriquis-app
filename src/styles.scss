@@ -424,7 +424,7 @@ select.fi {
   @media (min-width: 768px) { grid-template-columns: 1fr 1fr; }
   @media (min-width: 1100px) { grid-template-columns: 1.5fr 1fr 1fr; }
 }
-.log-card { background: var(--ow); border: 1px solid var(--mist); padding: 2rem; }
+.log-card { background: var(--ow); border: 1px solid var(--mist); padding: 2rem; position: relative; }
 .log-card-ey { font-family: var(--sans); font-size: 9px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--forest); margin-bottom: 0.875rem; display: flex; align-items: center; gap: 0.375rem; }
 .log-card-ey.no-ls { letter-spacing: 0; }
 .log-card-title { font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--ink); margin-bottom: 0.625rem; }

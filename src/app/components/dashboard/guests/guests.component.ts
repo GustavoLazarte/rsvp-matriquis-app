@@ -107,11 +107,11 @@ export class GuestsComponent {
         guest_phone: this.formPhone().trim() || null,
         group: this.formGroup().trim() || null,
         plus_one_allowed: this.formPlusOne() ? 1 : 0,
-        token: crypto.randomUUID(),
+        token: this.generateToken(),
         status: 'pending',
       });
       if (created) {
-        this.createdLink.set(`${window.location.origin}/invi/${created.token}`);
+        this.createdLink.set(`${this.getBaseUrl()}/rsvp/${created.token}`);
       }
     } catch {
       alert('Error al crear la invitación');
@@ -124,8 +124,13 @@ export class GuestsComponent {
     navigator.clipboard.writeText(this.createdLink());
   }
 
+  private getBaseUrl(): string {
+    const host = window.location.host.replace(/^www\./i, '');
+    return `${window.location.protocol}//${host}`;
+  }
+
   getInvitationLink(inv: Invitation): string {
-    return `${window.location.origin}/invi/${inv.token}`;
+    return `${this.getBaseUrl()}/rsvp/${inv.token}`;
   }
 
   copyInvitationLink(inv: Invitation) {
@@ -153,5 +158,16 @@ export class GuestsComponent {
 
   exportCsv() {
     this.exportService.exportInvitations(this.invitations, this.responses, this.eventSettings);
+  }
+
+  private generateToken(): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+    let token = '';
+    const arr = new Uint8Array(8);
+    crypto.getRandomValues(arr);
+    for (let i = 0; i < 8; i++) {
+      token += chars[arr[i] % chars.length];
+    }
+    return token;
   }
 }

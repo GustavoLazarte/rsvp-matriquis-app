@@ -121,7 +121,8 @@ export class DashboardComponent implements OnInit {
   }
 
   get stats() {
-    const active = this.invitations().filter(i => i.status !== 'revoked');
+    const all = this.invitations();
+    const active = all.filter(i => i.status !== 'revoked');
     const total = active.length;
     const responded = this.responses();
     const confirmed = responded.filter(r => r.attending === 'yes' && active.some(i => i.id === r.invitation_id)).length;
@@ -129,8 +130,9 @@ export class DashboardComponent implements OnInit {
     const pending = total - confirmed - declined;
     const confirmedPct = total ? Math.round(((confirmed + declined) / total) * 100) : 0;
     const totalGuests = responded.filter(r => r.attending === 'yes' && active.some(i => i.id === r.invitation_id)).reduce((acc, r) => acc + r.guest_count, 0);
-    const revoked = this.invitations().filter(i => i.status === 'revoked').length;
-    return { total, confirmed, declined, pending, confirmedPct, totalGuests, revoked };
+    const revoked = all.filter(i => i.status === 'revoked').length;
+    const sent = all.length;
+    return { total, confirmed, declined, pending, confirmedPct, totalGuests, revoked, sent };
   }
 
   get userEmailDisplay(): string {

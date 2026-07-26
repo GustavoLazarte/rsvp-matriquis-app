@@ -20,7 +20,7 @@ const routes: Routes = [
       import('./pages/dashboard/dashboard.module').then((m) => m.DashboardModule),
   },
   {
-    path: 'invi/:inviId',
+    path: 'rsvp/:token',
     loadChildren: () => import('./pages/invi/invi.module').then((m) => m.InviModule),
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' },

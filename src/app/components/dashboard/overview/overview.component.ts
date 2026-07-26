@@ -16,6 +16,8 @@ interface Stats {
   pending: number;
   confirmedPct: number;
   totalGuests: number;
+  sent: number;
+  revoked: number;
 }
 
 @Component({

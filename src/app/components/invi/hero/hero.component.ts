@@ -10,6 +10,7 @@ import { Event } from 'src/app/core/models';
 })
 export class HeroComponent {
   @Input() rsvpEvent : Event | null = null;
+  @Input() isRsvpLocked = false;
   constructor(public i18n: I18nService) {}
 
   get nameParts(): [string, string] {

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, signal } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, signal, Output, EventEmitter } from '@angular/core';
 import { I18nService } from '../../../core/services/i18n.service';
 import { Event as AppEvent, RsvpResponse } from 'src/app/core/models';
 import { RsvpResponseService } from 'src/app/services/rsvp-response.service';
@@ -13,6 +13,7 @@ import { InvitationService } from 'src/app/services/invitation.service';
 export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
   @Input() rsvpEvent: AppEvent | null = null;
   @Input() inviId: string | null = null;
+  @Output() rsvpConfirmed = new EventEmitter<void>();
   attending: 'yes' | 'no' | null = null;
   plusOneAllowed = false;
   hasPlus = signal(false);
@@ -48,6 +49,7 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
       if (existing) {
         this.submitted = true;
         this.attending = existing.attending as 'yes' | 'no';
+        this.rsvpConfirmed.emit();
       }
     }
   }
@@ -125,6 +127,7 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
 
     this.submitted = true;
     this.submitting = false;
+    this.rsvpConfirmed.emit();
     this.confetti();
   }
 

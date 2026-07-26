@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as XLSX from 'xlsx';
 import type { Invitation, RsvpResponse, Event } from '../core/models';
 
 @Injectable({ providedIn: 'root' })
@@ -12,15 +13,6 @@ export class ExportService {
     revoked: 'Revocada',
   };
 
-  private attendanceLabels: Record<string, string> = {
-    yes: 'Asistirá',
-    no: 'No asistirá',
-    maybe: 'Tal vez',
-  };
-
-  private SEP = ';';
-  private NL = '\r\n';
-
   exportInvitations(
     invitations: Invitation[],
     responses: RsvpResponse[],
@@ -32,112 +24,134 @@ export class ExportService {
     }
 
     const responseMap = new Map(responses.map(r => [r.invitation_id, r]));
-    const lines: string[] = [];
-
-    const headers = [
-      'Nombre del invitado',
-      'Email',
-      'Teléfono',
-      'Grupo',
-      '+1 Permitido',
-      'Estado de invitación',
-      'Estado RSVP',
-      'Cantidad de invitados',
-      'Notas alimentarias',
-      'Mensaje',
-      'Enviado el',
-      'Expira el',
-      'Veces abierto',
-      'Última apertura',
-      'Respondió el',
-      'Creado el',
-      'Enlace',
-    ];
-    lines.push(headers.join(this.SEP));
-
-    for (const inv of invitations) {
-      const r = responseMap.get(inv.id);
-      const row = [
-        inv.guest_name,
-        inv.guest_email || '',
-        inv.guest_phone || '',
-        inv.group || '',
-        inv.plus_one_allowed ? 'Sí' : 'No',
-        this.statusLabels[inv.status] || inv.status,
-        r ? this.attendanceLabels[r.attending] || r.attending : 'Sin respuesta',
-        r ? String(r.guest_count) : '',
-        r?.dietary_notes || '',
-        r?.message || '',
-        inv.sent_at ? this.formatDate(inv.sent_at) : '',
-        inv.expires_at ? this.formatDate(inv.expires_at) : '',
-        String(inv.opened_count),
-        inv.last_opened_at ? this.formatDate(inv.last_opened_at) : '',
-        r ? this.formatDate(r.responded_at) : '',
-        this.formatDate(inv.created_at),
-        `${window.location.origin}/invi/${inv.token}`,
-      ];
-      lines.push(row.map(v => this.escapeField(v)).join(this.SEP));
-    }
-
-    lines.push('');
-    lines.push(this.buildSummary(invitations, responses));
-
-    const csvContent = lines.join(this.NL);
-    const filename = `invitaciones_${event.title.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.csv`;
-
-    this.download(csvContent, filename);
-  }
-
-  private buildSummary(invitations: Invitation[], responses: RsvpResponse[]): string {
     const active = invitations.filter(i => i.status !== 'revoked');
     const responded = responses.filter(r => active.some(i => i.id === r.invitation_id));
     const confirmed = responded.filter(r => r.attending === 'yes');
     const declined = responded.filter(r => r.attending === 'no');
-    const pending = active.length - confirmed.length - declined.length;
+    const maybe = responded.filter(r => r.attending === 'maybe');
+    const pending = active.length - confirmed.length - declined.length - maybe.length;
     const revoked = invitations.filter(i => i.status === 'revoked').length;
     const totalGuests = confirmed.reduce((acc, r) => acc + r.guest_count, 0);
-    const total = active.length;
-    const pct = total ? Math.round(((confirmed.length + declined.length) / total) * 100) : 0;
+    const responseRate = active.length ? Math.round(((confirmed.length + declined.length + maybe.length) / active.length) * 100) : 0;
 
-    const summaryHeaders = ['Concepto', 'Cantidad'];
-    const summaryRows = [
-      summaryHeaders.join(this.SEP),
-      this.escapeField('Total invitados activos') + this.SEP + total,
-      this.escapeField('Confirmados') + this.SEP + confirmed.length,
-      this.escapeField('Rechazados') + this.SEP + declined.length,
-      this.escapeField('Pendientes') + this.SEP + pending,
-      this.escapeField('Revocados') + this.SEP + revoked,
-      this.escapeField('Total personas asistentes') + this.SEP + totalGuests,
-      this.escapeField('Tasa de respuesta') + this.SEP + pct + '%',
+    const wb = XLSX.utils.book_new();
+
+    // Summary sheet (polished)
+    const summaryData = [
+      [],
+      ['REPORTE DE INVITACIONES'],
+      [event.title || ''],
+      [],
+      [`Fecha del evento: ${this.fmt(event.event_date)}`],
+      [`Lugar: ${event.location || '—'}`],
+      [`Generado: ${this.fmt(new Date().toISOString())}`],
+      [],
+      ['RESUMEN'],
+      ['Invitados activos', active.length],
+      ['Confirmados', confirmed.length],
+      ['Rechazados', declined.length],
+      ['Tal vez', maybe.length],
+      ['Pendientes', pending],
+      ['Revocados', revoked],
+      ['Total personas asistentes', totalGuests],
+      ['Tasa de respuesta', responseRate + '%'],
     ];
 
-    return summaryRows.join(this.NL);
-  }
+    const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+    // Merge title row across columns A..F for nice look
+    wsSummary['!merges'] = [{ s: { r: 1, c: 0 }, e: { r: 1, c: 5 } }];
+    // Basic styling (best-effort with community xlsx)
+    const titleCell = wsSummary[XLSX.utils.encode_cell({ r: 1, c: 0 })];
+    if (titleCell) (titleCell as any).s = { font: { name: 'Georgia', sz: 16, bold: true }, alignment: { horizontal: 'center' } };
 
-  private escapeField(value: string): string {
-    if (value.includes(this.SEP) || value.includes('"') || value.includes('\n') || value.includes('\r')) {
-      return `"${value.replace(/"/g, '""')}"`;
+    // Details sheet with attendees
+    const headers = ['#', 'Nombre', 'Email', 'Teléfono', 'Grupo', '+1', 'Estado', 'RSVP', 'Invitados', 'Notas / Mensaje', 'Respondió', 'Enlace'];
+    const dataRows = invitations.map((inv, idx) => {
+      const resp = responseMap.get(inv.id);
+      let rsvpText = 'Sin respuesta';
+      if (resp) {
+        if (resp.attending === 'yes') rsvpText = 'Asistirá';
+        else if (resp.attending === 'no') rsvpText = 'No asistirá';
+        else if (resp.attending === 'maybe') rsvpText = 'Tal vez';
+      }
+      const notes = [resp?.dietary_notes, resp?.message].filter(Boolean).join(' — ');
+      return [
+        idx + 1,
+        inv.guest_name,
+        inv.guest_email || '—',
+        inv.guest_phone || '—',
+        inv.group || '—',
+        inv.plus_one_allowed ? 'Sí' : '—',
+        this.statusLabels[inv.status] || inv.status,
+        rsvpText,
+        resp ? resp.guest_count : '—',
+        notes || '—',
+        resp ? this.fmt(resp.responded_at) : '—',
+        `${window.location.origin}/rsvp/${inv.token}`,
+      ];
+    });
+
+    const wsData = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
+
+    // Auto-width columns: compute max length per column
+    const colsCount = headers.length;
+    const colWidths: { wch: number }[] = new Array(colsCount).fill({ wch: 10 }).map(() => ({ wch: 10 }));
+    const allData = [headers, ...dataRows];
+    for (let c = 0; c < colsCount; c++) {
+      let max = 10;
+      for (let r = 0; r < allData.length; r++) {
+        const v = allData[r][c];
+        const len = v === null || v === undefined ? 0 : String(v).length;
+        if (len > max) max = len;
+      }
+      // cap width to reasonable value
+      colWidths[c] = { wch: Math.min(Math.max(max + 2, 10), 50) };
     }
-    return value;
+    wsData['!cols'] = colWidths;
+
+    // Header style
+    const headerRow = 0;
+    for (let c = 0; c < colsCount; c++) {
+      const cell = wsData[XLSX.utils.encode_cell({ r: headerRow, c })];
+      if (cell) {
+        (cell as any).s = { font: { bold: true, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: '3A6B4A' } }, alignment: { horizontal: 'center' } };
+      }
+    }
+
+    // Alternate row shading and wrap for notes column (column index 9)
+    const notesColIndex = 9;
+    for (let r = 1; r <= dataRows.length; r++) {
+      const shade = r % 2 === 1 ? 'F7FBF7' : 'FFFFFF';
+      for (let c = 0; c < colsCount; c++) {
+        const cellRef = XLSX.utils.encode_cell({ r, c });
+        const cell = wsData[cellRef];
+        if (!cell) continue;
+        const baseStyle: any = { alignment: { vertical: 'center', horizontal: c === 1 ? 'left' : 'center' } };
+        baseStyle.fill = { fgColor: { rgb: shade } };
+        // wrap text for notes
+        if (c === notesColIndex) baseStyle.alignment.wrapText = true;
+        // style link column (last column)
+        if (c === colsCount - 1) baseStyle.font = { color: { rgb: '0563BF' }, underline: true };
+        (cell as any).s = { ...(cell as any).s, ...baseStyle };
+      }
+    }
+
+    // Append sheets
+    XLSX.utils.book_append_sheet(wb, wsSummary, 'Resumen');
+    XLSX.utils.book_append_sheet(wb, wsData, 'Invitados');
+
+    const filename = `Reporte_${(event.title || 'evento').replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    // Ensure styles are written when possible
+    try {
+      XLSX.writeFile(wb, filename, { bookType: 'xlsx', bookSST: false, cellStyles: true });
+    } catch (e) {
+      // fallback
+      XLSX.writeFile(wb, filename);
+    }
   }
 
-  private formatDate(iso: string): string {
+  private fmt(iso: string): string {
     const d = new Date(iso);
-    const dd = String(d.getDate()).padStart(2, '0');
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const yyyy = d.getFullYear();
-    const hh = String(d.getHours()).padStart(2, '0');
-    const mi = String(d.getMinutes()).padStart(2, '0');
-    return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
-  }
-
-  private download(csvContent: string, filename: string) {
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(link.href);
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
   }
 }

@@ -20,7 +20,12 @@
       <span class="hero-name-primary">{{ nameParts[1] }}</span>
     </div>
     <div class="hero-sub">{{ rsvpEvent?.adress }}</div>
-    <button class="hero-cta" (click)="scrollToRsvp()">{{ i18n.t('nav_rsvp') }}</button>
+    <ng-container *ngIf="!isRsvpLocked; else alreadyConfirmed">
+      <button class="hero-cta" (click)="scrollToRsvp()">{{ i18n.t('nav_rsvp') }}</button>
+    </ng-container>
+    <ng-template #alreadyConfirmed>
+      <div class="hero-cta hero-cta--confirmed">{{ i18n.t('hero_already_confirmed') }}</div>
+    </ng-template>
   </div>
   <div class="hero-chevron" (click)="scrollToStory()">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg>

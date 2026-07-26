@@ -13,7 +13,9 @@ import { InvitationService } from 'src/app/services/invitation.service';
   styleUrls: ['./invi.component.scss'],
 })
 export class InviComponent {
-  inviId: string | null = null;
+  token: string | null = null;
+  rsvpSubmitted = false;
+  invitationStatus: 'pending' | 'opened' | 'responded' | 'expired' | 'revoked' = 'pending';
   eventStateService = inject(EventStateService);
   eventService = inject(EventService);
   invitationStateService = inject(InvitationStateService);
@@ -24,7 +26,7 @@ export class InviComponent {
     private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: object,
   ) {
-    this.inviId = this.route.snapshot.paramMap.get('inviId');
+    this.token = this.route.snapshot.paramMap.get('token');
     this.loadData();
     afterNextRender(() => {
       this.initRevealObserver();
@@ -32,20 +34,27 @@ export class InviComponent {
   }
 
   private async loadData() {
-    if (!this.inviId) return;
+    if (!this.token) return;
     try {
-      const { invitation, event } = await this.invitationService.loadByTokenWithEvent(this.inviId);
+      const { invitation, event } = await this.invitationService.loadByTokenWithEvent(this.token);
+      this.invitationStatus = invitation.status;
       this.eventStateService.addEvent(event);
       this.eventStateService.selectEvent(event.id);
       if (event?.title) this.title.setTitle(`${event.title} — RSVP`);
       this.invitationService.trackOpen(invitation.id);
     } catch {
-      const inv = await this.invitationService.loadByToken(this.inviId);
+      const inv = await this.invitationService.loadByToken(this.token);
+      this.invitationStatus = inv?.status || 'pending';
       await this.eventService.getById(inv?.event_id);
       const ev = this.eventStateService.currentEvent();
       if (ev?.title) this.title.setTitle(`${ev.title} — RSVP`);
       this.invitationService.trackOpen(inv.id);
     }
+  }
+
+  onRsvpConfirmed() {
+    this.rsvpSubmitted = true;
+    this.invitationStatus = 'responded';
   }
 
   private initRevealObserver() {

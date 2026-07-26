@@ -155,6 +155,11 @@ npm test
 npm run e2e
 ```
 
+## 🌐 Deploy y dominio personalizado
+- La app está preparada para desplegarse en Vercel con un dominio personalizado.
+- Los enlaces de invitación se generan usando el host principal del dominio, sin agregar `www` automáticamente.
+- Esto evita inconsistencias cuando el sitio se accede desde `www.tudominio.com` o desde el dominio raíz.
+
 ## 📱 Flujo de la Aplicación
 
 1. **Login** (`login/`) - Autenticación de usuario
