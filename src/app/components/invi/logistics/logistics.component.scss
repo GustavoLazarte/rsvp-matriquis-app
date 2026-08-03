@@ -55,6 +55,7 @@
   box-shadow: 0 2px 12px rgba(26, 46, 34, 0.03);
   @media (max-width: 380px) { padding: 28px 22px; }
 }
+.log-card.cal-open { position: relative; z-index: 30; }
 
 .circle-icon {
   width: 48px;
