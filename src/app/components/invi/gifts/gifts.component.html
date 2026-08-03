@@ -1,32 +1,70 @@
-<section id="gifts" style="background: var(--ow)">
-  <div class="inner">
-    <span class="eyebrow reveal">{{ i18n.t('gifts_label') }}</span>
-    <h2 class="h2 reveal rd1">{{ i18n.t('gifts_title') }}</h2>
-    <div class="rule reveal rd1"></div>
-    <p class="gifts-sub reveal rd2">{{ i18n.t('gifts_intro') }}</p>
+<section id="gifts" class="gifts-sec">
+  <div class="gifts-inner">
+    <div class="reveal">
+      <span class="gifts-eyebrow">{{ i18n.t('gifts_label') }}</span>
+      <h2 class="gifts-title">{{ i18n.t('gifts_title') }}</h2>
+      <div class="accent-line"></div>
+      <p class="gifts-intro">{{ i18n.t('gifts_intro') }}</p>
+    </div>
 
-    <div class="gifts-stores reveal rd2" *ngIf="rsvpEvent?.gif_table_url">
-      <span class="gifts-sec-label">{{ i18n.t('gifts_table') }}</span>
-      <a class="gift-card" [href]="rsvpEvent?.gif_table_url" target="_blank" rel="noreferrer">
-        <div class="gift-card-icon">🎁</div>
-        <div>
-          <div class="gift-card-name">{{ i18n.t('gifts_s1') }}</div>
-          <span class="gift-card-sub">{{ i18n.t('gifts_view') }} →</span>
+    <div class="gifts-table-block reveal rd1">
+      <div class="gifts-sec-label">{{ i18n.t('gifts_table') }}</div>
+      <a class="gift-store-card" [href]="rsvpEvent?.gif_table_url" target="_blank" rel="noreferrer">
+        <div class="gift-store-left">
+          <div class="gift-store-icon">🎁</div>
+          <div>
+            <h3 class="gift-store-name">{{ i18n.t('gifts_s1') }}</h3>
+            <div class="gift-store-sub">{{ i18n.t('gifts_view') }} →</div>
+          </div>
         </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2E5B3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
       </a>
     </div>
 
-    <div class="gifts-other reveal rd3">
-      <div class="gift-other-card">
-        <div class="gift-other-icon">✉️</div>
-        <div class="gift-other-title">{{ i18n.t('gifts_env_title') }}</div>
-        <div class="gift-other-body">{{ i18n.t('gifts_env_body') }}</div>
+    <div class="gifts-other reveal rd2">
+      <div class="gift-card-clean">
+        <div class="circle-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2E5B3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>
+        </div>
+        <div class="gift-ey">{{ i18n.t('gifts_env_title') }}</div>
+        <p class="gift-body">{{ i18n.t('gifts_env_body') }}</p>
       </div>
-      <div class="gift-other-card">
-        <div class="gift-other-icon">📱</div>
-        <div class="gift-other-title">{{ i18n.t('gifts_qr_title') }}</div>
-        <div class="gift-other-body">{{ i18n.t('gifts_qr_body') }}</div>
+
+      <div class="gift-card-clean qr">
+        <div>
+          <div class="circle-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2E5B3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg>
+          </div>
+          <div class="gift-ey">{{ i18n.t('gifts_qr_title') }}</div>
+          <p class="gift-body">{{ i18n.t('gifts_qr_body') }}</p>
+        </div>
+        <div>
+          <button class="gift-btn primary" (click)="toggleQr()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"></rect><rect width="5" height="5" x="16" y="3" rx="1"></rect><rect width="5" height="5" x="3" y="16" rx="1"></rect><path d="M21 16h-3a2 2 0 0 0-2 2v3"></path><path d="M21 21v.01"></path><path d="M12 7v3a2 2 0 0 1-2 2H7"></path><path d="M3 12h.01"></path><path d="M12 3h.01"></path><path d="M12 16v.01"></path><path d="M16 12h1"></path><path d="M21 12v.01"></path><path d="M12 21v-1"></path></svg>
+            {{ qrOpen ? i18n.t('gifts_qr_hide') : i18n.t('gifts_qr_btn') }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<div class="qr-overlay" *ngIf="qrOpen" (click)="closeQr()">
+  <div class="qr-modal" (click)="$event.stopPropagation()">
+    <button class="qr-close" (click)="closeQr()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+    </button>
+    <div class="qr-modal-ey">{{ i18n.t('gifts_qr_modal_label') }}</div>
+    <h3 class="qr-modal-title">{{ rsvpEvent?.title || 'Moni & Jose' }}</h3>
+    <div class="qr-modal-img">
+      <img *ngIf="qrLoaded" [src]="qrSrc" alt="QR" />
+      <div *ngIf="!qrLoaded" class="qr-loading">
+        <span class="qr-spinner"></span>
+      </div>
+    </div>
+    <div class="qr-modal-bank">
+      {{ i18n.t('gifts_qr_bank1') }}<br />
+      {{ i18n.t('gifts_qr_bank2') }}
+    </div>
+  </div>
+</div>

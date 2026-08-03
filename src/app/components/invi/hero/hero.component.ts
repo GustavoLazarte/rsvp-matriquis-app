@@ -17,7 +17,14 @@ export class HeroComponent {
     const title = this.rsvpEvent?.title || '';
     const sep = title.includes(' & ') ? ' & ' : ' &amp; ';
     const parts = title.split(sep);
-    return [parts[0]?.trim() || '', parts[1]?.trim() || ''];
+    if (parts.length >= 2 && parts[0]?.trim() && parts[1]?.trim()) {
+      return [parts[0].trim(), parts[1].trim()];
+    }
+    return ['Moni', 'Jose'];
+  }
+
+  get heroLogo(): string {
+    return 'assets/logo-moniyjose.svg';
   }
 
   get heroSubHtml(): string {

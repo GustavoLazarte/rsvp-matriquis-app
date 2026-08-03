@@ -1,5 +1,84 @@
 # Changelog
 
+## 3 de Agosto, 2026
+
+### Feature — Meta tags para compartir en redes (Open Graph / Twitter)
+**Problema**: Al compartir el link de invitación en WhatsApp/redes no había preview (card) ni información del sitio.
+
+**Solución**: `src/index.html` ahora incluye:
+- Open Graph completo (`og:site_name`, `og:title`, `og:description`, `og:image`, `og:url`, `og:locale`)
+- Twitter Card (`summary_large_image`)
+- Meta tags SEO (`keywords`, `author`, `canonical`, `robots`)
+- Meta tags de app móvil (`apple-mobile-web-app-*`, `application-name`, `mobile-web-app-capable`)
+- `theme-color`, `format-detection`, `X-UA-Compatible`
+
+> ⚠️ **Pendiente**: el preview de WhatsApp no renderiza SVG. Para que la card se vea, subir la imagen en PNG/JPG y actualizar `og:image`, `og:image:type` y `twitter:image`.
+
+- Archivos modificados: `src/index.html`
+
+---
+
+### Feature — Assets del sitio (favicon, PWA icons, manifest)
+**Problema**: El favicon referenciado no existía y no había iconos para PWA/app móvil.
+
+**Solución**: Creada carpeta `src/assets/`:
+- `favicon.svg` + `favicon.ico` — monograma J&M con fondo navy `#0f172a`
+- `icon.svg`, `icon-192.png`, `icon-512.png` — iconos para PWA
+- `apple-touch-icon.png` (180x180) — icono iOS
+- `manifest.webmanifest` — PWA manifest con theme color y start_url
+- `logo-moniyjose.svg` — logo oficial (subido por el cliente)
+- `rsvp-code.jpeg` — QR de transferencia bancaria
+
+- `angular.json`: `assets` ahora incluye `src/assets` y `src/manifest.webmanifest`
+- `src/index.html`: referencias a favicon SVG/ICO, apple-touch-icon y manifest
+
+---
+
+### Feature — Rediseño sección Logistics
+Componente `app-invi-logistics` rediseñado según mockup del maquetador:
+- Fondo `#fafbf9`, título serif 52px, línea dorada
+- Tarjetas blancas con iconos en círculo (dorado/verde), bordes redondeados
+- **Cuándo**: día de semana + fecha completa, agenda con puntos verdes (usa primeros 3 eventos de `tl_events`), botón "Agregar al Calendario" outline
+- **Dónde**: botón sólido "Abrir en Google Maps" + caja del venue con icono
+- **Adults Only**: mensaje + deadline con reloj
+- Estilos movidos de `styles.scss` a `logistics.component.scss`
+- Eliminada la foto del venue (`adress_photo_url`) del diseño
+
+- Archivos: `src/app/components/invi/logistics/*`
+
+---
+
+### Feature — Rediseño sección Gifts + Modal QR
+Componente `app-invi-gifts` rediseñado según mockup:
+- Fondo blanco, eyebrow + título serif + línea dorada
+- Card "Mesa de Regalos" (Casa Ideas) siempre visible, con icono 🎁 y external-link
+- Tarjetas "Lluvia de Sobres" y "Transferencia vía QR" con iconos en círculo
+- Botón "Ver Código QR" abre **overlay opaco** (modal) con:
+  - Título serif con el nombre del evento, QR (`rsvp-code.jpeg` o `gif_qr_url`), datos bancarios y botón cerrar
+  - **Precarga** del QR al montar el componente (`new Image()`) + spinner mientras carga
+- Nuevo campo `gif_qr_url` en `Event` (pendiente de agregar columna en Supabase)
+- Nuevas claves i18n ES/EN: `gifts_qr_btn`, `gifts_qr_hide`, `gifts_qr_modal_label`, `gifts_qr_bank1`, `gifts_qr_bank2`
+
+- Archivos:
+  - `src/app/components/invi/gifts/*`
+  - `src/app/core/models/event.ts`
+  - `src/app/core/services/i18n.service.ts`
+
+---
+
+### Feature — Hero: render inmediato sin esperar Supabase
+**Problema**: El hero esperaba el fetch de Supabase para mostrar nombres y logo, causando una vista incompleta/fea.
+
+**Solución**:
+- Nombres por defecto **"Moni" / "Jose"** (se reemplazan cuando llega `event.title`)
+- Logo local `assets/logo-moniyjose.svg` en vez de `couple_logo_url`
+
+- Archivos:
+  - `src/app/components/invi/hero/hero.component.ts`
+  - `src/app/components/invi/hero/hero.component.html`
+
+---
+
 ## 26 de Julio, 2026
 
 ### Fix — Enlaces de invitación sin prefijo www

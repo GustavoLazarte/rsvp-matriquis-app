@@ -18,20 +18,23 @@ export class LogisticsComponent {
     return events.slice(0, 3);
   }
 
-  get dateLabel(): string {
+  get weekdayLabel(): string {
     if (!this.rsvpEvent?.event_date) return '';
     const d = new Date(this.rsvpEvent.event_date);
-    const day = d.getDate();
-    const month = d.toLocaleString(this.i18n.current, { month: 'long' });
-    const year = d.getFullYear();
-    return this.i18n.current === 'es'
-      ? `${this.i18n.t('rsvp_days')} ${day} de ${month}`
-      : `${month} ${day}, ${year}`;
+    if (Number.isNaN(d.getTime())) return '';
+    const label = d.toLocaleString(this.i18n.current, { weekday: 'long' });
+    return label.charAt(0).toUpperCase() + label.slice(1);
   }
 
-  get yearLabel(): string {
+  get fullDateLabel(): string {
     if (!this.rsvpEvent?.event_date) return '';
-    return new Date(this.rsvpEvent.event_date).getFullYear().toString();
+    const d = new Date(this.rsvpEvent.event_date);
+    if (Number.isNaN(d.getTime())) return '';
+    return d.toLocaleString(this.i18n.current, { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  get addressLabel(): string {
+    return this.rsvpEvent?.adress || this.rsvpEvent?.adress_url || this.i18n.t('log_address');
   }
 
   get deadlineLabel(): string {

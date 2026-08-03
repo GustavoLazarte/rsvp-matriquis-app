@@ -1,5 +1,7 @@
 # RSVP App - Contexto del Proyecto
 
+> 📚 **Documentación completa**: ver [docs/README.md](docs/README.md) (arquitectura, modelos, estado) y [docs/CHANGELOG.md](docs/CHANGELOG.md) (historial de cambios).
+
 ## 📋 Descripción General
 Aplicación Angular para gestionar invitaciones de eventos (bodas, cumpleaños, etc.) con sistema de RSVP, galería de imágenes, y dashboard de administración.
 
@@ -102,7 +104,7 @@ src/
 
 ### 4. **State Management**
 - Servicios terminados en `-state.service.ts` manejan estado global
-- Usar `RxJS BehaviorSubject` para observable state
+- Usan **Angular Signals** para state observable (no RxJS/BehaviorSubject)
 - Ejemplo: `event-state.service.ts` → maneja estado de eventos
 
 ### 5. **Servicios HTTP**
@@ -113,7 +115,7 @@ src/
 ## 🚀 Levantar el Proyecto
 
 ### Requisitos
-- Node.js 16+
+- Node.js 18+
 - npm o yarn
 - Acceso a Supabase (credenciales en `.env`)
 
@@ -168,14 +170,14 @@ npm run e2e
    - Guests: Lista de invitados
    - Gallery: Galería de fotos
    - Settings: Configuración
-3. **Invitación** (`invi/`) - Página pública
-   - Hero: Presentación del evento
+3. **Invitación** (`rsvp/:token`) - Página pública
+   - Hero: Presentación del evento (nombres con fallback "Moni"/"Jose" + logo local `assets/logo-moniyjose.svg`)
    - Story: Historia de la pareja
    - Album: Fotos
    - RSVP Form: Formulario de confirmación
-   - Logistics: Info del evento
+   - Logistics: Info del evento (cuándo/dónde/adults)
    - Weather: Clima
-   - Gifts: Lista de regalos
+   - Gifts: Lista de regalos + modal QR con overlay
    - Timeline: Línea de tiempo
    - Dresscode: Código de vestimenta
 
@@ -189,7 +191,7 @@ npm run e2e
 ## 💾 Base de Datos (Supabase)
 
 ### Tablas principales
-- `events`: Información del evento
+- `events`: Información del evento (incluye `gif_table_url` y `gif_qr_url`)
 - `guests`: Invitados
 - `rsvp_responses`: Respuestas RSVP
 - `invitations`: Invitaciones
@@ -199,17 +201,26 @@ npm run e2e
 - `event-photos/`: Fotos del evento
 - `guest-uploads/`: Fotos subidas por invitados
 
+> ⚠️ **Pendiente**: agregar columna `gif_qr_url` (text) a la tabla `events` en Supabase para el QR personalizado del evento.
+
 ## 📦 Dependencias Principales
 
 ```json
 {
-  "@angular/core": "^15.0.0",
-  "@angular/router": "^15.0.0",
-  "@supabase/supabase-js": "^2.0.0",
-  "rxjs": "^7.0.0",
+  "@angular/core": "^19.1.0",
+  "@angular/router": "^19.1.0",
+  "@supabase/supabase-js": "^2.49.1",
+  "xlsx": "^0.18.5",
+  "rxjs": "~7.8.0",
   "scss": "Estilos"
 }
 ```
+
+## 🖼️ Assets y Meta Tags
+
+- **`src/assets/`**: favicon (SVG/ICO), iconos PWA (`icon-192/512`), `apple-touch-icon.png`, `manifest.webmanifest`, logo del hero (`logo-moniyjose.svg`) y QR bancario (`rsvp-code.jpeg`).
+- **`src/index.html`**: meta tags Open Graph, Twitter Card, SEO y app móvil para preview al compartir el link en WhatsApp/redes.
+- ⚠️ WhatsApp no muestra SVG: para la card al compartir, usar PNG/JPG en `og:image`.
 
 ## 🎨 Estilos
 
@@ -251,4 +262,4 @@ npm run e2e
 
 ---
 
-**Último actualizado**: Mayo 2026
+**Último actualizado**: Agosto 2026
