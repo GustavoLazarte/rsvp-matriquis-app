@@ -677,6 +677,10 @@ select.fi {
 .fab-blocked-msg:hover { background: #b89b6a; color: #fff; }
 @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+@media (max-width: 640px) {
+  .fab-rsvp { padding: 0.6rem 1rem; font-size: 9.5px; bottom: 1.25rem; right: 1rem; }
+}
+
 /* ===== CONFETTI ===== */
 .cf {
   position: fixed; top: -12px; pointer-events: none; z-index: 9998;
@@ -787,7 +791,7 @@ select.fi {
 }
 
 @media (max-width: 380px) {
-  .fab-rsvp { padding: 0.75rem 1.25rem; font-size: 9.5px; bottom: 1.25rem; right: 1rem; }
+  .fab-rsvp { padding: 0.55rem 0.8rem; font-size: 9px; bottom: 1.25rem; right: 1rem; }
   .fab-music { width: 40px; height: 40px; bottom: 1.25rem; left: 1rem; }
   .fab-player { bottom: 4.5rem; left: 1rem; }
   .fab-player iframe { width: 260px; height: 70px; }

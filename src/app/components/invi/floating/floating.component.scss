@@ -4,8 +4,8 @@
   content: attr(title);
   position: absolute;
   bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  transform: none;
   background: rgba(25, 44, 35, 0.95);
   color: #f8f4eb;
   padding: 0.45rem 0.65rem;
