@@ -54,32 +54,41 @@ export class LogisticsComponent {
     return Number.isNaN(date.getTime()) ? null : date;
   }
 
+  private calDate(hours: number, minutes: number): Date | null {
+    const base = this.eventStart;
+    if (!base) return null;
+    const d = new Date(base);
+    d.setHours(hours, minutes, 0, 0);
+    return d;
+  }
+
   private formatCalendarDate(date: Date): string {
-    return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
   }
 
   get gcalUrl(): string {
-    const start = this.eventStart;
+    const start = this.calDate(15, 30);
     if (!start) return 'https://calendar.google.com/calendar/render?action=TEMPLATE';
 
+    const end = this.calDate(23, 0);
     const title = encodeURIComponent(this.rsvpEvent?.title || 'Boda Moni & Jose');
     const location = encodeURIComponent(`${this.rsvpEvent?.location || ''}, Cochabamba, Bolivia`);
-    const details = encodeURIComponent('Ceremonia 16:30');
-    const end = new Date(start.getTime() + 10 * 60 * 60 * 1000);
+    const details = encodeURIComponent('Bienvenida desde las 15:30 hs · Fin del evento 23:00 hs.');
 
-    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${this.formatCalendarDate(start)}/${this.formatCalendarDate(end)}&details=${details}&location=${location}`;
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${this.formatCalendarDate(start!)}/${this.formatCalendarDate(end!)}&details=${details}&location=${location}`;
   }
 
   toggleCal() { this.calOpen = !this.calOpen; }
 
   downloadIcal() {
-    const start = this.eventStart;
+    const start = this.calDate(15, 30);
     if (!start) return;
 
-    const end = new Date(start.getTime() + 10 * 60 * 60 * 1000);
+    const end = this.calDate(23, 0);
     const title = this.rsvpEvent?.title;
     const location = `${this.rsvpEvent?.adress || ''}, ${this.rsvpEvent?.location || ''}`;
-    const details = 'Ceremonia 16:30 hs';
+    const details = 'Bienvenida desde las 15:30 hs · Fin del evento 23:00 hs.';
     const eventUrl = this.rsvpEvent?.adress_url || window.location.href;
     const logoUrl = this.rsvpEvent?.couple_logo_url;
 
@@ -90,7 +99,7 @@ export class LogisticsComponent {
       'BEGIN:VEVENT',
       `SUMMARY:${title}`,
       `DTSTART:${this.formatCalendarDate(start)}`,
-      `DTEND:${this.formatCalendarDate(end)}`,
+      `DTEND:${this.formatCalendarDate(end!)}`,
       `LOCATION:${location}`,
       `DESCRIPTION:${details}`,
       `URL:${eventUrl}`,

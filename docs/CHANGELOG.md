@@ -1,5 +1,103 @@
 # Changelog
 
+## 4 de Agosto, 2026
+
+### Fix — Card de WhatsApp: imagen en PNG (no SVG)
+**Problema**: WhatsApp no renderizaba la card al compartir porque `og:image` apuntaba a un SVG (formato no soportado).
+
+**Solución**:
+- Rasterizado `logo-moniyjose.svg` a PNG (monograma blanco sobre navy `#1A2E22`, 1339×1536) → `src/assets/logo-moniyjose.png`
+- `og:image`/`twitter:image` ahora apuntan a `https://www.moniyjose.lat/assets/logo-moniyjose.png?v=N` con `og:image:type=image/png` y dimensiones
+- El `?v=N` (cache bust) fuerza un crawl nuevo en WhatsApp
+
+- Archivos: `src/index.html`, `src/assets/logo-moniyjose.png`
+
+---
+
+### Feature — Mejores textos en meta tags (sin emojis)
+**Problema**: La card mostraba "Nuestra Boda 💍", con emoji y texto poco cálido.
+
+**Solución**: Título "Moni & Jose · Nos Casamos" y descripción "Te invitamos a celebrar con nosotros el día más importante de nuestras vidas..." en `og:*` y `twitter:*`.
+
+- Archivos: `src/index.html`
+
+---
+
+### Feature — Nuevo texto "Solo adultos" (cliente) + traducción EN
+Texto de la card Adults Only actualizado al del cliente: "Amamos a sus pequeños, pero con mucho cariño hemos decidido que nuestra celebración sea exclusivamente para adultos..." con su traducción en EN.
+
+- Archivos: `src/app/core/services/i18n.service.ts`
+
+---
+
+### Fix — Dropdown de calendario tapado por la card "Dónde"
+**Problema**: En móvil el dropdown de "Agregar al Calendario" quedaba detrás de la card siguiente (Dónde) porque `.reveal` aplica `transform`, creando un stacking context por card que atrapaba el `z-index` interno del dropdown.
+
+**Solución**: Mientras el dropdown está abierto, la card sube con `position: relative; z-index: 30` (clase `cal-open`).
+
+- Archivos:
+  - `src/app/components/invi/logistics/logistics.component.html`
+  - `src/app/components/invi/logistics/logistics.component.scss`
+
+---
+
+### Fix — Tooltip de pausa cortado en el borde izquierdo
+**Problema**: El tooltip de música (centrado con `translateX(-50%)`) salía de pantalla por la izquierda al estar el botón fijo a `left:1rem`.
+
+**Solución**: Anclado al borde izquierdo del botón (`left:0`).
+
+- Archivos: `src/app/components/invi/floating/floating.component.scss`
+
+---
+
+### Fix — Botón flotante "Confirmar Asistencia" más chico en mobile
+**Problema**: El FAB usaba tamaño desktop en móviles entre 380px y 640px.
+
+**Solución**: Nuevo `@media (max-width:640px)` que reduce el FAB (padding y fuente) con un tamaño aún menor en ≤380px.
+
+- Archivos: `src/styles.scss`
+
+---
+
+### Feature — Horario del evento 15:30–23:00 al agendar al calendario
+**Problema**: Al agendar en Google Calendar / descargar `.ics` el horario no coincidía y el calendario lo "corregía" según zona horaria.
+
+**Solución**:
+- El evento ahora va de **15:30 a 23:00** (`calDate(15,30)` → `calDate(23,0)`)
+- `formatCalendarDate()` genera hora **flotante local sin `Z`** (ya no usa `toISOString`), así cada invitado ve exactamente 15:30–23:00 en su zona horaria
+
+- Archivos: `src/app/components/invi/logistics/logistics.component.ts`
+
+---
+
+### Feature — Timeline nuevo con horarios actualizados
+Nueva programación de la celebración en `tl_events` (ES/EN):
+1. 15:30 Recepción de invitados
+2. 16:00 Ceremonia
+3. 16:30 Cóctel de bienvenida
+4. 17:30 Baile principal
+5. 18:00 Banquete
+6. 19:00 Tanda de baile
+7. 23:00 Fin del evento
+
+- Archivos: `src/app/core/services/i18n.service.ts`
+
+---
+
+### Feature — Iconos del timeline con Twemoji (color)
+**Problema**: Los iconos de línea (Lucide) no gustaban y se veían sin color.
+
+**Solución**: Reemplazados por **Twemoji** (SVG coloridos, CC-BY 4.0) descargados a `src/assets/timeline/` y renderizados con `<img>` (26px desktop / 16px mobile):
+- 🥂 Recepción · 💍 Ceremonia · 🍸 Cóctel · 💃 Baile principal · 🍽️ Banquete · 🎶 Tanda de baile · ✨ Fin
+- `tl_events` ahora usa `icon` (codepoint Twemoji) en vez de emoji/icono de línea
+
+- Archivos:
+  - `src/assets/timeline/*.svg`
+  - `src/app/components/invi/timeline/timeline.component.{html,scss,ts}`
+  - `src/app/core/services/i18n.service.ts`
+
+---
+
 ## 3 de Agosto, 2026
 
 ### Feature — Meta tags para compartir en redes (Open Graph / Twitter)
