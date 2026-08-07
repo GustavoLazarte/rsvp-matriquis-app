@@ -24,6 +24,7 @@ export class GuestsComponent {
   @Output() statusFilterChange = new EventEmitter<'all' | 'yes' | 'no' | 'pending' | 'revoked'>();
 
   readonly showModal = signal(false);
+  readonly expandedId = signal<string | null>(null);
   readonly creating = signal(false);
   readonly createdLink = signal('');
   readonly formName = signal('');
@@ -71,6 +72,10 @@ export class GuestsComponent {
   setStatusFilter(filter: 'all' | 'yes' | 'no' | 'pending' | 'revoked') {
     this.statusFilter = filter;
     this.statusFilterChange.emit(filter);
+  }
+
+  toggleExpand(id: string) {
+    this.expandedId.set(this.expandedId() === id ? null : id);
   }
 
   onSearchChange(value: string) {

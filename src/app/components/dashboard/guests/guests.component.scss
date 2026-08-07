@@ -218,6 +218,84 @@
   color: #fff;
 }
 
+/* ─── Expandable detail rows ─── */
+.dash-row {
+  cursor: pointer;
+}
+.dash-row.row-expanded {
+  background: #F3F8F5;
+}
+.dash-cell-chev {
+  vertical-align: middle;
+  margin-right: 0.35rem;
+  color: #3A6B4A;
+  opacity: 0.5;
+  transition: transform 0.2s;
+}
+.dash-cell-chev.chev-open {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+.dash-note-tag,
+.dash-msg-tag {
+  display: inline-block;
+  margin-left: 0.375rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 100px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+.dash-note-tag {
+  background: #E8F5E9;
+  color: #2e7d32;
+}
+.dash-msg-tag {
+  background: #FFF3E0;
+  color: #B26A00;
+}
+.dash-detail-row td {
+  padding: 1.25rem 1.5rem;
+  background: #F7FAF8;
+  border-bottom: 1px solid #E8F0EB;
+}
+.dash-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem 1.5rem;
+}
+.dash-detail-item {
+  padding: 0.875rem 1rem;
+  background: #fff;
+  border: 1px solid #E8F0EB;
+  border-radius: 10px;
+}
+.dash-detail-label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4a6a55;
+  margin-bottom: 0.375rem;
+}
+.dash-detail-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #1A2E22;
+  white-space: pre-line;
+}
+.dash-detail-empty {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: #a0b9a8;
+  font-style: italic;
+}
+
 /* Status badges */
 .dash-status {
   display: inline-flex;

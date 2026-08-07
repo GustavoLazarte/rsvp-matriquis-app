@@ -33,10 +33,14 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of filteredGuests">
+      <ng-container *ngFor="let item of filteredGuests">
+      <tr class="dash-row" [class.row-expanded]="expandedId() === item.invitation.id" (click)="toggleExpand(item.invitation.id)">
         <td class="dash-cell-name">
+          <svg class="dash-cell-chev" [class.chev-open]="expandedId() === item.invitation.id" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
           <svg class="dash-cell-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           {{ item.invitation.guest_name }}
+          <span class="dash-note-tag" *ngIf="item.response?.dietary_notes" title="Notas dietéticas">notas</span>
+          <span class="dash-msg-tag" *ngIf="item.response?.message" title="Mensaje">msg</span>
         </td>
         <td class="dash-cell-muted">
           <span class="dash-cell-contact" *ngIf="item.invitation.guest_email">
@@ -76,21 +80,45 @@
         <td class="dash-cell-muted">{{ (item.invitation.last_opened_at | date:'short') || '—' }}</td>
         <td>
           <div class="dash-row-actions">
-            <button class="dash-action-btn dash-action-btn--copy" (click)="copyInvitationLink(item.invitation)" title="Copiar enlace" *ngIf="item.invitation.status !== 'revoked'">
+            <button class="dash-action-btn dash-action-btn--copy" (click)="copyInvitationLink(item.invitation); $event.stopPropagation()" title="Copiar enlace" *ngIf="item.invitation.status !== 'revoked'">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
             </button>
-            <button class="dash-action-btn dash-action-btn--restore" (click)="restoreInvitation(item.invitation)" title="Restaurar" *ngIf="item.invitation.status === 'revoked'">
+            <button class="dash-action-btn dash-action-btn--restore" (click)="restoreInvitation(item.invitation); $event.stopPropagation()" title="Restaurar" *ngIf="item.invitation.status === 'revoked'">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
             </button>
-            <button class="dash-action-btn dash-action-btn--delete" (click)="revokeInvitation(item.invitation)" title="Revocar" *ngIf="item.invitation.status !== 'revoked'">
+            <button class="dash-action-btn dash-action-btn--delete" (click)="revokeInvitation(item.invitation); $event.stopPropagation()" title="Revocar" *ngIf="item.invitation.status !== 'revoked'">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
             </button>
-            <button class="dash-action-btn dash-action-btn--delete" (click)="deleteInvitation(item.invitation)" title="Eliminar permanentemente" *ngIf="item.invitation.status === 'revoked'">
+            <button class="dash-action-btn dash-action-btn--delete" (click)="deleteInvitation(item.invitation); $event.stopPropagation()" title="Eliminar permanentemente" *ngIf="item.invitation.status === 'revoked'">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             </button>
           </div>
         </td>
       </tr>
+      <tr class="dash-detail-row" *ngIf="expandedId() === item.invitation.id">
+        <td colspan="9" class="dash-detail-cell">
+          <div class="dash-detail-grid">
+            <div class="dash-detail-item" *ngIf="item.response?.dietary_notes">
+              <div class="dash-detail-label">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                Notas dietéticas
+              </div>
+              <div class="dash-detail-text">{{ item.response?.dietary_notes }}</div>
+            </div>
+            <div class="dash-detail-item" *ngIf="item.response?.message">
+              <div class="dash-detail-label">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                Mensaje
+              </div>
+              <div class="dash-detail-text">“{{ item.response?.message }}”</div>
+            </div>
+            <div class="dash-detail-empty" *ngIf="!item.response?.dietary_notes && !item.response?.message">
+              Este invitado no dejó notas ni mensaje.
+            </div>
+          </div>
+        </td>
+      </tr>
+      </ng-container>
       <tr *ngIf="filteredGuests.length === 0">
         <td colspan="9" class="dash-empty-row">No se encontraron invitados con esos filtros.</td>
       </tr>

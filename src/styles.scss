@@ -314,16 +314,17 @@ select.fi {
   box-shadow: 0 6px 32px rgba(26,46,34,0.1);
   cursor: pointer; transition: all 0.45s var(--ease);
   position: relative;
+  transform: translateZ(0);
 }
-.polaroid:nth-child(1) { transform: rotate(-2.2deg); }
-.polaroid:nth-child(2) { transform: rotate(1.7deg); }
-.polaroid:nth-child(3) { transform: rotate(-1.3deg); }
-.polaroid:nth-child(4) { transform: rotate(2.1deg); }
-.polaroid:nth-child(5) { transform: rotate(-1.8deg); }
-.polaroid:nth-child(6) { transform: rotate(1.4deg); }
-.polaroid:nth-child(n+7) { transform: rotate(-1deg); }
+.polaroid:nth-child(1) { transform: rotate(-2.2deg) translateZ(0); }
+.polaroid:nth-child(2) { transform: rotate(1.7deg) translateZ(0); }
+.polaroid:nth-child(3) { transform: rotate(-1.3deg) translateZ(0); }
+.polaroid:nth-child(4) { transform: rotate(2.1deg) translateZ(0); }
+.polaroid:nth-child(5) { transform: rotate(-1.8deg) translateZ(0); }
+.polaroid:nth-child(6) { transform: rotate(1.4deg) translateZ(0); }
+.polaroid:nth-child(n+7) { transform: rotate(-1deg) translateZ(0); }
 .polaroid:hover {
-  transform: rotate(0deg) translateY(-10px) scale(1.03);
+  transform: rotate(0deg) translateY(-10px) scale(1.03) translateZ(0);
   box-shadow: 0 28px 64px rgba(26,46,34,0.18);
   z-index: 10;
 }

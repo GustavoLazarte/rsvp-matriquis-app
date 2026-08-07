@@ -11,6 +11,7 @@ import { Event } from 'src/app/core/models';
 export class GiftsComponent implements OnInit {
   qrOpen = false;
   qrLoaded = false;
+  private pendingOpen = false;
   @Input() rsvpEvent: Event | null = null;
   constructor(public i18n: I18nService) {}
 
@@ -19,11 +20,35 @@ export class GiftsComponent implements OnInit {
   }
 
   ngOnInit() {
-    const img = new Image();
-    img.src = this.qrSrc;
-    img.onload = () => (this.qrLoaded = true);
+    this.preload();
   }
 
-  toggleQr() { this.qrOpen = !this.qrOpen; }
-  closeQr() { this.qrOpen = false; }
+  private preload() {
+    const img = new Image();
+    img.src = this.qrSrc;
+    img.onload = () => {
+      this.qrLoaded = true;
+      if (this.pendingOpen) {
+        this.pendingOpen = false;
+        this.qrOpen = true;
+      }
+    };
+    img.onerror = () => (this.qrLoaded = true);
+  }
+
+  toggleQr() {
+    if (this.qrOpen) {
+      this.qrOpen = false;
+    } else if (this.qrLoaded) {
+      this.qrOpen = true;
+    } else {
+      this.pendingOpen = true;
+      this.preload();
+    }
+  }
+
+  closeQr() {
+    this.qrOpen = false;
+    this.pendingOpen = false;
+  }
 }
