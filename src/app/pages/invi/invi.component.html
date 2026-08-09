@@ -1,3 +1,16 @@
+<ng-container *ngIf="invNotFound; else validPage">
+  <div class="grain"></div>
+  <div class="inv-not-found">
+    <div class="inv-nf-card">
+      <div class="inv-nf-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="12"/><circle cx="11" cy="15" r="0.5" fill="currentColor"/></svg>
+      </div>
+      <h1 class="inv-nf-title">{{ i18n.t('rsvp_not_found_title') }}</h1>
+      <p class="inv-nf-body">{{ i18n.t('rsvp_not_found_body') }}</p>
+    </div>
+  </div>
+</ng-container>
+<ng-template #validPage>
 <div class="grain"></div>
 
 <app-invi-ticker [rsvpEvent]="eventStateService.currentEvent()"></app-invi-ticker>
@@ -13,3 +26,4 @@
 <app-invi-rsvp-form [rsvpEvent]="eventStateService.currentEvent()" [inviId]="token" (rsvpConfirmed)="onRsvpConfirmed()"></app-invi-rsvp-form>
 <app-invi-footer [rsvpEvent]="eventStateService.currentEvent()"></app-invi-footer>
 <app-invi-floating [rsvpEvent]="eventStateService.currentEvent()" [rsvpSubmitted]="rsvpSubmitted"></app-invi-floating>
+</ng-template>

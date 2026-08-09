@@ -1,3 +1,52 @@
 :host {
   display: block;
 }
+
+.inv-not-found {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+.inv-nf-card {
+  text-align: center;
+  max-width: 440px;
+  padding: 3rem 2.5rem;
+  background: var(--white);
+  border: 1px solid var(--mist);
+  border-radius: 24px;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.08);
+  box-sizing: border-box;
+}
+.inv-nf-icon {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 1.5rem;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #F0F5F2, #D4E8DC);
+  color: #3A6B4A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.inv-nf-title {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 400;
+  color: #1A2E22;
+  margin: 0 0 0.75rem;
+}
+.inv-nf-body {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #5a7565;
+  margin: 0;
+}
+@media (max-width: 480px) {
+  .inv-nf-card { padding: 2.25rem 1.5rem; }
+  .inv-nf-title { font-size: 22px; }
+}

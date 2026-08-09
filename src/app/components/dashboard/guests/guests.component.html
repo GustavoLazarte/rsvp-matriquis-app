@@ -80,6 +80,9 @@
         <td class="dash-cell-muted">{{ (item.invitation.last_opened_at | date:'short') || '—' }}</td>
         <td>
           <div class="dash-row-actions">
+            <button class="dash-action-btn dash-action-btn--edit" (click)="openEdit(item.invitation); $event.stopPropagation()" title="Editar invitación">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            </button>
             <button class="dash-action-btn dash-action-btn--copy" (click)="copyInvitationLink(item.invitation); $event.stopPropagation()" title="Copiar enlace" *ngIf="item.invitation.status !== 'revoked'">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
             </button>
@@ -207,4 +210,53 @@
       </button>
     </div>
   </ng-template>
+</div>
+
+<div class="dash-modal-overlay" *ngIf="editModal()" (click)="closeEdit()"></div>
+<div class="dash-modal" *ngIf="editModal()">
+  <button class="dash-modal-x" (click)="closeEdit()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <div class="dash-modal-icon">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+  </div>
+
+  <h3 class="dash-modal-title">Editar invitación</h3>
+  <p class="dash-modal-desc">Actualiza los datos del invitado. Los cambios se aplican al instante.</p>
+
+  <div class="dash-modal-form">
+    <div class="dash-modal-field">
+      <label>Nombre completo</label>
+      <input class="dash-inp" [ngModel]="editName()" (ngModelChange)="editName.set($event)" name="editName" placeholder="Ej: María García" />
+    </div>
+    <div class="dash-modal-field">
+      <label>Correo electrónico</label>
+      <input class="dash-inp" [ngModel]="editEmail()" (ngModelChange)="editEmail.set($event)" name="editEmail" placeholder="ejemplo@correo.com" type="email" />
+    </div>
+    <div class="dash-modal-row">
+      <div class="dash-modal-field" style="flex:1">
+        <label>Grupo / Familia</label>
+        <input class="dash-inp" [ngModel]="editGroup()" (ngModelChange)="editGroup.set($event)" name="editGroup" placeholder="Ej: Familia López" />
+      </div>
+      <div class="dash-modal-field" style="flex:1">
+        <label>Teléfono</label>
+        <input class="dash-inp" [ngModel]="editPhone()" (ngModelChange)="editPhone.set($event)" name="editPhone" placeholder="+591 70000000" type="tel" />
+      </div>
+    </div>
+    <div class="dash-modal-field">
+      <label class="dash-checkbox">
+        <input type="checkbox" [ngModel]="editPlusOne()" (ngModelChange)="editPlusOne.set($event)" name="editPlusOne" />
+        <span>Permitir acompañante (+1)</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="dash-modal-actions">
+    <button class="dash-btn dash-btn--outline" (click)="closeEdit()">Cancelar</button>
+    <button class="dash-btn" (click)="saveEdit()" [disabled]="!editName().trim() || savingEdit()">
+      <svg *ngIf="savingEdit()" class="dash-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
+      {{ savingEdit() ? 'Guardando...' : 'Guardar cambios' }}
+    </button>
+  </div>
 </div>

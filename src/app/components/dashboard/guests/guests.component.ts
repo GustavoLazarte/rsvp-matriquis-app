@@ -33,6 +33,15 @@ export class GuestsComponent {
   readonly formGroup = signal('');
   readonly formPlusOne = signal(false);
 
+  readonly editModal = signal(false);
+  readonly savingEdit = signal(false);
+  readonly editId = signal('');
+  readonly editName = signal('');
+  readonly editEmail = signal('');
+  readonly editPhone = signal('');
+  readonly editGroup = signal('');
+  readonly editPlusOne = signal(false);
+
   get stats() {
     const active = this.invitations.filter(i => i.status !== 'revoked');
     const total = active.length;
@@ -122,6 +131,43 @@ export class GuestsComponent {
       alert('Error al crear la invitación');
     } finally {
       this.creating.set(false);
+    }
+  }
+
+  openEdit(inv: Invitation) {
+    this.editId.set(inv.id);
+    this.editName.set(inv.guest_name);
+    this.editEmail.set(inv.guest_email ?? '');
+    this.editPhone.set(inv.guest_phone ?? '');
+    this.editGroup.set(inv.group ?? '');
+    this.editPlusOne.set(inv.plus_one_allowed === 1);
+    this.editModal.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeEdit() {
+    this.editModal.set(false);
+    document.body.style.overflow = '';
+  }
+
+  async saveEdit() {
+    const name = this.editName().trim();
+    if (!name || !this.editId()) return;
+
+    this.savingEdit.set(true);
+    try {
+      await this.invitationService.update(this.editId(), {
+        guest_name: name,
+        guest_email: this.editEmail().trim() || null,
+        guest_phone: this.editPhone().trim() || null,
+        group: this.editGroup().trim() || null,
+        plus_one_allowed: this.editPlusOne() ? 1 : 0,
+      });
+      this.closeEdit();
+    } catch {
+      alert('Error al guardar la invitación');
+    } finally {
+      this.savingEdit.set(false);
     }
   }
 

@@ -18,11 +18,14 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
   plusOneAllowed = false;
   hasPlus = signal(false);
   foods = signal<string[]>([]);
+  dietText = signal('');
+  customFood = signal<string | null>(null);
   submitted = false;
   submitting = false;
   invitationId = '';
   guestName = signal('');
   isRevoked = false;
+  invNotFound = false;
 
   countdown = signal({ days: '00', hours: '00', mins: '00', secs: '00' });
   private cdTimer: ReturnType<typeof setInterval> | null = null;
@@ -35,8 +38,13 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
 
   async ngOnInit() {
     this.startCountdown();
-    if (this.inviId) {
+    if (!this.inviId) return;
+    try {
       const inv = await this.invitationService.loadByToken(this.inviId);
+      if (!inv) {
+        this.invNotFound = true;
+        return;
+      }
       if (inv.status === 'revoked') {
         this.isRevoked = true;
         return;
@@ -50,6 +58,8 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
         this.attending = existing.attending as 'yes' | 'no';
         this.rsvpConfirmed.emit();
       }
+    } catch {
+      this.invNotFound = true;
     }
   }
 
@@ -94,10 +104,21 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   toggleFood(f: string) {
-    this.foods.update(list => {
-      const i = list.indexOf(f);
-      return i >= 0 ? list.filter(x => x !== f) : [...list, f];
-    });
+    if (this.isSelected(f)) {
+      if (f === this.otherLabel) this.customFood.set(null);
+      this.foods.update(list => list.filter(x => x !== f));
+    } else {
+      this.foods.update(list => [...list, f]);
+    }
+  }
+
+  get otherLabel(): string {
+    return this.i18n.t('rsvp_food_other');
+  }
+
+  onDietTextChange(value: string) {
+    this.dietText.set(value);
+    this.customFood.set(value.trim() || null);
   }
 
   isSelected(f: string): boolean {
@@ -114,10 +135,14 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
 
     const guestCount = this.hasPlus() ? 2 : 1;
 
+    const base = this.foods().filter(f => f !== this.otherLabel);
+    if (this.customFood()) base.push(this.customFood()!);
+    const dietaryNotes = base.join(', ') || null;
+
     await this.rsvpResponseService.submit(this.inviId!, {
       attending: this.attending,
       guest_count: guestCount,
-      dietary_notes: this.foods().join(', ') || null,
+      dietary_notes: dietaryNotes,
       message: notes || null,
     });
 

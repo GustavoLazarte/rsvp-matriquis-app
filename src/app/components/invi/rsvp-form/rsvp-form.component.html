@@ -5,14 +5,25 @@
     <div class="rule reveal rd2"></div>
 
     <div class="rsvp-form-container">
-      <ng-container *ngIf="isRevoked; else notRevoked">
-        <div class="rsvp-ok">
-          <div style="margin-bottom:1.5rem;color:#999">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      <ng-container *ngIf="isRevoked || invNotFound; else notRevoked">
+        <ng-container *ngIf="isRevoked; else notFoundBlock">
+          <div class="rsvp-ok">
+            <div style="margin-bottom:1.5rem;color:#999">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            </div>
+            <div class="rsvp-ok-title" style="color:#888">{{ i18n.current === 'es' ? 'Invitación no disponible' : 'Invitation unavailable' }}</div>
+            <p class="rsvp-ok-body">{{ i18n.current === 'es' ? 'Esta invitación ya no se encuentra activa. Si crees que es un error, contacta al organizador.' : 'This invitation is no longer active. If you think this is a mistake, please contact the organizer.' }}</p>
           </div>
-          <div class="rsvp-ok-title" style="color:#888">{{ i18n.current === 'es' ? 'Invitación no disponible' : 'Invitation unavailable' }}</div>
-          <p class="rsvp-ok-body">{{ i18n.current === 'es' ? 'Esta invitación ya no se encuentra activa. Si crees que es un error, contacta al organizador.' : 'This invitation is no longer active. If you think this is a mistake, please contact the organizer.' }}</p>
-        </div>
+        </ng-container>
+        <ng-template #notFoundBlock>
+          <div class="rsvp-ok">
+            <div style="margin-bottom:1.5rem;color:#999">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="12"/><circle cx="11" cy="15" r="0.5" fill="currentColor"/></svg>
+            </div>
+            <div class="rsvp-ok-title" style="color:#888">{{ i18n.t('rsvp_not_found_title') }}</div>
+            <p class="rsvp-ok-body">{{ i18n.t('rsvp_not_found_body') }}</p>
+          </div>
+        </ng-template>
       </ng-container>
 
       <ng-template #notRevoked>
@@ -70,6 +81,10 @@
               <label class="fl">{{ i18n.t('rsvp_food') }}</label>
               <div class="chips">
                 <button type="button" class="chip" *ngFor="let opt of i18n.tArr('rsvp_food_opts')" [class.on]="isSelected(opt)" (click)="toggleFood(opt)">{{ opt }}</button>
+              </div>
+              <div class="other-field" *ngIf="isSelected(otherLabel)">
+                <label class="fl">{{ i18n.t('rsvp_food_other_title') }}</label>
+                <input class="fi" type="text" name="dietText" [ngModel]="dietText()" (ngModelChange)="onDietTextChange($event)" [placeholder]="i18n.t('rsvp_food_other_ph')" />
               </div>
             </div>
 

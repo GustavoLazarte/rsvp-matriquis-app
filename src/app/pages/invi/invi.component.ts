@@ -1,6 +1,7 @@
 import { Component, Inject, PLATFORM_ID, afterNextRender, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { I18nService } from 'src/app/core/services/i18n.service';
 import { EventStateService } from 'src/app/core/services/event-state.service';
 import { InvitationStateService } from 'src/app/core/services/invitation-state.service';
 import { EventService } from 'src/app/services/event.service';
@@ -15,7 +16,9 @@ import { InvitationService } from 'src/app/services/invitation.service';
 export class InviComponent {
   token: string | null = null;
   rsvpSubmitted = false;
+  invNotFound = false;
   invitationStatus: 'pending' | 'opened' | 'responded' | 'expired' | 'revoked' = 'pending';
+  i18n = inject(I18nService);
   eventStateService = inject(EventStateService);
   eventService = inject(EventService);
   invitationStateService = inject(InvitationStateService);
@@ -37,18 +40,30 @@ export class InviComponent {
     if (!this.token) return;
     try {
       const { invitation, event } = await this.invitationService.loadByTokenWithEvent(this.token);
+      if (!invitation || !event) {
+        this.invNotFound = true;
+        return;
+      }
       this.invitationStatus = invitation.status;
       this.eventStateService.addEvent(event);
       this.eventStateService.selectEvent(event.id);
       if (event?.title) this.title.setTitle(`${event.title} — RSVP`);
       this.invitationService.trackOpen(this.token);
     } catch {
-      const inv = await this.invitationService.loadByToken(this.token);
-      this.invitationStatus = inv?.status || 'pending';
-      await this.eventService.getById(inv?.event_id);
-      const ev = this.eventStateService.currentEvent();
-      if (ev?.title) this.title.setTitle(`${ev.title} — RSVP`);
-      this.invitationService.trackOpen(this.token);
+      try {
+        const inv = await this.invitationService.loadByToken(this.token);
+        if (!inv) {
+          this.invNotFound = true;
+          return;
+        }
+        this.invitationStatus = inv.status;
+        await this.eventService.getById(inv.event_id);
+        const ev = this.eventStateService.currentEvent();
+        if (ev?.title) this.title.setTitle(`${ev.title} — RSVP`);
+        this.invitationService.trackOpen(this.token);
+      } catch {
+        this.invNotFound = true;
+      }
     }
   }
 
