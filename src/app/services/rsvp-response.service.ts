@@ -3,6 +3,13 @@ import { SupabaseService } from '../core/services/supabase.service';
 import { RsvpResponseStateService } from '../core/services/rsvp-response-state.service';
 import type { RsvpResponse } from '../core/models';
 
+export interface RespondInvitationInput {
+  attending: 'yes' | 'no' | 'maybe';
+  guest_count: number;
+  dietary_notes: string | null;
+  message: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class RsvpResponseService {
   readonly state = this.responseState;
@@ -12,14 +19,10 @@ export class RsvpResponseService {
     private responseState: RsvpResponseStateService,
   ) {}
 
-  async loadByInvitation(invitationId: string): Promise<void> {
-    const { data, error } = await this.supabase.supabase
-      .from('rsvp_responses')
-      .select('*')
-      .eq('invitation_id', invitationId)
-      .order('responded_at', { ascending: false });
+  async loadByToken(token: string): Promise<RsvpResponse | null> {
+    const { data, error } = await this.supabase.supabase.rpc('get_invitation', { p_token: token });
     if (error) throw error;
-    if (data) this.responseState.setResponses(data as RsvpResponse[]);
+    return (data as { response: RsvpResponse | null } | null)?.response ?? null;
   }
 
   async loadByEvent(eventId: string): Promise<void> {
@@ -41,12 +44,14 @@ export class RsvpResponseService {
     this.responseState.removeByInvitationId(invitationId);
   }
 
-  async submit(input: Partial<RsvpResponse>): Promise<RsvpResponse | null> {
-    const { data, error } = await this.supabase.supabase
-      .from('rsvp_responses')
-      .insert(input)
-      .select()
-      .single();
+  async submit(token: string, input: RespondInvitationInput): Promise<RsvpResponse | null> {
+    const { data, error } = await this.supabase.supabase.rpc('respond_invitation', {
+      p_token: token,
+      p_attending: input.attending,
+      p_guest_count: input.guest_count,
+      p_dietary_notes: input.dietary_notes,
+      p_message: input.message,
+    });
     if (error) throw error;
     if (data) this.responseState.addResponse(data as RsvpResponse);
     return data as RsvpResponse | null;

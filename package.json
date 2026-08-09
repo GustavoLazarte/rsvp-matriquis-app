@@ -19,9 +19,9 @@
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
     "@supabase/supabase-js": "^2.49.1",
-    "xlsx": "^0.18.5",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
@@ -29,7 +29,7 @@
     "@angular/cli": "^19.1.5",
     "@angular/compiler-cli": "^19.1.0",
     "dotenv": "^16.6.1",
+    "supabase": "^2.113.0",
     "typescript": "~5.7.0"
   }
 }
- 

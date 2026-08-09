@@ -33,3 +33,4 @@ coverage/
 old-rsvp-app/
 package-lock.json
 
+.temp/

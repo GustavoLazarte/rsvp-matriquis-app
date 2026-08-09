@@ -2,7 +2,13 @@ import { Injectable } from '@angular/core';
 import { SupabaseService } from '../core/services/supabase.service';
 import { InvitationStateService } from '../core/services/invitation-state.service';
 import { RsvpResponseService } from './rsvp-response.service';
-import type { Invitation, Event } from '../core/models';
+import type { Invitation, Event, RsvpResponse } from '../core/models';
+
+export interface InvitationLookup {
+  invitation: Invitation;
+  event: Event;
+  response: RsvpResponse | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class InvitationService {
@@ -25,25 +31,16 @@ export class InvitationService {
   }
 
   async loadByToken(token: string): Promise<Invitation> {
-    const { data, error } = await this.supabase.supabase
-      .from('invitations')
-      .select('*')
-      .eq('token', token)
-      .single();
+    const { data, error } = await this.supabase.supabase.rpc('get_invitation', { p_token: token });
     if (error) throw error;
-    return data as Invitation;
+    return (data as InvitationLookup).invitation;
   }
 
   async loadByTokenWithEvent(token: string): Promise<{ invitation: Invitation; event: Event }> {
-    const { data, error } = await this.supabase.supabase
-      .from('invitations')
-      .select('*, event:event_id(*)')
-      .eq('token', token)
-      .single();
+    const { data, error } = await this.supabase.supabase.rpc('get_invitation', { p_token: token });
     if (error) throw error;
-    const invitation = data as Invitation;
-    const event = (data as any).event as Event;
-    return { invitation, event };
+    const lookup = data as InvitationLookup;
+    return { invitation: lookup.invitation, event: lookup.event };
   }
 
   async create(input: Partial<Invitation>): Promise<Invitation | null> {
@@ -66,14 +63,9 @@ export class InvitationService {
     this.invitationState.updateInvitation(id, input);
   }
 
-  async trackOpen(id: string): Promise<void> {
-    const inv = this.invitationState.invitations().find(i => i.id === id);
-    const current = inv?.opened_count ?? 0;
-    await this.update(id, {
-      opened_count: current + 1,
-      last_opened_at: new Date().toISOString(),
-      status: 'opened',
-    });
+  async trackOpen(token: string): Promise<void> {
+    const { error } = await this.supabase.supabase.rpc('track_open', { p_token: token });
+    if (error) throw error;
   }
 
   async revoke(id: string): Promise<void> {

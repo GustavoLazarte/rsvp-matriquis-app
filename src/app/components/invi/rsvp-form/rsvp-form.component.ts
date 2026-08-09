@@ -44,8 +44,7 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
       this.invitationId = inv.id;
       this.plusOneAllowed = inv.plus_one_allowed === 1;
       this.guestName.set(inv.guest_name);
-      await this.rsvpResponseService.loadByInvitation(inv.id);
-      const existing = this.rsvpResponseService.state.responses().find(r => r.invitation_id === inv.id);
+      const existing = await this.rsvpResponseService.loadByToken(this.inviId);
       if (existing) {
         this.submitted = true;
         this.attending = existing.attending as 'yes' | 'no';
@@ -115,15 +114,12 @@ export class RsvpFormComponent implements OnInit, OnDestroy, OnChanges {
 
     const guestCount = this.hasPlus() ? 2 : 1;
 
-    await this.rsvpResponseService.submit({
-      invitation_id: this.invitationId,
+    await this.rsvpResponseService.submit(this.inviId!, {
       attending: this.attending,
       guest_count: guestCount,
       dietary_notes: this.foods().join(', ') || null,
       message: notes || null,
     });
-
-    await this.invitationService.update(this.invitationId, { status: 'responded' });
 
     this.submitted = true;
     this.submitting = false;

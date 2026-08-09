@@ -41,14 +41,14 @@ export class InviComponent {
       this.eventStateService.addEvent(event);
       this.eventStateService.selectEvent(event.id);
       if (event?.title) this.title.setTitle(`${event.title} — RSVP`);
-      this.invitationService.trackOpen(invitation.id);
+      this.invitationService.trackOpen(this.token);
     } catch {
       const inv = await this.invitationService.loadByToken(this.token);
       this.invitationStatus = inv?.status || 'pending';
       await this.eventService.getById(inv?.event_id);
       const ev = this.eventStateService.currentEvent();
       if (ev?.title) this.title.setTitle(`${ev.title} — RSVP`);
-      this.invitationService.trackOpen(inv.id);
+      this.invitationService.trackOpen(this.token);
     }
   }
 
