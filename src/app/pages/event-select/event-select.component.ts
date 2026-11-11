@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { EventService } from 'src/app/services/event.service';
-import { AuthService } from 'src/app/services/auth.service';
-import { UserStateService } from 'src/app/core/services/user-state.service';
-import { EventStateService } from 'src/app/core/services/event-state.service';
-import { Event } from 'src/app/core/models';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
+import { EventService } from '../../services/event.service';
+import { Event } from '../../core/models';
+import { RoleService } from '../../auth/services/role.service';
+import { SupabaseService } from '../../core/services/supabase.service';
 
 @Component({
-  standalone: false,
   selector: 'app-event-select',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './event-select.component.html',
-  styleUrls: ['./event-select.component.scss'],
+  styleUrls: ['./event-select.component.scss']
 })
 export class EventSelectComponent implements OnInit {
   events: Event[] = [];
@@ -18,37 +19,37 @@ export class EventSelectComponent implements OnInit {
 
   constructor(
     private eventService: EventService,
-    private auth: AuthService,
-    private userState: UserStateService,
-    private eventState: EventStateService,
     private router: Router,
+    private roleService: RoleService,
+    private supabase: SupabaseService
   ) {}
 
   async ngOnInit() {
-    await this.auth.init();
-    const user = this.userState.user();
-    if (!user) {
-      this.router.navigate(['/login']);
-      return;
-    }
     try {
-      const evs = await this.eventService.getByUserId(user.id);
-      this.events = evs;
-    } catch {
-      // fallback empty
+      this.events = await this.eventService.getAllEvents();
+    } catch (e) {
+      this.events = [];
     }
     this.loading = false;
+
+    try {
+      const isPlatform = await this.roleService.isPlatformAdmin();
+      if (isPlatform) {
+        this.router.navigate(['/platform-admin']);
+      }
+    } catch (e) {}
+  }
+
+  goToDashboard(event: Event) {
+    this.router.navigate(['/dashboard'], { queryParams: { eventId: event.id } });
   }
 
   selectEvent(event: Event) {
-    this.eventState.setEvents([event]);
-    this.eventState.selectEvent(event.id);
-    this.userState.setCurrentEventId(event.id);
-    this.router.navigate(['/dashboard']);
+    this.goToDashboard(event);
   }
 
   async onLogout() {
-    await this.auth.logout();
+    await this.supabase.signOut();
     this.router.navigate(['/login']);
   }
 }

@@ -1,0 +1,30 @@
+<div class="platform-admin">
+  <header class="platform-admin__header">
+    <h1>Platform Admin</h1>
+    <p>Gestiona organizaciones, eventos, plantillas y dominios</p>
+  </header>
+
+  <section class="platform-admin__content">
+    <h2>Organizaciones</h2>
+    <div *ngIf="loading">Cargando...</div>
+    <table *ngIf="!loading && organizations.length">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Slug</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let org of organizations">
+          <td>{{ org.name }}</td>
+          <td>{{ org.slug }}</td>
+          <td>{{ org.status }}</td>
+          <td><a [routerLink]="['/dashboard']" [queryParams]="{orgId: org.id}">Ver eventos</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="!loading && !organizations.length">No hay organizaciones</p>
+  </section>
+</div>

@@ -3,3 +3,8 @@ export type { EventImage, EventImageType } from './event-image';
 export type { AlbumImage } from './album-image';
 export type { Invitation, InvitationStatus } from './invitation';
 export type { RsvpResponse, AttendanceOption } from './rsvp-response';
+export * from './organization';
+export * from './membership';
+export * from './template';
+export * from './event-theme';
+export * from './event-domain';

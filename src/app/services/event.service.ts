@@ -81,7 +81,18 @@ export class EventService {
       .eq('id', id)
       .single();
     if (error) throw error;
-    this.eventState.addEvent(data as Event);
-    this.eventState.selectEvent(id);
+    if (data) {
+      this.eventState.setEvents([data as Event]);
+      this.eventState.selectEvent(id);
+    }
+  }
+
+  async getAllEvents(): Promise<Event[]> {
+    const { data, error } = await this.supabase.supabase
+      .from('events')
+      .select('*')
+      .order('event_date', { ascending: true });
+    if (error) throw error;
+    return (data as Event[]) || [];
   }
 }

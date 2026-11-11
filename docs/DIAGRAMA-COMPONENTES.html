@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagrama de Componentes - RSVP SaaS</title>
+  <style>
+    :root {
+      --bg: #0f1026;
+      --card: #1b1d33;
+      --border: #2a2f55;
+      --primary: #7c3aed;
+      --accent: #22d3ee;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --text: #f8fafc;
+      --text-light: #cbd5f5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: radial-gradient(circle at top, #1f2247, var(--bg)); color: var(--text); padding: 2rem; line-height: 1.6; }
+    header { text-align: center; margin-bottom: 3rem; }
+    header h1 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 0.5rem; }
+    header p { color: var(--text-light); }
+    main { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
+    .layer { background: linear-gradient(180deg, rgba(124, 58, 237, 0.15) 0%, rgba(27, 29, 51, 0.9) 100%); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; }
+    .layer-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .layer-header h2 { font-size: 1.8rem; }
+    .badge { background: var(--primary); padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.85rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .component { background: rgba(15, 16, 38, 0.8); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden; }
+    .component::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+    .component h3 { margin-bottom: 0.8rem; font-size: 1.3rem; }
+    .component ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-light); }
+    .component ul li::before { content: "?"; color: var(--accent); margin-right: 0.5rem; }
+    .flow { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+    .flow-item { background: var(--card); border: 1px solid var(--border); padding: 0.8rem 1.5rem; border-radius: 999px; }
+    .arrow { color: var(--accent); font-size: 1.5rem; }
+    footer { text-align: center; margin-top: 3rem; color: var(--text-light); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Diagrama de Componentes</h1>
+    <p>Arquitectura Angular + Supabase para RSVP SaaS Multi-Evento</p>
+  </header>
+  <main>
+    <section class="layer">
+      <div class="layer-header">
+        <h2>1. Capa de Presentación (Routing)</h2>
+        <span class="badge">AppRoutingModule</span>
+      </div>
+      <div class="flow">
+        <div class="flow-item">/login</div>
+        <span class="arrow">?</span>
+        <div class="flow-item">/select-event</div>
+        <span class="arrow">?</span>
+        <div class="flow-item">/dashboard</div>
+        <span class="arrow">|</span>
+        <div class="flow-item">/platform-admin</div>
+        <span class="arrow">|</span>
+        <div class="flow-item">/org-admin</div>
+        <span class="arrow">|</span>
+        <div class="flow-item">/rsvp/:token</div>
+      </div>
+    </section>
+
+    <section class="layer">
+      <div class="layer-header">
+        <h2>2. Páginas y Componentes</h2>
+        <span class="badge">Pages</span>
+      </div>
+      <div class="grid">
+        <article class="component">
+          <h3>Autenticación</h3>
+          <ul>
+            <li>LoginComponent</li>
+            <li>authGuard</li>
+            <li>roleGuard</li>
+            <li>SupabaseService</li>
+          </ul>
+        </article>
+        <article class="component">
+          <h3>Platform Admin</h3>
+          <ul>
+            <li>PlatformAdminComponent</li>
+            <li>OrganizationService</li>
+            <li>Gestión de organizaciones</li>
+            <li>Vista global</li>
+          </ul>
+        </article>
+        <article class="component">
+          <h3>Org Admin</h3>
+          <ul>
+            <li>OrgAdminComponent</li>
+            <li>TemplatesComponent</li>
+            <li>Gestión de eventos</li>
+            <li>Miembros y dominios</li>
+          </ul>
+        </article>
+        <article class="component">
+          <h3>Dashboard (Event Admin)</h3>
+          <ul>
+            <li>DashboardComponent</li>
+            <li>GuestsComponent</li>
+            <li>StatsComponent</li>
+            <li>SettingsComponent</li>
+            <li>InviteModalComponent</li>
+            <li>ExportService</li>
+          </ul>
+        </article>
+        <article class="component">
+          <h3>Vista Pública (Invitados)</h3>
+          <ul>
+            <li>InviComponent</li>
+            <li>RsvpFormComponent</li>
+            <li>HeroComponent</li>
+            <li>CountdownComponent</li>
+            <li>AlbumComponent</li>
+            <li>LogisticsComponent</li>
+            <li>MusicComponent</li>
+            <li>GiftsComponent</li>
+          </ul>
+        </article>
+        <article class="component">
+          <h3>Selección de Evento</h3>
+          <ul>
+            <li>EventSelectComponent</li>
+            <li>EventService</li>
+            <li>RoleService</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="layer">
+      <div class="layer-header">
+        <h2>3. Servicios Core</h2>
+        <span class="badge">Core / Services</span>
+      </div>
+      <div class="grid">
+        <article class="component">
+          <h3>Datos y Estado</h3>
+          <ul>
+            <li>SupabaseService (Auth + DB)</li>
+            <li>EventStateService</li>
+            <li>InvitationStateService</li>
+            <li>RsvpResponseStateService</li>
+          </ul>
+        </article>
+        <article class="component">
+          <h3>Multi-Tenant</h3>
+          <ul>
+            <li>OrganizationService</li>
+            <li>RoleService</li>
+            <li>TemplateService</li>
+            <li>ThemeService</li>
+          </ul>
+        </article>
+        <article class="component">
+          <h3>Utilidades</h3>
+          <ul>
+            <li>I18nService</li>
+            <li>SupabaseStorageService</li>
+            <li>ExportService</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="layer">
+      <div class="layer-header">
+        <h2>4. Flujo de Datos</h2>
+        <span class="badge">Arquitectura</span>
+      </div>
+      <div class="flow">
+        <div class="flow-item">Usuario / Invitado</div>
+        <span class="arrow">?</span>
+        <div class="flow-item">Angular Components</div>
+        <span class="arrow">?</span>
+        <div class="flow-item">Services</div>
+        <span class="arrow">?</span>
+        <div class="flow-item">Supabase (Auth / RLS / RPC)</div>
+        <span class="arrow">?</span>
+        <div class="flow-item">PostgreSQL</div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>Diagrama generado para el proyecto RSVP SaaS | Angular 18+ | Supabase</p>
+  </footer>
+</body>
+</html>

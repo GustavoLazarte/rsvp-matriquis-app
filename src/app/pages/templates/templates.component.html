@@ -1,0 +1,16 @@
+<div class="templates">
+  <header>
+    <h1>Plantillas</h1>
+    <p>Elige la plantilla para personalizar la invitación</p>
+  </header>
+
+  <div *ngIf="loading">Cargando...</div>
+  <div class="grid" *ngIf="!loading">
+    <article class="card" *ngFor="let t of templates">
+      <div class="preview"></div>
+      <h3>{{ t.name }}</h3>
+      <p>{{ t.description }}</p>
+      <button (click)="selectTemplate(t)">Seleccionar</button>
+    </article>
+  </div>
+</div>

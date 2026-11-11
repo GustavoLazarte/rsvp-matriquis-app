@@ -23,6 +23,21 @@ const routes: Routes = [
     path: 'rsvp/:token',
     loadChildren: () => import('./pages/invi/invi.module').then((m) => m.InviModule),
   },
+  {
+    path: 'platform-admin',
+    canActivate: [authGuard],
+    loadChildren: () => import('./pages/platform-admin/platform-admin.module').then((m) => m.PlatformAdminModule),
+  },
+  {
+    path: 'org-admin',
+    canActivate: [authGuard],
+    loadChildren: () => import('./pages/org-admin/org-admin.module').then((m) => m.OrgAdminModule),
+  },
+  {
+    path: 'templates',
+    canActivate: [authGuard],
+    loadChildren: () => import('./pages/templates/templates.module').then((m) => m.TemplatesModule),
+  },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },
 ];
